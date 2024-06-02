@@ -166,14 +166,21 @@ class Inbox(
 
     def __init__(self, bot: Bot):
         self.bot = bot
-        self.view = self.create_inbox_view()
-        self.bot.add_view(self.view)
 
+        self._global_inbox_view = self.create_inbox_view()
+        self._inbox_views: dict[int, InboxView] = {}
         self._inbox_ratelimits: dict[tuple[int, int], app_commands.Cooldown] = {}
+
         self.cleanup_loop.start()
+        self.bot.add_view(self._global_inbox_view)
 
     def create_inbox_view(self) -> InboxView:
         return InboxView(self.bot, ratelimit_check=self.check_ratelimit)
+
+    async def cog_unload(self) -> None:
+        self._global_inbox_view.stop()
+        for view in self._inbox_views.values():
+            view.stop()
 
     async def check_ratelimit(self, inbox_id: int, user_id: int) -> bool:
         key = (inbox_id, user_id)
@@ -278,6 +285,8 @@ class Inbox(
 
         message = await channel.send(embeds=embeds, files=files, view=view)
         assert message.guild is not None
+
+        self._inbox_views[message.id] = view
 
         async with self.bot.acquire() as conn:
             query = DatabaseClient(conn)
