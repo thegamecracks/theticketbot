@@ -3,6 +3,7 @@
 [bot]
 token = ""
 extensions = [
+    ".cogs.cleanup",
     ".cogs.errors",
     ".cogs.owner",
 ]
