@@ -16,15 +16,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Python
     - uses: actions/setup-python@v5
       with:
         cache: pip
         cache-dependency-path: pyproject.toml
         python-version-file: pyproject.toml
-    - name: Install pyright
-      run: pip install pyright
-    - name: Install project
-      run: pip install .
-    - name: Run pyright
-      run: pyright
+    - run: pip install pyright
+    - run: pip install .
+    - run: pyright
