@@ -56,7 +56,7 @@ class Inbox(
             # {0}: the channel's mention
             # {1}: a list of permissions that are missing
             content = _("I need the following permissions in {0}: {1}")
-            content = await translate(content, self.bot)
+            content = await translate(content, interaction)
             content = content.format(channel.mention, missing)
             return await interaction.response.send_message(content, ephemeral=True)
 
@@ -68,7 +68,7 @@ class Inbox(
                 "to be sent with the inbox. To do this, right click or long tap "
                 "a message, then open Apps and pick the *Select this message* command."
             )
-            content = await translate(content, self.bot)
+            content = await translate(content, interaction)
             return await interaction.response.send_message(content, ephemeral=True)
 
         message = messages[-1]
@@ -85,7 +85,7 @@ class Inbox(
                 "The message's attachments are too large! "
                 "The total size must be under {0}."
             )
-            content = await translate(content, self.bot)
+            content = await translate(content, interaction)
             content = content.format(humanize.naturalsize(self.MAX_ATTACHMENT_SIZE))
             return await interaction.response.send_message(content, ephemeral=True)
 
@@ -110,7 +110,7 @@ class Inbox(
         # TODO: add inbox to database
         message = await channel.send(embeds=embeds, files=files)
 
-        content = await translate(_("Your inbox has been created! {0}"), self.bot)
+        content = await translate(_("Your inbox has been created! {0}"), interaction)
         content = content.format(message.jump_url)
         await interaction.followup.send(content, ephemeral=True)
 

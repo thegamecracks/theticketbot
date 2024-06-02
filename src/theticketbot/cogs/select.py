@@ -85,7 +85,7 @@ class Select(commands.Cog):
                 "{0}\nYou have selected too many messages! This is now message #{1}."
             )
 
-        content = await translate(content, self.bot)
+        content = await translate(content, interaction)
         content = content.format(
             message.jump_url,
             len(queue.messages),
