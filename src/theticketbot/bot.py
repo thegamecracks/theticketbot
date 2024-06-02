@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import contextlib
 import importlib.metadata
 import logging
 import sqlite3
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING, AsyncGenerator, Callable
 
+import asqlite
 from discord.ext import commands
 
 from .migrations import run_default_migrations
@@ -27,6 +29,25 @@ class Bot(commands.Bot):
             intents=config.bot.intents.create_intents(),
             strip_after_prefix=True,
         )
+
+    @contextlib.asynccontextmanager
+    async def acquire(
+        self,
+        *,
+        transaction: bool = True,
+    ) -> AsyncGenerator[asqlite.Connection, None]:
+        """Acquire a connection to the database.
+
+        :param transaction: If True, a transaction is opened as well.
+
+        """
+        path = str(self.config.db.path)
+        async with asqlite.connect(path) as conn:
+            if not transaction:
+                yield conn
+            else:
+                async with conn.transaction():
+                    yield conn
 
     async def _maybe_load_jishaku(self) -> None:
         if not self.config.bot.allow_jishaku:
