@@ -5,6 +5,7 @@ token = ""
 extensions = [
     ".cogs.cleanup",
     ".cogs.errors",
+    ".cogs.inbox",
     ".cogs.owner",
     ".cogs.select",
 ]

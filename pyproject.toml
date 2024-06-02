@@ -12,6 +12,7 @@ dynamic = ["version"]
 dependencies = [
     "asqlite @ https://github.com/Rapptz/asqlite/archive/fcd8ce0672562e440f99eb4b7a56eba16f6abf4e.tar.gz",
     "discord.py~=2.3",
+    "humanize~=4.9",
     "pydantic~=2.7",
 ]
 

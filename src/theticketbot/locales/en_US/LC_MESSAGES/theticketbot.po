@@ -26,7 +26,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-02 15:30-0400\n"
+"POT-Creation-Date: 2024-06-02 16:48-0400\n"
 "PO-Revision-Date: 2024-06-02 15:17-0400\n"
 "Last-Translator: U-LAPTOP-3G2E6T6I\\home <home@laptop-3g2e6t6i>\n"
 "Language-Team: English\n"
@@ -35,6 +35,57 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. Command group name
+#: src/theticketbot/cogs/inbox.py:14
+msgid "inbox"
+msgstr ""
+
+#. Subcommand name ("inbox")
+#: src/theticketbot/cogs/inbox.py:23
+msgid "create"
+msgstr ""
+
+#. Subcommand description ("inbox create")
+#: src/theticketbot/cogs/inbox.py:25
+msgid "Create a new inbox."
+msgstr ""
+
+#. Subcommand parameter name ("inbox create")
+#: src/theticketbot/cogs/inbox.py:29
+msgid "channel"
+msgstr ""
+
+#. Subcommand parameter description ("inbox create <channel>")
+#: src/theticketbot/cogs/inbox.py:33
+msgid "The channel to post the inbox."
+msgstr ""
+
+#. Message sent when attempting to create an inbox with insufficient permissions
+#. {0}: the channel's mention
+#. {1}: a list of permissions that are missing
+#: src/theticketbot/cogs/inbox.py:58
+#, python-brace-format
+msgid "I need the following permissions in {0}: {1}"
+msgstr ""
+
+#: src/theticketbot/cogs/inbox.py:67
+msgid ""
+"Before you can use this command, you must select a message to be sent with "
+"the inbox. To do this, right click or long tap a message, then open Apps and "
+"pick the *Select this message* command."
+msgstr ""
+
+#: src/theticketbot/cogs/inbox.py:85
+#, python-brace-format
+msgid ""
+"The message's attachments are too large! The total size must be under {0}."
+msgstr ""
+
+#: src/theticketbot/cogs/inbox.py:113
+#, python-brace-format
+msgid "Your inbox has been created! {0}"
+msgstr ""
 
 #. Command name
 #: src/theticketbot/cogs/select.py:29
