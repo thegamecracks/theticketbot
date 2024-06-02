@@ -199,13 +199,22 @@ class DatabaseClient:
 
     # Ticket methods
 
-    async def add_ticket(self, ticket_id: int, inbox_id: int, owner_id: int) -> None:
+    async def add_ticket(
+        self,
+        ticket_id: int,
+        inbox_id: int,
+        owner_id: int,
+        guild_id: int,
+    ) -> None:
         """Add a ticket to the database.
 
+        Members are automatically added, but the inbox must already exist.
+
         :raises sqlite3.IntegrityError:
-            Either the inbox/owner does not exist or the ticket already exists.
+            Either the inbox does not exist or the ticket already exists.
 
         """
+        await self.add_member(owner_id, guild_id)
         await self.conn.execute(
             "INSERT INTO ticket (id, inbox_id, owner_id) VALUES (?, ?, ?)",
             ticket_id,

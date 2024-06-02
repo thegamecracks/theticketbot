@@ -100,7 +100,7 @@ class InboxView(discord.ui.View):
             )
 
             query = DatabaseClient(conn)
-            await query.add_ticket(ticket.id, message.id, interaction.user.id)
+            await query.add_ticket(ticket.id, message.id, interaction.user.id, guild.id)
 
             mentions = await query.get_inbox_staff(message.id)
             mentions = ", ".join(mentions)
