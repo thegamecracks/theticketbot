@@ -251,6 +251,12 @@ class Inbox(
             content = content.format(humanize.naturalsize(self.MAX_ATTACHMENT_SIZE))
             return await interaction.response.send_message(content, ephemeral=True)
 
+        embeds_copied = False
+        if len(embeds[0]) == 0 and len(message.embeds) > 0:
+            embeds.clear()
+            embeds.extend(embed.copy() for embed in message.embeds)
+            embeds_copied = True
+
         await interaction.response.defer(ephemeral=True)
 
         url = channel.jump_url
@@ -259,14 +265,13 @@ class Inbox(
             files.append(f)
             image_url = f"attachment://{f.filename}"
 
-            if embeds[0].url is None:
+            if embeds_copied:
+                pass
+            elif embeds[0].url is None:
                 embeds[0].url = url
                 embeds[0].set_image(url=image_url)
             else:
                 embeds.append(discord.Embed(url=url).set_image(url=image_url))
-
-        if len(embeds[0]) == 0 and not embeds[0].url:
-            embeds.clear()
 
         view = self.create_inbox_view()
         await view.localize(interaction.guild.preferred_locale)

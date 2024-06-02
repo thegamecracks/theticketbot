@@ -26,7 +26,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-02 19:39-0400\n"
+"POT-Creation-Date: 2024-06-02 19:45-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -127,13 +127,13 @@ msgid ""
 msgstr ""
 
 #. The default starter content for new tickets
-#: src/theticketbot/cogs/inbox.py:287
+#: src/theticketbot/cogs/inbox.py:292
 msgid ""
 "$author Thank you for creating a ticket!\n"
 "Staff: $staff"
 msgstr ""
 
-#: src/theticketbot/cogs/inbox.py:293
+#: src/theticketbot/cogs/inbox.py:298
 #, python-brace-format
 msgid "Your inbox has been created! {0}"
 msgstr ""
