@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import importlib.metadata
 import logging
+import sqlite3
 from typing import TYPE_CHECKING, Callable
 
 from discord.ext import commands
 
+from .migrations import run_default_migrations
 from .translator import GettextTranslator
 
 if TYPE_CHECKING:
@@ -44,6 +46,10 @@ class Bot(commands.Bot):
         return config
 
     async def setup_hook(self) -> None:
+        self.config.db.path.parent.mkdir(parents=True, exist_ok=True)
+        with sqlite3.connect(self.config.db.path) as conn:
+            run_default_migrations(conn)
+
         for path in self.config.bot.extensions:
             await self.load_extension(path, package=__package__)
         log.info("Loaded %d extensions", len(self.config.bot.extensions))
