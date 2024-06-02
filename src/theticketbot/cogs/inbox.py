@@ -150,7 +150,7 @@ class InboxView(discord.ui.View):
 
     async def get_max_tickets(self, conn: asqlite.Connection, inbox_id: int) -> int:
         row = await conn.fetchone(
-            "SELECT max_tickets_per_user FROM inbox WHERE inbox_id = ?",
+            "SELECT max_tickets_per_user FROM inbox WHERE id = ?",
             inbox_id,
         )
         assert row is not None
