@@ -196,4 +196,5 @@ class DatabaseClient:
             *ticket_ids,
         )
         row = await c.fetchone()
+        assert row is not None
         return row[0]
