@@ -135,6 +135,10 @@ async def translate(
             context=context,
         )
     else:
-        translated = await obj.translate(message, data=data)
+        translated = await obj.translate(
+            message,
+            data=data,
+            locale=locale or obj.locale,
+        )
 
     return translated or str(message)
