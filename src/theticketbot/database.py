@@ -127,6 +127,31 @@ class DatabaseClient:
         await self.add_message(message_id, channel_id, guild_id=guild_id)
         await self.conn.execute("INSERT INTO inbox (id) VALUES (?)", message_id)
 
+    async def get_inbox_starter_content(self, inbox_id: int) -> str | None:
+        """Get the starter content for an inbox.
+
+        :returns: The starter content, if any.
+
+        """
+        row = await self.conn.fetchone(
+            "SELECT starter_content FROM inbox WHERE id = ?",
+            inbox_id,
+        )
+        if row is not None:
+            return row[0]
+
+    async def set_inbox_starter_content(
+        self,
+        inbox_id: int,
+        starter_content: str | None,
+    ) -> None:
+        """Set the starter content for an inbox."""
+        await self.conn.execute(
+            "UPDATE inbox SET starter_content = ? WHERE id = ?",
+            starter_content,
+            inbox_id,
+        )
+
     async def add_inbox_staff(self, inbox_id: int, mention: str) -> None:
         """Add an inbox staff to the database.
 
