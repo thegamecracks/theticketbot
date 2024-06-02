@@ -1,16 +1,16 @@
 from __future__ import annotations
 
 import importlib.resources
-import io
 import tomllib
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Literal, Protocol
+from typing import IO, TYPE_CHECKING, Any, Literal, Protocol
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 if TYPE_CHECKING:
     import discord
 
+assert __package__ is not None
 _package_files = importlib.resources.files(__package__)
 CONFIG_DEFAULT_RESOURCE = _package_files.joinpath("config_default.toml")
 
@@ -41,8 +41,7 @@ class SettingsBotIntents(_BaseModel):
 
     """
 
-    class Config:
-        extra = "allow"
+    model_config = ConfigDict(extra="allow")
 
     def create_intents(self) -> discord.Intents:
         import discord
@@ -57,7 +56,7 @@ SettingsBot.model_rebuild()
 
 
 class OpenableBinary(Protocol):
-    def open(self, __mode: Literal["rb"], /) -> io.BufferedIOBase:
+    def open(self, __mode: Literal["rb"], /) -> IO[bytes]:
         ...
 
 

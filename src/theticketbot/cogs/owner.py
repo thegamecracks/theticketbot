@@ -28,7 +28,7 @@ class Owner(commands.Cog):
     def __init__(self, bot: Bot):
         self.bot = bot
 
-    async def cog_check(self, ctx: Context):
+    async def cog_check(self, ctx: Context):  # type: ignore  # async is allowed
         return await commands.is_owner().predicate(ctx)
 
     @commands.command(name="reload-config", aliases=["config-reload"])

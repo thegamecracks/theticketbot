@@ -14,7 +14,7 @@ from discord.ext import commands
 if TYPE_CHECKING:
     from .bot import Bot
 
-
+assert __package__ is not None
 _LOCALES_PATH = Path(str(importlib.resources.files(__package__).joinpath("locales")))
 DOMAIN = "theticketbot"
 
