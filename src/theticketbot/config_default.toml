@@ -12,7 +12,6 @@ allow_jishaku = true
 # https://discordpy.readthedocs.io/en/stable/api.html#intents
 # All default intents are enabled but can be modified here
 guild_messages = true
-guild_reactions = true
 guilds = true
 message_content = true
 
@@ -24,6 +23,7 @@ dm_reactions = false
 dm_typing = false
 emojis_and_stickers = false
 guild_scheduled_events = false
+guild_reactions = false
 guild_typing = false
 integrations = false
 invites = false
