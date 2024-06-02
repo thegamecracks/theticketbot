@@ -153,11 +153,11 @@ class DatabaseClient:
         :returns: A list of staff mentions.
 
         """
-        c = await self.conn.execute(
+        rows = await self.conn.fetchall(
             "SELECT mention FROM inbox_staff WHERE inbox_id = ?",
             inbox_id,
         )
-        return [row[0] for row in await c.fetchall()]
+        return [row[0] for row in rows]
 
     async def remove_inbox_staff(self, inbox_id: int, mention: str) -> bool:
         """Remove an inbox staff from the database.
@@ -165,12 +165,12 @@ class DatabaseClient:
         :returns: True if the given inbox staff existed, False otherwise.
 
         """
-        c = await self.conn.execute(
+        row = await self.conn.fetchone(
             "DELETE FROM inbox_staff WHERE inbox_id = ? AND mention = ? RETURNING 1",
             inbox_id,
             mention,
         )
-        return await c.fetchone() is not None
+        return row is not None
 
     # Ticket methods
 
@@ -191,10 +191,9 @@ class DatabaseClient:
     async def count_matching_tickets(self, ticket_ids: list[int]) -> int:
         """Count the number of ticket IDs that exist in the database."""
         placeholders = ", ".join("?" * len(ticket_ids))
-        c = await self.conn.execute(
+        row = await self.conn.fetchone(
             f"SELECT COUNT(*) FROM ticket WHERE id IN ({placeholders})",
             *ticket_ids,
         )
-        row = await c.fetchone()
         assert row is not None
         return row[0]
