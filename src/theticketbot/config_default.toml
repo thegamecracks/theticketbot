@@ -6,6 +6,7 @@ extensions = [
     ".cogs.cleanup",
     ".cogs.errors",
     ".cogs.owner",
+    ".cogs.select",
 ]
 allow_jishaku = true
 
