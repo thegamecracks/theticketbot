@@ -16,8 +16,7 @@ CONFIG_DEFAULT_RESOURCE = _package_files.joinpath("config_default.toml")
 
 
 class _BaseModel(BaseModel):
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
 
 # https://docs.pydantic.dev/usage/settings/
