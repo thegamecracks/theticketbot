@@ -56,8 +56,7 @@ SettingsBot.model_rebuild()
 
 
 class OpenableBinary(Protocol):
-    def open(self, __mode: Literal["rb"], /) -> IO[bytes]:
-        ...
+    def open(self, __mode: Literal["rb"], /) -> IO[bytes]: ...
 
 
 def _recursive_update(dest: dict, src: dict) -> None:

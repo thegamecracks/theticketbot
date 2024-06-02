@@ -52,5 +52,4 @@ class Bot(commands.Bot):
         await self.tree.set_translator(GettextTranslator())
 
 
-class Context(commands.Context[Bot]):
-    ...
+class Context(commands.Context[Bot]): ...
