@@ -121,7 +121,7 @@ class InboxView(discord.ui.View):
             )
             content = await translate(content, interaction)
             return await interaction.edit_original_response(content=content)
-        except discord.HTTPException:
+        except Exception:
             # Message sent when creating a ticket failed unexpectedly
             content = _("An unexpected error occurred while creating the ticket.")
             content = await translate(content, interaction)
