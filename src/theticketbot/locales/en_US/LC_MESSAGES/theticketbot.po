@@ -26,7 +26,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-02 16:48-0400\n"
+"POT-Creation-Date: 2024-06-02 19:39-0400\n"
 "PO-Revision-Date: 2024-06-02 15:17-0400\n"
 "Last-Translator: U-LAPTOP-3G2E6T6I\\home <home@laptop-3g2e6t6i>\n"
 "Language-Team: English\n"
@@ -36,53 +36,105 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#. Button label for creating a new ticket
+#: src/theticketbot/cogs/inbox.py:32
+msgid "Create Ticket"
+msgstr ""
+
+#. Message sent when user is being ratelimited for an inbox
+#: src/theticketbot/cogs/inbox.py:58
+msgid "You are creating tickets too quickly!"
+msgstr ""
+
+#: src/theticketbot/cogs/inbox.py:74
+#, python-brace-format
+msgid ""
+"You have too many tickets in this inbox. Please close your last ticket {0} "
+"before creating a new one."
+msgstr ""
+
+#. Message sent when creating a ticket
+#: src/theticketbot/cogs/inbox.py:82
+msgid "Creating ticket..."
+msgstr ""
+
+#. Audit log reason for a user creating a ticket
+#: src/theticketbot/cogs/inbox.py:91
+#, python-brace-format
+msgid "Ticket created by {0}"
+msgstr ""
+
+#: src/theticketbot/cogs/inbox.py:119
+msgid ""
+"I am missing the permissions needed to create a ticket here. Please notify a "
+"server admin!"
+msgstr ""
+
+#. Message sent when creating a ticket failed unexpectedly
+#: src/theticketbot/cogs/inbox.py:126
+msgid "An unexpected error occurred while creating the ticket."
+msgstr ""
+
+#. Message sent after successfully creating a ticket
+#: src/theticketbot/cogs/inbox.py:132
+#, python-brace-format
+msgid "Your ticket is ready! {0}"
+msgstr ""
+
 #. Command group name
-#: src/theticketbot/cogs/inbox.py:14
+#: src/theticketbot/cogs/inbox.py:163
 msgid "inbox"
 msgstr ""
 
 #. Subcommand name ("inbox")
-#: src/theticketbot/cogs/inbox.py:23
+#: src/theticketbot/cogs/inbox.py:185
 msgid "create"
 msgstr ""
 
 #. Subcommand description ("inbox create")
-#: src/theticketbot/cogs/inbox.py:25
+#: src/theticketbot/cogs/inbox.py:187
 msgid "Create a new inbox."
 msgstr ""
 
 #. Subcommand parameter name ("inbox create")
-#: src/theticketbot/cogs/inbox.py:29
+#: src/theticketbot/cogs/inbox.py:191
 msgid "channel"
 msgstr ""
 
 #. Subcommand parameter description ("inbox create <channel>")
-#: src/theticketbot/cogs/inbox.py:33
+#: src/theticketbot/cogs/inbox.py:195
 msgid "The channel to post the inbox."
 msgstr ""
 
 #. Message sent when attempting to create an inbox with insufficient permissions
 #. {0}: the channel's mention
 #. {1}: a list of permissions that are missing
-#: src/theticketbot/cogs/inbox.py:58
+#: src/theticketbot/cogs/inbox.py:220
 #, python-brace-format
 msgid "I need the following permissions in {0}: {1}"
 msgstr ""
 
-#: src/theticketbot/cogs/inbox.py:67
+#: src/theticketbot/cogs/inbox.py:229
 msgid ""
 "Before you can use this command, you must select a message to be sent with "
 "the inbox. To do this, right click or long tap a message, then open Apps and "
 "pick the *Select this message* command."
 msgstr ""
 
-#: src/theticketbot/cogs/inbox.py:85
+#: src/theticketbot/cogs/inbox.py:247
 #, python-brace-format
 msgid ""
 "The message's attachments are too large! The total size must be under {0}."
 msgstr ""
 
-#: src/theticketbot/cogs/inbox.py:113
+#. The default starter content for new tickets
+#: src/theticketbot/cogs/inbox.py:287
+msgid ""
+"$author Thank you for creating a ticket!\n"
+"Staff: $staff"
+msgstr ""
+
+#: src/theticketbot/cogs/inbox.py:293
 #, python-brace-format
 msgid "Your inbox has been created! {0}"
 msgstr ""
