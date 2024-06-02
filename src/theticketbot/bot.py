@@ -4,9 +4,10 @@ import contextlib
 import importlib.metadata
 import logging
 import sqlite3
-from typing import TYPE_CHECKING, AsyncGenerator, Callable
+from typing import TYPE_CHECKING, AsyncGenerator, Callable, cast
 
 import asqlite
+import discord
 from discord.ext import commands
 
 from .migrations import run_default_migrations
@@ -48,6 +49,17 @@ class Bot(commands.Bot):
             else:
                 async with conn.transaction():
                     yield conn
+
+    def get_selected_messages(self, user_id: int) -> list[discord.Message]:
+        """Return a list of messages recently selected by a user."""
+        if TYPE_CHECKING:
+            from .cogs.select import Select
+
+        cog = cast("Select | None", self.get_cog("Select"))
+        if cog is None:
+            return []
+
+        return cog.get_selected_messages(user_id)
 
     async def _maybe_load_jishaku(self) -> None:
         if not self.config.bot.allow_jishaku:
