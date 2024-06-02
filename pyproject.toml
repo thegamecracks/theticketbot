@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "theticketbot"
+description = "A ticket discord bot."
+requires-python = ">=3.11"
+authors = [{ name = "thegamecracks" }]
+readme = "README.md"
+dynamic = ["version"]
+dependencies = [
+    "discord.py~=2.3",
+    "pydantic~=2.7",
+]
+
+[project.optional-dependencies]
+jishaku = ["jishaku>=2.5.2"]
+
+[tool.setuptools.dynamic]
+version = { attr = "theticketbot.__version__" }

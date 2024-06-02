@@ -1,0 +1,36 @@
+# theticketbot
+# Copyright (C) 2024 thegamecracks
+# This file is distributed under the same license as the theticketbot package.
+#
+# The following requirements must be met when providing translations for
+# certain strings:
+#
+# * Command name
+# * Command group name
+# * Command parameter name
+# * Subcommand name
+# * Subcommand group name
+# * Subcommand parameter name
+#   - Lowercase variants of characters must be used
+#   - No spaces allowed, use "-" or "_" instead ("-" is preferred)
+#   - Max length of 32 characters
+#
+# * Command description
+# * Command group description
+# * Command parameter description
+# * Subcommand description
+# * Subcommand group description
+# * Subcommand parameter description
+#   - Max length of 100 characters
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-08-29 12:10-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"

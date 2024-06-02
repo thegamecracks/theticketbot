@@ -1,0 +1,2 @@
+recursive-include src *.po *.pot
+include src/theticketbot/config_default.toml

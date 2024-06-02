@@ -1,0 +1,34 @@
+# Full schema defined in /src/theticketbot/config.py
+
+[bot]
+token = ""
+extensions = [
+    ".cogs.errors",
+    ".cogs.owner",
+]
+allow_jishaku = true
+
+[bot.intents]
+# https://discordpy.readthedocs.io/en/stable/api.html#intents
+# All default intents are enabled but can be modified here
+guild_messages = true
+guild_reactions = true
+guilds = true
+message_content = true
+
+auto_moderation = false
+auto_moderation_configuration = false
+auto_moderation_execution = false
+dm_messages = false
+dm_reactions = false
+dm_typing = false
+emojis_and_stickers = false
+guild_scheduled_events = false
+guild_typing = false
+integrations = false
+invites = false
+members = false
+moderation = false
+presences = false
+voice_states = false
+webhooks = false

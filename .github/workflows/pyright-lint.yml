@@ -1,0 +1,25 @@
+name: Lint with Pyright
+
+on:
+  push:
+    paths:
+      - '**.py'
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        cache: pip
+        cache-dependency-path: pyproject.toml
+        python-version-file: pyproject.toml
+    - name: Install pyright
+      run: pip install pyright
+    - name: Install project
+      run: pip install .
+    - name: Run pyright
+      run: pyright
