@@ -22,6 +22,7 @@ class _BaseModel(BaseModel):
 # https://docs.pydantic.dev/usage/settings/
 class Settings(_BaseModel):
     bot: SettingsBot
+    db: SettingsDB
 
 
 class SettingsBot(_BaseModel):
@@ -48,6 +49,11 @@ class SettingsBotIntents(_BaseModel):
         intents = dict(discord.Intents.default())
         intents |= self.model_dump()
         return discord.Intents(**intents)
+
+
+class SettingsDB(_BaseModel):
+    path: Path
+    """The filepath to write the bot's SQLite database to."""
 
 
 Settings.model_rebuild()

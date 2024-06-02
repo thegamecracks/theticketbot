@@ -32,3 +32,6 @@ moderation = false
 presences = false
 voice_states = false
 webhooks = false
+
+[db]
+path = "data/theticketbot.db"
