@@ -88,6 +88,13 @@ search for them in the future, and can be deleted permanently if desired.
 For consistency in handling tickets, your staff team should devise a procedure
 and adhere to it.
 
+Each inbox has a per-user ratelimit to help reduce spam. It adjusts according
+to the slowmode you have set for the inbox's channel, but the minimum time
+allowed between tickets is 60 seconds. Inboxes also try to maintain a maximum
+of 1 active thread per user, although it is not guaranteed due to technical
+limitations. If the owner leaves or is removed from their ticket, it will
+automatically be archived.
+
 ## License
 
 This project is written under the [MIT] license.
