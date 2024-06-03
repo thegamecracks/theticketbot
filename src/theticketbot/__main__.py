@@ -7,12 +7,19 @@ from pathlib import Path
 
 import discord
 
+from . import __version__
 from .bot import Bot
 from .config import load_config
 
 parser = argparse.ArgumentParser(
     prog=__package__,
     description=importlib.metadata.metadata("theticketbot")["Summary"],
+)
+parser.add_argument(
+    "-V",
+    "--version",
+    action="version",
+    version=f"%(prog)s {__version__}",
 )
 parser.add_argument(
     "-v",
