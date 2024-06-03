@@ -46,10 +46,8 @@ CREATE TABLE ticket (
         INTEGER PRIMARY KEY
         REFERENCES channel (id) ON DELETE CASCADE,
 
-    inbox_id INTEGER NOT NULL REFERENCES inbox (id),
-    owner_id INTEGER NOT NULL REFERENCES user (id)
-    -- Tickets don't disappear if their inbox message or owner are deleted,
-    -- so no cascade needed
+    inbox_id INTEGER REFERENCES inbox (id) ON DELETE SET NULL,
+    owner_id INTEGER REFERENCES user (id) ON DELETE SET NULL
 
     -- The following invariants are not checked:
     --   * channel.guild == inbox.message.channel.guild
