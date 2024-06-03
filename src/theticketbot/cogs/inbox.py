@@ -582,24 +582,6 @@ class Inbox(
         await modal.localize(interaction.locale)
         await interaction.response.send_modal(modal)
 
-    @starter.command(
-        # Subcommand name ("inbox starter")
-        name=_("get"),
-        # Subcommand description ("inbox starter get")
-        description=_("Get the starting content for an inbox's tickets."),
-    )
-    async def starter_get(self, interaction: discord.Interaction):
-        inbox = await self.maybe_get_inbox_message(interaction)
-        if inbox is None:
-            return
-
-        async with self.bot.acquire() as conn:
-            query = DatabaseClient(conn)
-            starter_content = await query.get_inbox_starter_content(inbox.id)
-            starter_content = starter_content or DEFAULT_STARTER_CONTENT
-
-        await interaction.response.send_message(starter_content, ephemeral=True)
-
     @commands.Cog.listener("on_raw_thread_member_remove")
     async def archive_abandoned_tickets(self, payload: discord.RawThreadMembersUpdate):
         # NOTE: event may not fire on already-archived tickets

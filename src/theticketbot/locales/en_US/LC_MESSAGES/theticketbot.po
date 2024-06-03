@@ -26,7 +26,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1.1a1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-03 19:09-0400\n"
+"POT-Creation-Date: 2024-06-03 19:18-0400\n"
 "PO-Revision-Date: 2024-06-02 15:17-0400\n"
 "Last-Translator: U-LAPTOP-3G2E6T6I\\home <home@laptop-3g2e6t6i>\n"
 "Language-Team: English\n"
@@ -302,19 +302,9 @@ msgstr ""
 msgid "Set the starting content for an inbox's tickets."
 msgstr ""
 
-#. Subcommand name ("inbox starter")
-#: src/theticketbot/cogs/inbox.py:587
-msgid "get"
-msgstr ""
-
-#. Subcommand description ("inbox starter get")
-#: src/theticketbot/cogs/inbox.py:589
-msgid "Get the starting content for an inbox's tickets."
-msgstr ""
-
 #. Message sent when owner leaves their ticket
 #. {0}: The owner's mention
-#: src/theticketbot/cogs/inbox.py:630
+#: src/theticketbot/cogs/inbox.py:612
 #, python-brace-format
 msgid "Archiving ticket as the owner ({0}) has left the thread."
 msgstr ""
