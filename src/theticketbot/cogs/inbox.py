@@ -45,12 +45,6 @@ class InboxView(discord.ui.View):
         guild = interaction.guild
         message = interaction.message
 
-        if not await self.ratelimit_check(message.id, interaction.user.id):
-            # Message sent when user is being ratelimited for an inbox
-            content = _("You are creating tickets too quickly!")
-            content = await translate(content, interaction)
-            return await interaction.response.send_message(content, ephemeral=True)
-
         async with self.bot.acquire() as conn:
             tickets = await self.get_active_user_tickets(
                 guild.threads,
@@ -70,6 +64,12 @@ class InboxView(discord.ui.View):
             )
             content = await translate(content, interaction)
             content = content.format(tickets[-1].jump_url)
+            return await interaction.response.send_message(content, ephemeral=True)
+
+        if not await self.ratelimit_check(message.id, interaction.user.id):
+            # Message sent when user is being ratelimited for an inbox
+            content = _("You are creating tickets too quickly!")
+            content = await translate(content, interaction)
             return await interaction.response.send_message(content, ephemeral=True)
 
         # Message sent when creating a ticket
