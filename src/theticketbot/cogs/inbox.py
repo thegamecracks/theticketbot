@@ -260,7 +260,10 @@ class Inbox(
         cooldown = self._inbox_ratelimits.setdefault(key, app_commands.Cooldown(1, 60))
         return cooldown.update_rate_limit(time.monotonic()) or 0
 
-    async def maybe_get_inbox_message(self, interaction: discord.Interaction) -> discord.Message | None:
+    async def maybe_get_inbox_message(
+        self,
+        interaction: discord.Interaction,
+    ) -> discord.Message | None:
         messages = self.bot.get_selected_messages(interaction.user.id)
         if len(messages) < 1:
             # Message sent when using a command without selecting an inbox message
@@ -276,7 +279,11 @@ class Inbox(
         if await self.check_inbox_message(interaction, inbox):
             return inbox
 
-    async def check_inbox_message(self, interaction: discord.Interaction, message: discord.Message) -> bool:
+    async def check_inbox_message(
+        self,
+        interaction: discord.Interaction,
+        message: discord.Message,
+    ) -> bool:
         async with self.bot.acquire() as conn:
             row = await conn.fetchone("SELECT 1 FROM inbox WHERE id = ?", message.id)
 
