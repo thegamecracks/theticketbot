@@ -18,7 +18,7 @@ DEFAULT_STARTER_CONTENT = "$author $staff"
 
 
 class InboxRatelimit(Protocol):
-    async def __call__(self, inbox_id: int, user_id: int, /) -> bool: ...
+    async def __call__(self, inbox_id: int, user_id: int, /) -> float: ...
 
 
 class InboxView(discord.ui.View):
@@ -69,10 +69,13 @@ class InboxView(discord.ui.View):
             content = content.format(tickets[-1].jump_url)
             return await interaction.response.send_message(content, ephemeral=True)
 
-        if not await self.ratelimit_check(message.id, interaction.user.id):
+        retry_after = await self.ratelimit_check(message.id, interaction.user.id)
+        if retry_after > 0:
             # Message sent when user is being ratelimited for an inbox
-            content = _("You are creating tickets too quickly!")
+            # {0}: the duration in seconds to wait before retrying
+            content = _("You are creating tickets too quickly! Please wait {0:.0f}s.")
             content = await translate(content, interaction)
+            content = content.format(retry_after)
             return await interaction.response.send_message(content, ephemeral=True)
 
         # Message sent when creating a ticket
@@ -233,10 +236,10 @@ class Inbox(
         for view in self._inbox_views.values():
             view.stop()
 
-    async def check_ratelimit(self, inbox_id: int, user_id: int) -> bool:
+    async def check_ratelimit(self, inbox_id: int, user_id: int) -> float:
         key = (inbox_id, user_id)
         cooldown = self._inbox_ratelimits.setdefault(key, app_commands.Cooldown(1, 60))
-        return cooldown.update_rate_limit(time.monotonic()) is None
+        return cooldown.update_rate_limit(time.monotonic()) or 0
 
     @app_commands.command(
         # Subcommand name ("inbox")
