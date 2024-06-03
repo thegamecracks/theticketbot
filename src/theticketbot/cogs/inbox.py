@@ -475,14 +475,21 @@ class Inbox(
             return await interaction.response.send_message(content, ephemeral=True)
 
         async with self.bot.acquire() as conn:
-            await DatabaseClient(conn).remove_inbox_staff(inbox.id, staff.mention)
+            query = DatabaseClient(conn)
+            success = await query.remove_inbox_staff(inbox.id, staff.mention)
 
-        # Message sent when removing staff from an inbox
-        # {0}: the staff's mention
-        # {1}: the inbox's link
-        content = await translate(
-            _("{0} has been removed from inbox {1} !"), interaction
-        )
+        if success:
+            # Message sent when removing staff from an inbox
+            # {0}: the staff's mention
+            # {1}: the inbox's link
+            content = _("{0} has been removed from inbox {1} !")
+        else:
+            # Message sent when removing non-existent staff from an inbox
+            # {0}: the staff's mention
+            # {1}: the inbox's link
+            content = _("{0} is not staff of inbox {1} .")
+
+        content = await translate(content, interaction)
         content = content.format(staff.mention, inbox.jump_url)
         await interaction.response.send_message(content, ephemeral=True)
 

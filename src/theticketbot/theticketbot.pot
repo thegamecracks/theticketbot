@@ -26,7 +26,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-02 21:43-0400\n"
+"POT-Creation-Date: 2024-06-02 21:46-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -195,8 +195,8 @@ msgid "The everyone role cannot be added as staff."
 msgstr ""
 
 #: src/theticketbot/cogs/inbox.py:397 src/theticketbot/cogs/inbox.py:458
-#: src/theticketbot/cogs/inbox.py:500 src/theticketbot/cogs/inbox.py:549
-#: src/theticketbot/cogs/inbox.py:585
+#: src/theticketbot/cogs/inbox.py:507 src/theticketbot/cogs/inbox.py:556
+#: src/theticketbot/cogs/inbox.py:592
 msgid ""
 "Before you can use this command, you must select an inbox message. To do "
 "this, right click or long tap a message, then open Apps and pick the *Select "
@@ -206,8 +206,8 @@ msgstr ""
 #. Message sent when message is not an inbox
 #. {0}: the inbox's link
 #: src/theticketbot/cogs/inbox.py:412 src/theticketbot/cogs/inbox.py:473
-#: src/theticketbot/cogs/inbox.py:515 src/theticketbot/cogs/inbox.py:564
-#: src/theticketbot/cogs/inbox.py:600
+#: src/theticketbot/cogs/inbox.py:522 src/theticketbot/cogs/inbox.py:571
+#: src/theticketbot/cogs/inbox.py:607
 #, python-brace-format
 msgid "{0} is not an inbox."
 msgstr ""
@@ -243,53 +243,64 @@ msgstr ""
 msgid "The staff member or role to remove."
 msgstr ""
 
-#: src/theticketbot/cogs/inbox.py:484
+#. Message sent when removing staff from an inbox
+#. {0}: the staff's mention
+#. {1}: the inbox's link
+#: src/theticketbot/cogs/inbox.py:485
 #, python-brace-format
 msgid "{0} has been removed from inbox {1} !"
 msgstr ""
 
+#. Message sent when removing non-existent staff from an inbox
+#. {0}: the staff's mention
+#. {1}: the inbox's link
+#: src/theticketbot/cogs/inbox.py:490
+#, python-brace-format
+msgid "{0} is not staff of inbox {1} ."
+msgstr ""
+
 #. Subcommand name ("inbox staff")
-#: src/theticketbot/cogs/inbox.py:491
+#: src/theticketbot/cogs/inbox.py:498
 msgid "list"
 msgstr ""
 
 #. Subcommand description ("inbox staff list")
-#: src/theticketbot/cogs/inbox.py:493
+#: src/theticketbot/cogs/inbox.py:500
 msgid "List all staff members for an inbox."
 msgstr ""
 
 #. Message sent when no staff can be listed for an inbox
-#: src/theticketbot/cogs/inbox.py:527
+#: src/theticketbot/cogs/inbox.py:534
 msgid "This inbox does not have any staff."
 msgstr ""
 
 #. Subcommand group name ("ticket")
-#: src/theticketbot/cogs/inbox.py:533
+#: src/theticketbot/cogs/inbox.py:540
 msgid "starter"
 msgstr ""
 
 #. Subcommand group description ("ticket starter")
-#: src/theticketbot/cogs/inbox.py:535
+#: src/theticketbot/cogs/inbox.py:542
 msgid "Manage the starting message for an inbox's tickets."
 msgstr ""
 
 #. Subcommand name ("inbox starter")
-#: src/theticketbot/cogs/inbox.py:540
+#: src/theticketbot/cogs/inbox.py:547
 msgid "set"
 msgstr ""
 
 #. Subcommand description ("inbox starter set")
-#: src/theticketbot/cogs/inbox.py:542
+#: src/theticketbot/cogs/inbox.py:549
 msgid "Set the starting content for an inbox's tickets."
 msgstr ""
 
 #. Subcommand name ("inbox starter")
-#: src/theticketbot/cogs/inbox.py:576
+#: src/theticketbot/cogs/inbox.py:583
 msgid "get"
 msgstr ""
 
 #. Subcommand description ("inbox starter get")
-#: src/theticketbot/cogs/inbox.py:578
+#: src/theticketbot/cogs/inbox.py:585
 msgid "Get the starting content for an inbox's tickets."
 msgstr ""
 
