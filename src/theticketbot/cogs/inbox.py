@@ -198,7 +198,7 @@ class SetInboxStarterContentModal(discord.ui.Modal, title="Set Inbox Starter"):
 
         # Message sent when setting inbox starter content
         # {0}: the inbox's link
-        content = _("{0}'s starting content has been set!")
+        content = _("{0} 's starting content has been set!")
         content = await translate(content, interaction)
         content = content.format(self.inbox.jump_url)
         await interaction.response.send_message(content, ephemeral=True)
@@ -411,7 +411,7 @@ class Inbox(
         # Message sent when adding staff to an inbox
         # {0}: the staff's mention
         # {1}: the inbox's link
-        content = await translate(_("{0} has been added to inbox {1}!"), interaction)
+        content = await translate(_("{0} has been added to inbox {1} !"), interaction)
         content = content.format(staff.mention, inbox.jump_url)
         await interaction.response.send_message(content, ephemeral=True)
 
@@ -463,7 +463,7 @@ class Inbox(
         # {0}: the staff's mention
         # {1}: the inbox's link
         content = await translate(
-            _("{0} has been removed from inbox {1}!"), interaction
+            _("{0} has been removed from inbox {1} !"), interaction
         )
         content = content.format(staff.mention, inbox.jump_url)
         await interaction.response.send_message(content, ephemeral=True)
