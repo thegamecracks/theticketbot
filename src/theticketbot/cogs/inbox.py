@@ -383,6 +383,12 @@ class Inbox(
         interaction: discord.Interaction,
         staff: discord.Member | discord.Role,
     ):
+        if isinstance(staff, discord.Role) and staff == staff.guild.roles[0]:
+            # Message sent when attempting to add everyone to inbox staff
+            content = _("The everyone role cannot be added as staff.")
+            content = await translate(content, interaction)
+            return await interaction.response.send_message(content, ephemeral=True)
+
         messages = self.bot.get_selected_messages(interaction.user.id)
         if len(messages) < 1:
             # Message sent when attempting to add an inbox staff without a message
