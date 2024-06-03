@@ -161,6 +161,7 @@ class InboxView(discord.ui.View):
         return row[0]
 
 
+@app_commands.default_permissions(manage_guild=True)
 class Inbox(
     commands.GroupCog,
     # Command group name
@@ -205,8 +206,7 @@ class Inbox(
         # Subcommand parameter description ("inbox create <channel>")
         channel=_("The channel to post the inbox."),
     )
-    @app_commands.default_permissions(manage_guild=True)
-    async def inbox(
+    async def create(
         self,
         interaction: discord.Interaction,
         channel: discord.TextChannel,
