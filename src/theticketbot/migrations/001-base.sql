@@ -29,7 +29,7 @@ CREATE TABLE inbox (
     id
         INTEGER PRIMARY KEY
         REFERENCES message (id) ON DELETE CASCADE,
-    starter_content TEXT,
+    starter_content TEXT NOT NULL DEFAULT '',
     max_tickets_per_user INTEGER NOT NULL DEFAULT 1
 );
 

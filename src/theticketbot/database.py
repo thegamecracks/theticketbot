@@ -127,7 +127,7 @@ class DatabaseClient:
         await self.add_message(message_id, channel_id, guild_id=guild_id)
         await self.conn.execute("INSERT INTO inbox (id) VALUES (?)", message_id)
 
-    async def get_inbox_starter_content(self, inbox_id: int) -> str | None:
+    async def get_inbox_starter_content(self, inbox_id: int) -> str:
         """Get the starter content for an inbox.
 
         :returns: The starter content, if any.
@@ -137,13 +137,13 @@ class DatabaseClient:
             "SELECT starter_content FROM inbox WHERE id = ?",
             inbox_id,
         )
-        if row is not None:
-            return row[0]
+        assert row is not None
+        return row[0]
 
     async def set_inbox_starter_content(
         self,
         inbox_id: int,
-        starter_content: str | None,
+        starter_content: str,
     ) -> None:
         """Set the starter content for an inbox."""
         await self.conn.execute(
