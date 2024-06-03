@@ -407,6 +407,7 @@ class Inbox(
 
         if row is None:
             # Message sent when message is not an inbox
+            # {0}: the inbox's link
             content = await translate(_("{0} is not an inbox."), interaction)
             content = content.format(inbox.jump_url)
             return await interaction.response.send_message(content, ephemeral=True)
@@ -458,6 +459,7 @@ class Inbox(
 
         if row is None:
             # Message sent when message is not an inbox
+            # {0}: the inbox's link
             content = await translate(_("{0} is not an inbox."), interaction)
             content = content.format(inbox.jump_url)
             return await interaction.response.send_message(content, ephemeral=True)
@@ -499,6 +501,7 @@ class Inbox(
 
         if row is None:
             # Message sent when message is not an inbox
+            # {0}: the inbox's link
             content = await translate(_("{0} is not an inbox."), interaction)
             content = content.format(inbox.jump_url)
             return await interaction.response.send_message(content, ephemeral=True)
@@ -547,6 +550,7 @@ class Inbox(
 
         if row is None:
             # Message sent when message is not an inbox
+            # {0}: the inbox's link
             content = await translate(_("{0} is not an inbox."), interaction)
             content = content.format(inbox.jump_url)
             return await interaction.response.send_message(content, ephemeral=True)
@@ -582,6 +586,7 @@ class Inbox(
 
         if row is None:
             # Message sent when message is not an inbox
+            # {0}: the inbox's link
             content = await translate(_("{0} is not an inbox."), interaction)
             content = content.format(inbox.jump_url)
             return await interaction.response.send_message(content, ephemeral=True)
