@@ -166,6 +166,8 @@ class Inbox(
     commands.GroupCog,
     # Command group name
     group_name=_("inbox"),
+    # Command group description ("inbox")
+    group_description=_("Manage the server's ticket inboxes."),
 ):
     MAX_ATTACHMENT_SIZE = 10**6 * 5
 
