@@ -11,6 +11,9 @@ extensions = [
 ]
 allow_jishaku = true
 
+[bot.inbox]
+max_attachment_size = 5000000
+
 [bot.intents]
 # https://discordpy.readthedocs.io/en/stable/api.html#intents
 # All default intents are enabled but can be modified here

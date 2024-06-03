@@ -216,8 +216,6 @@ class Inbox(
     # Command group description ("inbox")
     group_description=_("Manage the server's ticket inboxes."),
 ):
-    MAX_ATTACHMENT_SIZE = 10**6 * 5
-
     def __init__(self, bot: Bot):
         self.bot = bot
 
@@ -300,7 +298,8 @@ class Inbox(
         if message.content != "":
             embeds[0].description = message.content
 
-        if sum(a.size for a in message.attachments) > self.MAX_ATTACHMENT_SIZE:
+        max_attachment_size = self.bot.config.bot.inbox.max_attachment_size
+        if sum(a.size for a in message.attachments) > max_attachment_size:
             # Message sent when attempting to create an inbox with too large attachments
             # {0}: The maximum filesize allowed
             content = _(
@@ -308,7 +307,7 @@ class Inbox(
                 "The total size must be under {0}."
             )
             content = await translate(content, interaction)
-            content = content.format(humanize.naturalsize(self.MAX_ATTACHMENT_SIZE))
+            content = content.format(humanize.naturalsize(max_attachment_size))
             return await interaction.response.send_message(content, ephemeral=True)
 
         embeds_copied = False

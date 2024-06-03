@@ -28,8 +28,14 @@ class Settings(_BaseModel):
 class SettingsBot(_BaseModel):
     allow_jishaku: bool
     extensions: list[str]
+    inbox: SettingsBotInbox
     intents: SettingsBotIntents
     token: str
+
+
+class SettingsBotInbox(_BaseModel):
+    max_attachment_size: int
+    """The max cumulative size allowed for an inbox message's attachments."""
 
 
 class SettingsBotIntents(_BaseModel):
