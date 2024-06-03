@@ -13,6 +13,8 @@ from theticketbot.bot import Bot
 from theticketbot.database import DatabaseClient
 from theticketbot.translator import translate
 
+DEFAULT_STARTER_CONTENT = "$author $staff"
+
 
 class InboxRatelimit(Protocol):
     async def __call__(self, inbox_id: int, user_id: int, /) -> bool: ...
@@ -108,7 +110,7 @@ class InboxView(discord.ui.View):
                 mentions = ", ".join(mentions)
 
                 starter_content = await query.get_inbox_starter_content(message.id)
-                starter_content = starter_content or "$author $staff"
+                starter_content = starter_content or DEFAULT_STARTER_CONTENT
 
             content = string.Template(starter_content).safe_substitute(
                 author=interaction.user.mention,
@@ -159,6 +161,47 @@ class InboxView(discord.ui.View):
         )
         assert row is not None
         return row[0]
+
+
+class SetInboxStarterContentModal(discord.ui.Modal, title="Set Inbox Starter"):
+    content = discord.ui.TextInput(
+        label="Content",
+        style=discord.TextStyle.long,
+        max_length=2000,
+        required=False,
+    )
+
+    def __init__(self, bot: Bot, inbox: discord.Message) -> None:
+        super().__init__()
+        self.bot = bot
+        self.inbox = inbox
+
+    async def localize(self, locale: discord.Locale) -> None:
+        async def t(s: _) -> str:
+            return await translate(s, self.bot, locale=locale)
+
+        # Modal title for setting inbox starter
+        self.title = await t(_("Set Inbox Starter"))
+        # Modal text input label for inbox starter content
+        self.content.label = await t(_("Content"))
+
+    async def set_defaults(self, conn: asqlite.Connection) -> None:
+        query = DatabaseClient(conn)
+        starter_content = await query.get_inbox_starter_content(self.inbox.id)
+        starter_content = starter_content or DEFAULT_STARTER_CONTENT
+        self.content.default = starter_content
+
+    async def on_submit(self, interaction: discord.Interaction):
+        async with self.bot.acquire() as conn:
+            query = DatabaseClient(conn)
+            await query.set_inbox_starter_content(self.inbox.id, self.content.value)
+
+        # Message sent when setting inbox starter content
+        # {0}: the inbox's link
+        content = _("{0}'s starting content has been set!")
+        content = await translate(content, interaction)
+        content = content.format(self.inbox.jump_url)
+        await interaction.response.send_message(content, ephemeral=True)
 
 
 @app_commands.default_permissions(manage_guild=True)
@@ -436,6 +479,64 @@ class Inbox(
             content = _("This inbox does not have any staff.")
             content = await translate(content, interaction)
             await interaction.response.send_message(content, ephemeral=True)
+
+    starter = app_commands.Group(
+        # Subcommand group name ("ticket")
+        name=_("starter"),
+    )
+
+    @starter.command(
+        # Subcommand name ("inbox starter")
+        name=_("set"),
+        # Subcommand description ("inbox starter set")
+        description=_("Set the starting content for an inbox's tickets."),
+    )
+    async def starter_set(self, interaction: discord.Interaction):
+        messages = self.bot.get_selected_messages(interaction.user.id)
+        if len(messages) < 1:
+            # Message sent when attempting to set inbox starter content without a message
+            content = _(
+                "Before you can use this command, you must select an inbox "
+                "message. To do this, right click or long tap a message, "
+                "then open Apps and pick the *Select this message* command."
+            )
+            content = await translate(content, interaction)
+            return await interaction.response.send_message(content, ephemeral=True)
+
+        inbox = messages[-1]
+
+        modal = SetInboxStarterContentModal(self.bot, inbox)
+        async with self.bot.acquire() as conn:
+            await modal.set_defaults(conn)
+        await modal.localize(interaction.locale)
+        await interaction.response.send_modal(modal)
+
+    @starter.command(
+        # Subcommand name ("inbox starter")
+        name=_("get"),
+        # Subcommand description ("inbox starter get")
+        description=_("Get the starting content for an inbox's tickets."),
+    )
+    async def starter_get(self, interaction: discord.Interaction):
+        messages = self.bot.get_selected_messages(interaction.user.id)
+        if len(messages) < 1:
+            # Message sent when attempting to get inbox starter content without a message
+            content = _(
+                "Before you can use this command, you must select an inbox "
+                "message. To do this, right click or long tap a message, "
+                "then open Apps and pick the *Select this message* command."
+            )
+            content = await translate(content, interaction)
+            return await interaction.response.send_message(content, ephemeral=True)
+
+        inbox = messages[-1]
+
+        async with self.bot.acquire() as conn:
+            query = DatabaseClient(conn)
+            starter_content = await query.get_inbox_starter_content(inbox.id)
+            starter_content = starter_content or DEFAULT_STARTER_CONTENT
+
+        await interaction.response.send_message(starter_content, ephemeral=True)
 
     @tasks.loop(minutes=30)
     async def cleanup_loop(self) -> None:
