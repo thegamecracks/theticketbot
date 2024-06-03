@@ -1,3 +1,4 @@
+import logging
 import sqlite3
 import string
 import time
@@ -17,6 +18,8 @@ from theticketbot.translator import translate
 DEFAULT_STARTER_CONTENT = "$author $staff"
 
 InboxRatelimit = Callable[[discord.Message, discord.Member], Awaitable[float]]
+
+log = logging.getLogger(__name__)
 
 
 class InboxView(discord.ui.View):
@@ -596,6 +599,39 @@ class Inbox(
             starter_content = starter_content or DEFAULT_STARTER_CONTENT
 
         await interaction.response.send_message(starter_content, ephemeral=True)
+
+    @commands.Cog.listener("on_raw_thread_member_remove")
+    async def archive_abandoned_tickets(self, payload: discord.RawThreadMembersUpdate):
+        # NOTE: event may not fire on already-archived tickets
+        guild = self.bot.get_guild(payload.guild_id)
+        if guild is None:
+            return log.warning("Ignoring unknown guild %d", payload.guild_id)
+
+        thread = guild.get_thread(payload.thread_id)
+        if thread is None:
+            return log.warning("Ignoring unknown thread %d", payload.thread_id)
+
+        user_ids = set(map(int, payload.data.get("removed_member_ids", ())))
+
+        async with self.bot.acquire() as conn:
+            row = await conn.fetchone(
+                "SELECT owner_id FROM ticket WHERE id = ?",
+                payload.thread_id,
+            )
+            if row is None:
+                return
+
+        owner_id: int = row[0]
+        if owner_id not in user_ids:
+            return
+
+        # Message sent when owner leaves their ticket
+        # {0}: The owner's mention
+        content = _("Archiving ticket as the owner ({0}) has left the thread.")
+        content = await translate(content, self.bot, locale=guild.preferred_locale)
+        content = content.format(f"<@{owner_id}>")
+        await thread.send(content, allowed_mentions=discord.AllowedMentions.none())
+        await thread.edit(archived=True)
 
     @tasks.loop(minutes=30)
     async def cleanup_loop(self) -> None:
