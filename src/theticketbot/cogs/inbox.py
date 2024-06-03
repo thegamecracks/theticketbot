@@ -37,15 +37,7 @@ class InboxView(discord.ui.View):
         interaction: discord.Interaction,
         button: discord.ui.Button,
     ):
-        async with self.bot.acquire() as conn:
-            return await self.handle_new_ticket(interaction, conn)
-
-    # FIXME: this function is too big, can we do any better?
-    async def handle_new_ticket(
-        self,
-        interaction: discord.Interaction,
-        conn: asqlite.Connection,
-    ):
+        # FIXME: this function is too big, can we do any better?
         assert isinstance(interaction.channel, discord.TextChannel)
         assert interaction.guild is not None
         assert interaction.message is not None
@@ -59,14 +51,16 @@ class InboxView(discord.ui.View):
             content = await translate(content, interaction)
             return await interaction.response.send_message(content, ephemeral=True)
 
-        tickets = await self.get_active_user_tickets(
-            guild.threads,
-            conn,
-            message.id,
-            interaction.user.id,
-        )
-        tickets.sort(key=lambda t: t.id)
-        max_tickets = await self.get_max_tickets(conn, message.id)
+        async with self.bot.acquire() as conn:
+            tickets = await self.get_active_user_tickets(
+                guild.threads,
+                conn,
+                message.id,
+                interaction.user.id,
+            )
+            tickets.sort(key=lambda t: t.id)
+            max_tickets = await self.get_max_tickets(conn, message.id)
+
         if max_tickets > 0 and len(tickets) >= max_tickets:
             # Message sent when trying to create too many tickets
             # {0}: the ticket's link
@@ -99,19 +93,22 @@ class InboxView(discord.ui.View):
                 reason=reason,
             )
 
-            query = DatabaseClient(conn)
-            await query.add_ticket(
-                ticket_id=ticket.id,
-                inbox_id=message.id,
-                owner_id=interaction.user.id,
-                guild_id=guild.id,
-            )
+            async with self.bot.acquire() as conn:
+                query = DatabaseClient(conn)
+                await query.add_ticket(
+                    ticket_id=ticket.id,
+                    inbox_id=message.id,
+                    owner_id=interaction.user.id,
+                    guild_id=guild.id,
+                )
 
-            mentions = await query.get_inbox_staff(message.id)
-            mentions = ", ".join(mentions)
+            async with self.bot.acquire() as conn:
+                query = DatabaseClient(conn)
+                mentions = await query.get_inbox_staff(message.id)
+                mentions = ", ".join(mentions)
 
-            starter_content = await query.get_inbox_starter_content(message.id)
-            starter_content = starter_content or "$author $staff"
+                starter_content = await query.get_inbox_starter_content(message.id)
+                starter_content = starter_content or "$author $staff"
 
             content = string.Template(content).safe_substitute(
                 author=interaction.user.mention,
