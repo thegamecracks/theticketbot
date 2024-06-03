@@ -1,4 +1,5 @@
 """Iterates through .po files in source packages and invokes msgfmt on them."""
+
 import subprocess
 from pathlib import Path
 

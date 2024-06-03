@@ -1,4 +1,5 @@
 """Re-invokes xgettext on source packages and merges them into .po/.pot files."""
+
 import argparse
 import subprocess
 from contextlib import contextmanager, nullcontext

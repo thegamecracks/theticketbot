@@ -5,6 +5,7 @@ appropriate .mo (machine object) results.
 Reference: https://setuptools.pypa.io/en/latest/userguide/extension.html#setuptools.command.build.SubCommand
 Original: https://github.com/thegamecracks/discord.py-i18n-demo/blob/main/setup.py
 """
+
 # pyright: strict
 import shutil
 import subprocess
