@@ -88,6 +88,7 @@ class InboxView(discord.ui.View):
         )
 
         # Audit log reason for a user creating a ticket
+        # {0}: the user's name
         reason = _("Ticket created by {0}")
         reason = await translate(reason, interaction, locale=guild.preferred_locale)
         reason = reason.format(interaction.user.name)
@@ -350,12 +351,14 @@ class Inbox(
 
             starter_content = await translate(
                 # The default starter content for new tickets
-                _("$author Thank you for creating a ticket!\nStaff: $staff"),
+                _("$author Thank you for creating a ticket!\n$staff"),
                 interaction,
                 locale=interaction.guild.preferred_locale,
             )
             await query.set_inbox_starter_content(message.id, starter_content)
 
+        # Message sent after the user creates an inbox
+        # {0}: the inbox's link
         content = await translate(_("Your inbox has been created! {0}"), interaction)
         content = content.format(message.jump_url)
         await interaction.followup.send(content, ephemeral=True)
