@@ -131,8 +131,10 @@ class InboxView(discord.ui.View):
             raise
         else:
             # Message sent after successfully creating a ticket
+            # {0}: the ticket's link
             content = _("Your ticket is ready! {0}")
             content = await translate(content, interaction)
+            content = content.format(ticket.jump_url)
             await interaction.edit_original_response(content=content)
 
     async def get_active_user_tickets(
