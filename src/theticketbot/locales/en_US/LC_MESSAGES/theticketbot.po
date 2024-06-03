@@ -26,7 +26,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1.1a1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-03 19:18-0400\n"
+"POT-Creation-Date: 2024-06-03 19:26-0400\n"
 "PO-Revision-Date: 2024-06-02 15:17-0400\n"
 "Last-Translator: U-LAPTOP-3G2E6T6I\\home <home@laptop-3g2e6t6i>\n"
 "Language-Team: English\n"
@@ -284,22 +284,22 @@ msgstr ""
 
 #. Subcommand group name ("inbox")
 #: src/theticketbot/cogs/inbox.py:563
-msgid "starter"
+msgid "new-tickets"
 msgstr ""
 
-#. Subcommand group description ("inbox starter")
+#. Subcommand group description ("inbox new-tickets")
 #: src/theticketbot/cogs/inbox.py:565
-msgid "Manage the starting message for an inbox's tickets."
+msgid "Manage new tickets created by an inbox."
 msgstr ""
 
-#. Subcommand name ("inbox starter")
+#. Subcommand name ("inbox new-tickets")
 #: src/theticketbot/cogs/inbox.py:570
-msgid "set"
+msgid "set-starter"
 msgstr ""
 
-#. Subcommand description ("inbox starter set")
+#. Subcommand description ("inbox new-tickets set-starter")
 #: src/theticketbot/cogs/inbox.py:572
-msgid "Set the starting content for an inbox's tickets."
+msgid "Set the starting message for new tickets."
 msgstr ""
 
 #. Message sent when owner leaves their ticket

@@ -558,20 +558,20 @@ class Inbox(
             content = await translate(content, interaction)
             await interaction.response.send_message(content, ephemeral=True)
 
-    starter = app_commands.Group(
+    new_tickets = app_commands.Group(
         # Subcommand group name ("inbox")
-        name=_("starter"),
-        # Subcommand group description ("inbox starter")
-        description=_("Manage the starting message for an inbox's tickets."),
+        name=_("new-tickets"),
+        # Subcommand group description ("inbox new-tickets")
+        description=_("Manage new tickets created by an inbox."),
     )
 
-    @starter.command(
-        # Subcommand name ("inbox starter")
-        name=_("set"),
-        # Subcommand description ("inbox starter set")
-        description=_("Set the starting content for an inbox's tickets."),
+    @new_tickets.command(
+        # Subcommand name ("inbox new-tickets")
+        name=_("set-starter"),
+        # Subcommand description ("inbox new-tickets set-starter")
+        description=_("Set the starting message for new tickets."),
     )
-    async def starter_set(self, interaction: discord.Interaction):
+    async def new_tickets_set_starter(self, interaction: discord.Interaction):
         inbox = await self.maybe_get_inbox_message(interaction)
         if inbox is None:
             return

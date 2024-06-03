@@ -70,9 +70,9 @@ Currently, there are no limits on the number of inboxes your server can have.
 To further customize the inbox, you can select the inbox message and use
 `/inbox staff add` to add members or roles to ping when a user creates
 a ticket. If you want to be more advanced, you can customize the starting
-message with `/inbox starter set`. To keep push notifications easy to understand
-at a glance, make sure the starter message says something unique to its inbox
-at the beginning, like:
+message with `/inbox new-tickets set-starter`. To keep push notifications
+easy to understand at a glance, make sure the starter message says something
+unique to its inbox at the beginning, like:
 
 > $author Thank you for creating a moderation ticket! $staff will be with you shortly.
 
