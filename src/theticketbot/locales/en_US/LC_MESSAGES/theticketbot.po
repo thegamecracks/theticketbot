@@ -222,7 +222,7 @@ msgstr ""
 #. Command name
 #: src/theticketbot/cogs/select.py:29
 msgid "Select this message"
-msgstr "Select this message"
+msgstr ""
 
 #: src/theticketbot/cogs/select.py:73
 #, python-brace-format
@@ -231,9 +231,6 @@ msgid ""
 "Message #{1} selected! You have {2} seconds to perform an action with this "
 "message."
 msgstr ""
-"{0}\n"
-"Message #{1} selected! You have {2} seconds to perform an action with this "
-"message."
 
 #: src/theticketbot/cogs/select.py:85
 #, python-brace-format
@@ -241,5 +238,3 @@ msgid ""
 "{0}\n"
 "You have selected too many messages! This is now message #{1}."
 msgstr ""
-"{0}\n"
-"You have selected too many messages! This is now message #{1}."
