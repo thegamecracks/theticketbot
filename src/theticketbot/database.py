@@ -152,6 +152,31 @@ class DatabaseClient:
             inbox_id,
         )
 
+    async def get_inbox_default_ticket_name(self, inbox_id: int) -> str:
+        """Get the default ticket name for an inbox.
+
+        :returns: The default ticket name, if any.
+
+        """
+        row = await self.conn.fetchone(
+            "SELECT default_ticket_name FROM inbox WHERE id = ?",
+            inbox_id,
+        )
+        assert row is not None
+        return row[0]
+
+    async def set_inbox_default_ticket_name(
+        self,
+        inbox_id: int,
+        default_ticket_name: str,
+    ) -> None:
+        """Set the default ticket name for an inbox."""
+        await self.conn.execute(
+            "UPDATE inbox SET default_ticket_name = ? WHERE id = ?",
+            default_ticket_name,
+            inbox_id,
+        )
+
     async def add_inbox_staff(self, inbox_id: int, mention: str) -> None:
         """Add an inbox staff to the database.
 

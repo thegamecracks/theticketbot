@@ -16,6 +16,7 @@ from theticketbot.database import DatabaseClient
 from theticketbot.translator import translate
 
 DEFAULT_STARTER_CONTENT = "$author $staff"
+DEFAULT_TICKET_NAME = "$year-$month-$day $name"
 
 InboxRatelimit = Callable[[discord.Message, discord.Member], Awaitable[float]]
 
@@ -94,9 +95,17 @@ class InboxView(discord.ui.View):
         content = await translate(_("Creating ticket..."), interaction)
         await interaction.response.send_message(content, ephemeral=True)
 
-        name = "{} {}".format(
-            interaction.created_at.strftime("%Y-%m-%d"),
-            interaction.user.display_name,
+        async with self.bot.acquire() as conn:
+            query = DatabaseClient(conn)
+            ticket_name = await query.get_inbox_default_ticket_name(message.id)
+            ticket_name = ticket_name or DEFAULT_TICKET_NAME
+
+        created_at = interaction.created_at
+        ticket_name = string.Template(ticket_name).safe_substitute(
+            year=created_at.year,
+            month=str(created_at.month).zfill(2),
+            day=str(created_at.day).zfill(2),
+            name=interaction.user.display_name,
         )
 
         # Audit log reason for a user creating a ticket
@@ -107,7 +116,7 @@ class InboxView(discord.ui.View):
 
         try:
             ticket = await interaction.channel.create_thread(
-                name=name,
+                name=ticket_name,
                 invitable=False,
                 reason=reason,
             )
@@ -226,6 +235,42 @@ class SetInboxStarterContentModal(discord.ui.Modal, title="Starter Message"):
         # Message sent when setting inbox starter content
         # {0}: the inbox's link
         content = _("{0} 's starting message has been set!")
+        content = await translate(content, interaction)
+        content = content.format(self.inbox.jump_url)
+        await interaction.response.send_message(content, ephemeral=True)
+
+
+class SetTicketDefaultsModal(discord.ui.Modal, title="New Tickets"):
+    name = discord.ui.TextInput(label="Name", max_length=45, required=False)
+
+    def __init__(self, bot: Bot, inbox: discord.Message) -> None:
+        super().__init__()
+        self.bot = bot
+        self.inbox = inbox
+
+    async def localize(self, locale: discord.Locale) -> None:
+        async def t(s: _) -> str:
+            return await translate(s, self.bot, locale=locale)
+
+        # Modal title for setting new ticket defaults
+        self.title = await t(_("New Tickets"))
+        # Modal text input label for ticket names
+        self.name.label = await t(_("Name"))
+
+    async def set_defaults(self, conn: asqlite.Connection) -> None:
+        query = DatabaseClient(conn)
+        ticket_name = await query.get_inbox_default_ticket_name(self.inbox.id)
+        ticket_name = ticket_name or DEFAULT_TICKET_NAME
+        self.name.default = ticket_name
+
+    async def on_submit(self, interaction: discord.Interaction):
+        async with self.bot.acquire() as conn:
+            query = DatabaseClient(conn)
+            await query.set_inbox_default_ticket_name(self.inbox.id, self.name.value)
+
+        # Message sent when setting new ticket defaults
+        # {0}: the inbox's link
+        content = _("{0} 's ticket defaults have been set!")
         content = await translate(content, interaction)
         content = content.format(self.inbox.jump_url)
         await interaction.response.send_message(content, ephemeral=True)
@@ -577,6 +622,23 @@ class Inbox(
             return
 
         modal = SetInboxStarterContentModal(self.bot, inbox)
+        async with self.bot.acquire() as conn:
+            await modal.set_defaults(conn)
+        await modal.localize(interaction.locale)
+        await interaction.response.send_modal(modal)
+
+    @new_tickets.command(
+        # Subcommand name ("inbox new-tickets")
+        name=_("set-ticket-name"),
+        # Subcommand description ("inbox new-tickets set-ticket-name")
+        description=_("Set the name for new tickets."),
+    )
+    async def new_tickets_set_name(self, interaction: discord.Interaction):
+        inbox = await self.maybe_get_inbox_message(interaction)
+        if inbox is None:
+            return
+
+        modal = SetTicketDefaultsModal(self.bot, inbox)
         async with self.bot.acquire() as conn:
             await modal.set_defaults(conn)
         await modal.localize(interaction.locale)
