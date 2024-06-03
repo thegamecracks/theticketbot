@@ -360,6 +360,8 @@ class Inbox(
     staff = app_commands.Group(
         # Subcommand group name ("ticket")
         name=_("staff"),
+        # Subcommand group description ("ticket staff")
+        description=_("Manage staff for an inbox."),
     )
 
     @staff.command(
@@ -483,6 +485,8 @@ class Inbox(
     starter = app_commands.Group(
         # Subcommand group name ("ticket")
         name=_("starter"),
+        # Subcommand group description ("ticket starter")
+        description=_("Manage the starting message for an inbox's tickets."),
     )
 
     @starter.command(
