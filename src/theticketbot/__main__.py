@@ -11,6 +11,8 @@ from . import __version__
 from .bot import Bot
 from .config import load_config
 
+log = logging.getLogger(__package__)
+
 parser = argparse.ArgumentParser(
     prog=__package__,
     description=importlib.metadata.metadata("theticketbot")["Summary"],
@@ -40,7 +42,6 @@ config_file: Path = args.config_file
 
 root_level = logging.INFO
 if args.verbose > 0:
-    log = logging.getLogger(__package__)
     log.setLevel(logging.DEBUG)
 if args.verbose > 1:
     root_level = logging.DEBUG
@@ -60,6 +61,7 @@ if bot.config.bot.token == "":
         "and add it to your configuration."
     )
 
+log.info(f"Package version: {__version__}")
 bot.run(
     bot.config.bot.token,
     log_handler=None,
