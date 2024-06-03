@@ -1,3 +1,4 @@
+import sqlite3
 import string
 import time
 from typing import Iterable, Protocol
@@ -412,8 +413,17 @@ class Inbox(
             content = content.format(inbox.jump_url)
             return await interaction.response.send_message(content, ephemeral=True)
 
-        async with self.bot.acquire() as conn:
-            await DatabaseClient(conn).add_inbox_staff(inbox.id, staff.mention)
+        try:
+            async with self.bot.acquire() as conn:
+                await DatabaseClient(conn).add_inbox_staff(inbox.id, staff.mention)
+        except sqlite3.IntegrityError:
+            # Message sent when adding an already existing inbox staff
+            # {0}: the staff's mention
+            # {1}: the inbox's link
+            content = _("{0} is already staff for inbox {1} .")
+            content = await translate(content, interaction)
+            content = content.format(staff.mention, inbox.jump_url)
+            return await interaction.response.send_message(content, ephemeral=True)
 
         # Message sent when adding staff to an inbox
         # {0}: the staff's mention
