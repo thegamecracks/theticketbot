@@ -49,6 +49,16 @@ class InboxView(discord.ui.View):
         message = interaction.message
 
         async with self.bot.acquire() as conn:
+            # If the database was wiped, this will fail.
+            row = await conn.fetchone("SELECT 1 FROM inbox WHERE id = ?", message.id)
+            if row is None:
+                # Message sent when a user tries using a deleted inbox
+                content = _(
+                    "Sorry, this inbox is no longer recognized and must be "
+                    "re-created. Please notify a server admin!"
+                )
+                return await interaction.response.send_message(content, ephemeral=True)
+
             tickets = await self.get_active_user_tickets(
                 guild.threads,
                 conn,
