@@ -439,9 +439,9 @@ class Inbox(
         await interaction.followup.send(content, ephemeral=True)
 
     staff = app_commands.Group(
-        # Subcommand group name ("ticket")
+        # Subcommand group name ("inbox")
         name=_("staff"),
-        # Subcommand group description ("ticket staff")
+        # Subcommand group description ("inbox staff")
         description=_("Manage staff for an inbox."),
     )
 
@@ -559,9 +559,9 @@ class Inbox(
             await interaction.response.send_message(content, ephemeral=True)
 
     starter = app_commands.Group(
-        # Subcommand group name ("ticket")
+        # Subcommand group name ("inbox")
         name=_("starter"),
-        # Subcommand group description ("ticket starter")
+        # Subcommand group description ("inbox starter")
         description=_("Manage the starting message for an inbox's tickets."),
     )
 
