@@ -397,6 +397,15 @@ class Inbox(
         inbox = messages[-1]
 
         async with self.bot.acquire() as conn:
+            row = await conn.fetchone("SELECT 1 FROM inbox WHERE id = ?", inbox.id)
+
+        if row is None:
+            # Message sent when message is not an inbox
+            content = await translate(_("{0} is not an inbox."), interaction)
+            content = content.format(inbox.jump_url)
+            return await interaction.response.send_message(content, ephemeral=True)
+
+        async with self.bot.acquire() as conn:
             await DatabaseClient(conn).add_inbox_staff(inbox.id, staff.mention)
 
         # Message sent when adding staff to an inbox
@@ -439,6 +448,15 @@ class Inbox(
         inbox = messages[-1]
 
         async with self.bot.acquire() as conn:
+            row = await conn.fetchone("SELECT 1 FROM inbox WHERE id = ?", inbox.id)
+
+        if row is None:
+            # Message sent when message is not an inbox
+            content = await translate(_("{0} is not an inbox."), interaction)
+            content = content.format(inbox.jump_url)
+            return await interaction.response.send_message(content, ephemeral=True)
+
+        async with self.bot.acquire() as conn:
             await DatabaseClient(conn).remove_inbox_staff(inbox.id, staff.mention)
 
         # Message sent when removing staff from an inbox
@@ -469,6 +487,15 @@ class Inbox(
             return await interaction.response.send_message(content, ephemeral=True)
 
         inbox = messages[-1]
+
+        async with self.bot.acquire() as conn:
+            row = await conn.fetchone("SELECT 1 FROM inbox WHERE id = ?", inbox.id)
+
+        if row is None:
+            # Message sent when message is not an inbox
+            content = await translate(_("{0} is not an inbox."), interaction)
+            content = content.format(inbox.jump_url)
+            return await interaction.response.send_message(content, ephemeral=True)
 
         async with self.bot.acquire() as conn:
             mentions = await DatabaseClient(conn).get_inbox_staff(inbox.id)
@@ -509,6 +536,15 @@ class Inbox(
 
         inbox = messages[-1]
 
+        async with self.bot.acquire() as conn:
+            row = await conn.fetchone("SELECT 1 FROM inbox WHERE id = ?", inbox.id)
+
+        if row is None:
+            # Message sent when message is not an inbox
+            content = await translate(_("{0} is not an inbox."), interaction)
+            content = content.format(inbox.jump_url)
+            return await interaction.response.send_message(content, ephemeral=True)
+
         modal = SetInboxStarterContentModal(self.bot, inbox)
         async with self.bot.acquire() as conn:
             await modal.set_defaults(conn)
@@ -534,6 +570,15 @@ class Inbox(
             return await interaction.response.send_message(content, ephemeral=True)
 
         inbox = messages[-1]
+
+        async with self.bot.acquire() as conn:
+            row = await conn.fetchone("SELECT 1 FROM inbox WHERE id = ?", inbox.id)
+
+        if row is None:
+            # Message sent when message is not an inbox
+            content = await translate(_("{0} is not an inbox."), interaction)
+            content = content.format(inbox.jump_url)
+            return await interaction.response.send_message(content, ephemeral=True)
 
         async with self.bot.acquire() as conn:
             query = DatabaseClient(conn)
