@@ -161,13 +161,23 @@ class InboxView(discord.ui.View):
         inbox_id: int,
         owner_id: int,
     ) -> list[discord.Thread]:
+        # Should do an intersect here, but this should be small enough
         c = await conn.execute(
             "SELECT id FROM ticket WHERE inbox_id = ? AND owner_id = ?",
             inbox_id,
             owner_id,
         )
         ticket_ids: set[int] = {row[0] for row in await c.fetchall()}
-        return [t for t in threads if t.id in ticket_ids]
+
+        members_intent = self.bot.intents.members
+        active: list[discord.Thread] = []
+        for t in threads:
+            if t.id not in ticket_ids:
+                continue
+            if members_intent and discord.utils.get(t.members, id=owner_id) is None:
+                continue
+            active.append(t)
+        return active
 
     async def get_max_tickets(self, conn: asqlite.Connection, inbox_id: int) -> int:
         row = await conn.fetchone(

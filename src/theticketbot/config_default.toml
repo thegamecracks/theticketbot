@@ -19,6 +19,7 @@ max_attachment_size = 5000000
 # All default intents are enabled but can be modified here
 guild_messages = true
 guilds = true
+members = true
 message_content = true
 
 auto_moderation = false
@@ -33,7 +34,6 @@ guild_reactions = false
 guild_typing = false
 integrations = false
 invites = false
-members = false
 moderation = false
 presences = false
 voice_states = false

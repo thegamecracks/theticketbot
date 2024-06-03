@@ -28,6 +28,7 @@ class Bot(commands.Bot):
         super().__init__(
             command_prefix=commands.when_mentioned,
             intents=config.bot.intents.create_intents(),
+            member_cache_flags=discord.MemberCacheFlags.none(),
             strip_after_prefix=True,
         )
 
