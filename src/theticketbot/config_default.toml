@@ -20,7 +20,6 @@ max_attachment_size = 5000000
 guild_messages = true
 guilds = true
 members = true
-message_content = true
 
 auto_moderation = false
 auto_moderation_configuration = false
@@ -34,6 +33,7 @@ guild_reactions = false
 guild_typing = false
 integrations = false
 invites = false
+message_content = false
 moderation = false
 presences = false
 voice_states = false
