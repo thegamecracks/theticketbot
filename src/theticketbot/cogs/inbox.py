@@ -1,7 +1,7 @@
 import sqlite3
 import string
 import time
-from typing import Iterable, Protocol
+from typing import Awaitable, Callable, Iterable
 
 import asqlite
 import discord
@@ -16,9 +16,7 @@ from theticketbot.translator import translate
 
 DEFAULT_STARTER_CONTENT = "$author $staff"
 
-
-class InboxRatelimit(Protocol):
-    async def __call__(self, inbox_id: int, user_id: int, /) -> float: ...
+InboxRatelimit = Callable[[discord.Message, discord.Member], Awaitable[float]]
 
 
 class InboxView(discord.ui.View):
@@ -42,6 +40,7 @@ class InboxView(discord.ui.View):
     ):
         # FIXME: this function is too big, can we do any better?
         assert isinstance(interaction.channel, discord.TextChannel)
+        assert isinstance(interaction.user, discord.Member)
         assert interaction.guild is not None
         assert interaction.message is not None
 
@@ -79,7 +78,7 @@ class InboxView(discord.ui.View):
             content = content.format(tickets[-1].jump_url)
             return await interaction.response.send_message(content, ephemeral=True)
 
-        retry_after = await self.ratelimit_check(message.id, interaction.user.id)
+        retry_after = await self.ratelimit_check(message, interaction.user)
         if retry_after > 0:
             # Message sent when user is being ratelimited for an inbox
             # {0}: the duration in seconds to wait before retrying
@@ -237,12 +236,14 @@ class Inbox(
     # Command group description ("inbox")
     group_description=_("Manage the server's ticket inboxes."),
 ):
+    _inbox_ratelimits: dict[tuple[int, int], tuple[float, app_commands.Cooldown]]
+
     def __init__(self, bot: Bot):
         self.bot = bot
 
         self._global_inbox_view = self.create_inbox_view()
         self._inbox_views: dict[int, InboxView] = {}
-        self._inbox_ratelimits: dict[tuple[int, int], app_commands.Cooldown] = {}
+        self._inbox_ratelimits = {}
 
         self.cleanup_loop.start()
         self.bot.add_view(self._global_inbox_view)
@@ -255,9 +256,23 @@ class Inbox(
         for view in self._inbox_views.values():
             view.stop()
 
-    async def check_ratelimit(self, inbox_id: int, user_id: int) -> float:
-        key = (inbox_id, user_id)
-        cooldown = self._inbox_ratelimits.setdefault(key, app_commands.Cooldown(1, 60))
+    async def check_ratelimit(
+        self,
+        inbox: discord.Message,
+        member: discord.Member,
+    ) -> float:
+        assert isinstance(inbox.channel, discord.TextChannel)
+
+        key = (inbox.id, member.id)
+        per = max(60.0, inbox.channel.slowmode_delay)
+        per_cooldown = self._inbox_ratelimits.get(key)
+
+        # Allow cooldowns to reset when slowmode is changed
+        if per_cooldown is None or per != per_cooldown[0]:
+            per_cooldown = (per, app_commands.Cooldown(1, per))
+            self._inbox_ratelimits[key] = per_cooldown
+
+        per, cooldown = per_cooldown
         return cooldown.update_rate_limit(time.monotonic()) or 0
 
     async def maybe_get_inbox_message(
@@ -587,7 +602,7 @@ class Inbox(
         now = time.monotonic()
 
         to_remove: list[tuple[int, int]] = []
-        for key, cooldown in self._inbox_ratelimits.items():
+        for key, (_, cooldown) in self._inbox_ratelimits.items():
             if now > cooldown._last + cooldown.per:  # unfortunate reliance on internals
                 to_remove.append(key)
 
