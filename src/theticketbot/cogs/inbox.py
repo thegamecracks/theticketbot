@@ -250,6 +250,20 @@ class Inbox(
         cooldown = self._inbox_ratelimits.setdefault(key, app_commands.Cooldown(1, 60))
         return cooldown.update_rate_limit(time.monotonic()) or 0
 
+    async def check_inbox_message(self, interaction: discord.Interaction, message: discord.Message) -> bool:
+        async with self.bot.acquire() as conn:
+            row = await conn.fetchone("SELECT 1 FROM inbox WHERE id = ?", message.id)
+
+        if row is not None:
+            return True
+
+        # Message sent when message is not an inbox
+        # {0}: the inbox's link
+        content = await translate(_("{0} is not an inbox."), interaction)
+        content = content.format(message.jump_url)
+        await interaction.response.send_message(content, ephemeral=True)
+        return False
+
     @app_commands.command(
         # Subcommand name ("inbox")
         name=_("create"),
@@ -418,15 +432,8 @@ class Inbox(
 
         inbox = messages[-1]
 
-        async with self.bot.acquire() as conn:
-            row = await conn.fetchone("SELECT 1 FROM inbox WHERE id = ?", inbox.id)
-
-        if row is None:
-            # Message sent when message is not an inbox
-            # {0}: the inbox's link
-            content = await translate(_("{0} is not an inbox."), interaction)
-            content = content.format(inbox.jump_url)
-            return await interaction.response.send_message(content, ephemeral=True)
+        if not await self.check_inbox_message(interaction, inbox):
+            return
 
         try:
             async with self.bot.acquire() as conn:
@@ -479,15 +486,8 @@ class Inbox(
 
         inbox = messages[-1]
 
-        async with self.bot.acquire() as conn:
-            row = await conn.fetchone("SELECT 1 FROM inbox WHERE id = ?", inbox.id)
-
-        if row is None:
-            # Message sent when message is not an inbox
-            # {0}: the inbox's link
-            content = await translate(_("{0} is not an inbox."), interaction)
-            content = content.format(inbox.jump_url)
-            return await interaction.response.send_message(content, ephemeral=True)
+        if not await self.check_inbox_message(interaction, inbox):
+            return
 
         async with self.bot.acquire() as conn:
             query = DatabaseClient(conn)
@@ -528,15 +528,8 @@ class Inbox(
 
         inbox = messages[-1]
 
-        async with self.bot.acquire() as conn:
-            row = await conn.fetchone("SELECT 1 FROM inbox WHERE id = ?", inbox.id)
-
-        if row is None:
-            # Message sent when message is not an inbox
-            # {0}: the inbox's link
-            content = await translate(_("{0} is not an inbox."), interaction)
-            content = content.format(inbox.jump_url)
-            return await interaction.response.send_message(content, ephemeral=True)
+        if not await self.check_inbox_message(interaction, inbox):
+            return
 
         async with self.bot.acquire() as conn:
             mentions = await DatabaseClient(conn).get_inbox_staff(inbox.id)
@@ -577,15 +570,8 @@ class Inbox(
 
         inbox = messages[-1]
 
-        async with self.bot.acquire() as conn:
-            row = await conn.fetchone("SELECT 1 FROM inbox WHERE id = ?", inbox.id)
-
-        if row is None:
-            # Message sent when message is not an inbox
-            # {0}: the inbox's link
-            content = await translate(_("{0} is not an inbox."), interaction)
-            content = content.format(inbox.jump_url)
-            return await interaction.response.send_message(content, ephemeral=True)
+        if not await self.check_inbox_message(interaction, inbox):
+            return
 
         modal = SetInboxStarterContentModal(self.bot, inbox)
         async with self.bot.acquire() as conn:
@@ -613,15 +599,8 @@ class Inbox(
 
         inbox = messages[-1]
 
-        async with self.bot.acquire() as conn:
-            row = await conn.fetchone("SELECT 1 FROM inbox WHERE id = ?", inbox.id)
-
-        if row is None:
-            # Message sent when message is not an inbox
-            # {0}: the inbox's link
-            content = await translate(_("{0} is not an inbox."), interaction)
-            content = content.format(inbox.jump_url)
-            return await interaction.response.send_message(content, ephemeral=True)
+        if not await self.check_inbox_message(interaction, inbox):
+            return
 
         async with self.bot.acquire() as conn:
             query = DatabaseClient(conn)

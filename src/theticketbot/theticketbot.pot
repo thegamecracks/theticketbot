@@ -26,7 +26,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1.1a1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-03 00:33-0400\n"
+"POT-Creation-Date: 2024-06-03 08:12-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -117,49 +117,56 @@ msgstr ""
 msgid "Manage the server's ticket inboxes."
 msgstr ""
 
+#. Message sent when message is not an inbox
+#. {0}: the inbox's link
+#: src/theticketbot/cogs/inbox.py:262
+#, python-brace-format
+msgid "{0} is not an inbox."
+msgstr ""
+
 #. Subcommand name ("inbox")
-#: src/theticketbot/cogs/inbox.py:255
+#: src/theticketbot/cogs/inbox.py:269
 msgid "create"
 msgstr ""
 
 #. Subcommand description ("inbox create")
-#: src/theticketbot/cogs/inbox.py:257
+#: src/theticketbot/cogs/inbox.py:271
 msgid "Create a new inbox."
 msgstr ""
 
 #. Subcommand parameter name ("inbox create")
-#: src/theticketbot/cogs/inbox.py:261
+#: src/theticketbot/cogs/inbox.py:275
 msgid "channel"
 msgstr ""
 
 #. Subcommand parameter description ("inbox create <channel>")
-#: src/theticketbot/cogs/inbox.py:265
+#: src/theticketbot/cogs/inbox.py:279
 msgid "The channel to post the inbox."
 msgstr ""
 
 #. Message sent when attempting to create an inbox with insufficient permissions
 #. {0}: the channel's mention
 #. {1}: a list of permissions that are missing
-#: src/theticketbot/cogs/inbox.py:289
+#: src/theticketbot/cogs/inbox.py:303
 #, python-brace-format
 msgid "I need the following permissions in {0}: {1}"
 msgstr ""
 
-#: src/theticketbot/cogs/inbox.py:298
+#: src/theticketbot/cogs/inbox.py:312
 msgid ""
 "Before you can use this command, you must select a message to be sent with "
 "the inbox. To do this, right click or long tap a message, then open Apps and "
 "pick the *Select this message* command."
 msgstr ""
 
-#: src/theticketbot/cogs/inbox.py:317
+#: src/theticketbot/cogs/inbox.py:331
 #, python-brace-format
 msgid ""
 "The message's attachments are too large! The total size must be under {0}."
 msgstr ""
 
 #. The default starter content for new tickets
-#: src/theticketbot/cogs/inbox.py:364
+#: src/theticketbot/cogs/inbox.py:378
 msgid ""
 "$author Thank you for creating a ticket!\n"
 "$staff"
@@ -167,7 +174,7 @@ msgstr ""
 
 #. Message sent after the user creates an inbox
 #. {0}: the inbox's link
-#: src/theticketbot/cogs/inbox.py:372
+#: src/theticketbot/cogs/inbox.py:386
 #, python-brace-format
 msgid "Your inbox has been created! {0}"
 msgstr ""
@@ -175,58 +182,49 @@ msgstr ""
 #. Subcommand group name ("ticket")
 #. Subcommand parameter name ("inbox staff add")
 #. Subcommand parameter name ("inbox staff remove")
-#: src/theticketbot/cogs/inbox.py:378 src/theticketbot/cogs/inbox.py:391
-#: src/theticketbot/cogs/inbox.py:458
+#: src/theticketbot/cogs/inbox.py:392 src/theticketbot/cogs/inbox.py:405
+#: src/theticketbot/cogs/inbox.py:465
 msgid "staff"
 msgstr ""
 
 #. Subcommand group description ("ticket staff")
-#: src/theticketbot/cogs/inbox.py:380
+#: src/theticketbot/cogs/inbox.py:394
 msgid "Manage staff for an inbox."
 msgstr ""
 
 #. Subcommand name ("inbox staff")
-#: src/theticketbot/cogs/inbox.py:385
+#: src/theticketbot/cogs/inbox.py:399
 msgid "add"
 msgstr ""
 
 #. Subcommand description ("inbox staff add")
-#: src/theticketbot/cogs/inbox.py:387
+#: src/theticketbot/cogs/inbox.py:401
 msgid "Add a staff member or role for an inbox."
 msgstr ""
 
 #. Subcommand parameter description ("inbox staff add <staff>")
-#: src/theticketbot/cogs/inbox.py:395
+#: src/theticketbot/cogs/inbox.py:409
 msgid "The staff member or role to add."
 msgstr ""
 
 #. Message sent when attempting to add everyone to inbox staff
-#: src/theticketbot/cogs/inbox.py:404
+#: src/theticketbot/cogs/inbox.py:418
 msgid "The everyone role cannot be added as staff."
 msgstr ""
 
-#: src/theticketbot/cogs/inbox.py:412 src/theticketbot/cogs/inbox.py:473
-#: src/theticketbot/cogs/inbox.py:522 src/theticketbot/cogs/inbox.py:571
-#: src/theticketbot/cogs/inbox.py:607
+#: src/theticketbot/cogs/inbox.py:426 src/theticketbot/cogs/inbox.py:480
+#: src/theticketbot/cogs/inbox.py:522 src/theticketbot/cogs/inbox.py:564
+#: src/theticketbot/cogs/inbox.py:593
 msgid ""
 "Before you can use this command, you must select an inbox message. To do "
 "this, right click or long tap a message, then open Apps and pick the *Select "
 "this message* command."
 msgstr ""
 
-#. Message sent when message is not an inbox
-#. {0}: the inbox's link
-#: src/theticketbot/cogs/inbox.py:427 src/theticketbot/cogs/inbox.py:488
-#: src/theticketbot/cogs/inbox.py:537 src/theticketbot/cogs/inbox.py:586
-#: src/theticketbot/cogs/inbox.py:622
-#, python-brace-format
-msgid "{0} is not an inbox."
-msgstr ""
-
 #. Message sent when adding an already existing inbox staff
 #. {0}: the staff's mention
 #. {1}: the inbox's link
-#: src/theticketbot/cogs/inbox.py:438
+#: src/theticketbot/cogs/inbox.py:445
 #, python-brace-format
 msgid "{0} is already staff for inbox {1} ."
 msgstr ""
@@ -234,23 +232,23 @@ msgstr ""
 #. Message sent when adding staff to an inbox
 #. {0}: the staff's mention
 #. {1}: the inbox's link
-#: src/theticketbot/cogs/inbox.py:446
+#: src/theticketbot/cogs/inbox.py:453
 #, python-brace-format
 msgid "{0} has been added to inbox {1} !"
 msgstr ""
 
 #. Subcommand name ("inbox staff")
-#: src/theticketbot/cogs/inbox.py:452
+#: src/theticketbot/cogs/inbox.py:459
 msgid "remove"
 msgstr ""
 
 #. Subcommand description ("inbox staff remove")
-#: src/theticketbot/cogs/inbox.py:454
+#: src/theticketbot/cogs/inbox.py:461
 msgid "Remove a staff member or role from an inbox."
 msgstr ""
 
 #. Subcommand parameter description ("inbox staff remove <staff>")
-#: src/theticketbot/cogs/inbox.py:462
+#: src/theticketbot/cogs/inbox.py:469
 msgid "The staff member or role to remove."
 msgstr ""
 
@@ -281,37 +279,37 @@ msgid "List all staff members for an inbox."
 msgstr ""
 
 #. Message sent when no staff can be listed for an inbox
-#: src/theticketbot/cogs/inbox.py:549
+#: src/theticketbot/cogs/inbox.py:542
 msgid "This inbox does not have any staff."
 msgstr ""
 
 #. Subcommand group name ("ticket")
-#: src/theticketbot/cogs/inbox.py:555
+#: src/theticketbot/cogs/inbox.py:548
 msgid "starter"
 msgstr ""
 
 #. Subcommand group description ("ticket starter")
-#: src/theticketbot/cogs/inbox.py:557
+#: src/theticketbot/cogs/inbox.py:550
 msgid "Manage the starting message for an inbox's tickets."
 msgstr ""
 
 #. Subcommand name ("inbox starter")
-#: src/theticketbot/cogs/inbox.py:562
+#: src/theticketbot/cogs/inbox.py:555
 msgid "set"
 msgstr ""
 
 #. Subcommand description ("inbox starter set")
-#: src/theticketbot/cogs/inbox.py:564
+#: src/theticketbot/cogs/inbox.py:557
 msgid "Set the starting content for an inbox's tickets."
 msgstr ""
 
 #. Subcommand name ("inbox starter")
-#: src/theticketbot/cogs/inbox.py:598
+#: src/theticketbot/cogs/inbox.py:584
 msgid "get"
 msgstr ""
 
 #. Subcommand description ("inbox starter get")
-#: src/theticketbot/cogs/inbox.py:600
+#: src/theticketbot/cogs/inbox.py:586
 msgid "Get the starting content for an inbox's tickets."
 msgstr ""
 
