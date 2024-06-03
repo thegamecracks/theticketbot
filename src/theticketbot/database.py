@@ -177,6 +177,19 @@ class DatabaseClient:
             inbox_id,
         )
 
+    async def increment_inbox_counter(self, inbox_id: int) -> int:
+        """Increment the counter for an inbox.
+
+        :returns: The new value of the counter.
+
+        """
+        row = await self.conn.fetchone(
+            "UPDATE inbox SET counter = counter + 1 WHERE id = ? RETURNING counter",
+            inbox_id,
+        )
+        assert row is not None
+        return row[0]
+
     async def add_inbox_staff(self, inbox_id: int, mention: str) -> None:
         """Add an inbox staff to the database.
 

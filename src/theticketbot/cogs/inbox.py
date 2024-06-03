@@ -100,12 +100,16 @@ class InboxView(discord.ui.View):
             ticket_name = await query.get_inbox_default_ticket_name(message.id)
             ticket_name = ticket_name or DEFAULT_TICKET_NAME
 
+            # NOTE: counter may skip if thread creation fails
+            counter = await query.increment_inbox_counter(message.id)
+
         created_at = interaction.created_at
         ticket_name = string.Template(ticket_name).safe_substitute(
             year=created_at.year,
             month=str(created_at.month).zfill(2),
             day=str(created_at.day).zfill(2),
             name=interaction.user.display_name,
+            counter=str(counter % 10**4).zfill(4),
         )
 
         # Audit log reason for a user creating a ticket
