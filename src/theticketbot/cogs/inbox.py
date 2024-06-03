@@ -5,10 +5,10 @@ from typing import Iterable, Protocol
 
 import asqlite
 import discord
+import humanize
 from discord import app_commands
 from discord.app_commands import locale_str as _
 from discord.ext import commands, tasks
-import humanize
 
 from theticketbot.bot import Bot
 from theticketbot.database import DatabaseClient
