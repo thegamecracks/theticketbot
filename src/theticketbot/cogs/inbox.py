@@ -314,6 +314,129 @@ class Inbox(
         content = content.format(message.jump_url)
         await interaction.followup.send(content, ephemeral=True)
 
+    staff = app_commands.Group(
+        # Subcommand group name ("ticket")
+        name=_("staff"),
+    )
+
+    @staff.command(
+        # Subcommand name ("inbox staff")
+        name=_("add"),
+        # Subcommand description ("inbox staff add")
+        description=_("Add a staff member or role for an inbox."),
+    )
+    @app_commands.rename(
+        # Subcommand parameter name ("inbox staff add")
+        staff=_("staff"),
+    )
+    @app_commands.describe(
+        # Subcommand parameter description ("inbox staff add <staff>")
+        staff=_("The staff member or role to add."),
+    )
+    async def staff_add(
+        self,
+        interaction: discord.Interaction,
+        staff: discord.Member | discord.Role,
+    ):
+        messages = self.bot.get_selected_messages(interaction.user.id)
+        if len(messages) < 1:
+            # Message sent when attempting to add an inbox staff without a message
+            content = _(
+                "Before you can use this command, you must select an inbox "
+                "message. To do this, right click or long tap a message, "
+                "then open Apps and pick the *Select this message* command."
+            )
+            content = await translate(content, interaction)
+            return await interaction.response.send_message(content, ephemeral=True)
+
+        inbox = messages[-1]
+
+        async with self.bot.acquire() as conn:
+            await DatabaseClient(conn).add_inbox_staff(inbox.id, staff.mention)
+
+        # Message sent when adding staff to an inbox
+        # {0}: the staff's mention
+        # {1}: the inbox's link
+        content = await translate(_("{0} has been added to inbox {1}!"), interaction)
+        content = content.format(staff.mention, inbox.jump_url)
+        await interaction.response.send_message(content, ephemeral=True)
+
+    @staff.command(
+        # Subcommand name ("inbox staff")
+        name=_("remove"),
+        # Subcommand description ("inbox staff remove")
+        description=_("Remove a staff member or role from an inbox."),
+    )
+    @app_commands.rename(
+        # Subcommand parameter name ("inbox staff remove")
+        staff=_("staff"),
+    )
+    @app_commands.describe(
+        # Subcommand parameter description ("inbox staff remove <staff>")
+        staff=_("The staff member or role to remove."),
+    )
+    async def staff_remove(
+        self,
+        interaction: discord.Interaction,
+        staff: discord.Member | discord.Role,
+    ):
+        messages = self.bot.get_selected_messages(interaction.user.id)
+        if len(messages) < 1:
+            # Message sent when attempting to remove an inbox staff without a message
+            content = _(
+                "Before you can use this command, you must select an inbox "
+                "message. To do this, right click or long tap a message, "
+                "then open Apps and pick the *Select this message* command."
+            )
+            content = await translate(content, interaction)
+            return await interaction.response.send_message(content, ephemeral=True)
+
+        inbox = messages[-1]
+
+        async with self.bot.acquire() as conn:
+            await DatabaseClient(conn).remove_inbox_staff(inbox.id, staff.mention)
+
+        # Message sent when removing staff from an inbox
+        # {0}: the staff's mention
+        # {1}: the inbox's link
+        content = await translate(
+            _("{0} has been removed from inbox {1}!"), interaction
+        )
+        content = content.format(staff.mention, inbox.jump_url)
+        await interaction.response.send_message(content, ephemeral=True)
+
+    @staff.command(
+        # Subcommand name ("inbox staff")
+        name=_("list"),
+        # Subcommand description ("inbox staff list")
+        description=_("List all staff members for an inbox."),
+    )
+    async def staff_list(self, interaction: discord.Interaction):
+        messages = self.bot.get_selected_messages(interaction.user.id)
+        if len(messages) < 1:
+            # Message sent when attempting to list inbox staff without a message
+            content = _(
+                "Before you can use this command, you must select an inbox "
+                "message. To do this, right click or long tap a message, "
+                "then open Apps and pick the *Select this message* command."
+            )
+            content = await translate(content, interaction)
+            return await interaction.response.send_message(content, ephemeral=True)
+
+        inbox = messages[-1]
+
+        async with self.bot.acquire() as conn:
+            mentions = await DatabaseClient(conn).get_inbox_staff(inbox.id)
+
+        if len(mentions) > 0:
+            mentions = ", ".join(mentions)
+            await interaction.response.send_message(mentions, ephemeral=True)
+        else:
+            # Message sent when no staff can be listed for an inbox
+            content = _("This inbox does not have any staff.")
+            content = await translate(content, interaction)
+            await interaction.response.send_message(content, ephemeral=True)
+
     @tasks.loop(minutes=30)
     async def cleanup_loop(self) -> None:
         now = time.monotonic()
