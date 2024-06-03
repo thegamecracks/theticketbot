@@ -250,6 +250,22 @@ class Inbox(
         cooldown = self._inbox_ratelimits.setdefault(key, app_commands.Cooldown(1, 60))
         return cooldown.update_rate_limit(time.monotonic()) or 0
 
+    async def maybe_get_inbox_message(self, interaction: discord.Interaction) -> discord.Message | None:
+        messages = self.bot.get_selected_messages(interaction.user.id)
+        if len(messages) < 1:
+            # Message sent when using a command without selecting an inbox message
+            content = _(
+                "Before you can use this command, you must select an inbox "
+                "message. To do this, right click or long tap a message, "
+                "then open Apps and pick the *Select this message* command."
+            )
+            content = await translate(content, interaction)
+            return await interaction.response.send_message(content, ephemeral=True)
+
+        inbox = messages[-1]
+        if await self.check_inbox_message(interaction, inbox):
+            return inbox
+
     async def check_inbox_message(self, interaction: discord.Interaction, message: discord.Message) -> bool:
         async with self.bot.acquire() as conn:
             row = await conn.fetchone("SELECT 1 FROM inbox WHERE id = ?", message.id)
@@ -419,20 +435,8 @@ class Inbox(
             content = await translate(content, interaction)
             return await interaction.response.send_message(content, ephemeral=True)
 
-        messages = self.bot.get_selected_messages(interaction.user.id)
-        if len(messages) < 1:
-            # Message sent when attempting to add an inbox staff without a message
-            content = _(
-                "Before you can use this command, you must select an inbox "
-                "message. To do this, right click or long tap a message, "
-                "then open Apps and pick the *Select this message* command."
-            )
-            content = await translate(content, interaction)
-            return await interaction.response.send_message(content, ephemeral=True)
-
-        inbox = messages[-1]
-
-        if not await self.check_inbox_message(interaction, inbox):
+        inbox = await self.maybe_get_inbox_message(interaction)
+        if inbox is None:
             return
 
         try:
@@ -473,20 +477,8 @@ class Inbox(
         interaction: discord.Interaction,
         staff: discord.Member | discord.Role,
     ):
-        messages = self.bot.get_selected_messages(interaction.user.id)
-        if len(messages) < 1:
-            # Message sent when attempting to remove an inbox staff without a message
-            content = _(
-                "Before you can use this command, you must select an inbox "
-                "message. To do this, right click or long tap a message, "
-                "then open Apps and pick the *Select this message* command."
-            )
-            content = await translate(content, interaction)
-            return await interaction.response.send_message(content, ephemeral=True)
-
-        inbox = messages[-1]
-
-        if not await self.check_inbox_message(interaction, inbox):
+        inbox = await self.maybe_get_inbox_message(interaction)
+        if inbox is None:
             return
 
         async with self.bot.acquire() as conn:
@@ -515,20 +507,8 @@ class Inbox(
         description=_("List all staff members for an inbox."),
     )
     async def staff_list(self, interaction: discord.Interaction):
-        messages = self.bot.get_selected_messages(interaction.user.id)
-        if len(messages) < 1:
-            # Message sent when attempting to list inbox staff without a message
-            content = _(
-                "Before you can use this command, you must select an inbox "
-                "message. To do this, right click or long tap a message, "
-                "then open Apps and pick the *Select this message* command."
-            )
-            content = await translate(content, interaction)
-            return await interaction.response.send_message(content, ephemeral=True)
-
-        inbox = messages[-1]
-
-        if not await self.check_inbox_message(interaction, inbox):
+        inbox = await self.maybe_get_inbox_message(interaction)
+        if inbox is None:
             return
 
         async with self.bot.acquire() as conn:
@@ -557,20 +537,8 @@ class Inbox(
         description=_("Set the starting content for an inbox's tickets."),
     )
     async def starter_set(self, interaction: discord.Interaction):
-        messages = self.bot.get_selected_messages(interaction.user.id)
-        if len(messages) < 1:
-            # Message sent when attempting to set inbox starter content without a message
-            content = _(
-                "Before you can use this command, you must select an inbox "
-                "message. To do this, right click or long tap a message, "
-                "then open Apps and pick the *Select this message* command."
-            )
-            content = await translate(content, interaction)
-            return await interaction.response.send_message(content, ephemeral=True)
-
-        inbox = messages[-1]
-
-        if not await self.check_inbox_message(interaction, inbox):
+        inbox = await self.maybe_get_inbox_message(interaction)
+        if inbox is None:
             return
 
         modal = SetInboxStarterContentModal(self.bot, inbox)
@@ -586,20 +554,8 @@ class Inbox(
         description=_("Get the starting content for an inbox's tickets."),
     )
     async def starter_get(self, interaction: discord.Interaction):
-        messages = self.bot.get_selected_messages(interaction.user.id)
-        if len(messages) < 1:
-            # Message sent when attempting to get inbox starter content without a message
-            content = _(
-                "Before you can use this command, you must select an inbox "
-                "message. To do this, right click or long tap a message, "
-                "then open Apps and pick the *Select this message* command."
-            )
-            content = await translate(content, interaction)
-            return await interaction.response.send_message(content, ephemeral=True)
-
-        inbox = messages[-1]
-
-        if not await self.check_inbox_message(interaction, inbox):
+        inbox = await self.maybe_get_inbox_message(interaction)
+        if inbox is None:
             return
 
         async with self.bot.acquire() as conn:
