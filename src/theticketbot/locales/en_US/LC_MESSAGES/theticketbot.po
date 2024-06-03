@@ -26,7 +26,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1.1a1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-03 19:26-0400\n"
+"POT-Creation-Date: 2024-06-03 19:30-0400\n"
 "PO-Revision-Date: 2024-06-02 15:17-0400\n"
 "Last-Translator: U-LAPTOP-3G2E6T6I\\home <home@laptop-3g2e6t6i>\n"
 "Language-Team: English\n"
@@ -93,7 +93,7 @@ msgstr ""
 
 #. Modal title for setting inbox starter
 #: src/theticketbot/cogs/inbox.py:211
-msgid "Set Inbox Starter"
+msgid "Starter Message"
 msgstr ""
 
 #. Modal text input label for inbox starter content
@@ -105,7 +105,7 @@ msgstr ""
 #. {0}: the inbox's link
 #: src/theticketbot/cogs/inbox.py:228
 #, python-brace-format
-msgid "{0} 's starting content has been set!"
+msgid "{0} 's starting message has been set!"
 msgstr ""
 
 #. Command group name

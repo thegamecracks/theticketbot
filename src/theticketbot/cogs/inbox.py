@@ -190,7 +190,7 @@ class InboxView(discord.ui.View):
         return row[0]
 
 
-class SetInboxStarterContentModal(discord.ui.Modal, title="Set Inbox Starter"):
+class SetInboxStarterContentModal(discord.ui.Modal, title="Starter Message"):
     content = discord.ui.TextInput(
         label="Content",
         style=discord.TextStyle.long,
@@ -208,7 +208,7 @@ class SetInboxStarterContentModal(discord.ui.Modal, title="Set Inbox Starter"):
             return await translate(s, self.bot, locale=locale)
 
         # Modal title for setting inbox starter
-        self.title = await t(_("Set Inbox Starter"))
+        self.title = await t(_("Starter Message"))
         # Modal text input label for inbox starter content
         self.content.label = await t(_("Content"))
 
@@ -225,7 +225,7 @@ class SetInboxStarterContentModal(discord.ui.Modal, title="Set Inbox Starter"):
 
         # Message sent when setting inbox starter content
         # {0}: the inbox's link
-        content = _("{0} 's starting content has been set!")
+        content = _("{0} 's starting message has been set!")
         content = await translate(content, interaction)
         content = content.format(self.inbox.jump_url)
         await interaction.response.send_message(content, ephemeral=True)
