@@ -110,7 +110,7 @@ class InboxView(discord.ui.View):
                 starter_content = await query.get_inbox_starter_content(message.id)
                 starter_content = starter_content or "$author $staff"
 
-            content = string.Template(content).safe_substitute(
+            content = string.Template(starter_content).safe_substitute(
                 author=interaction.user.mention,
                 staff=mentions,
             )
