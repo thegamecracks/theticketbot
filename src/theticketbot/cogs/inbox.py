@@ -60,7 +60,7 @@ class InboxView(discord.ui.View):
                 return await interaction.response.send_message(content, ephemeral=True)
 
             tickets = await self.get_active_user_tickets(
-                guild.threads,
+                interaction.channel.threads,
                 conn,
                 message.id,
                 interaction.user.id,
