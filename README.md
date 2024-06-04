@@ -102,8 +102,8 @@ i.e. the message that has the Create Ticket button.
 
   - `$staff`
 
-    A comma-separated list of mentions for the inbox's staff members
-    and roles. Must be included in the message for staff to be invited
+    A list of mentions for the inbox's staff members and roles.
+    Must be included in the message for staff to be invited
     if they do not have the Manage Threads permission.
 
   To keep push notifications easy to understand at a glance, make sure the

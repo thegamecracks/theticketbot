@@ -137,7 +137,7 @@ class InboxView(discord.ui.View):
             async with self.bot.acquire() as conn:
                 query = DatabaseClient(conn)
                 mentions = await query.get_inbox_staff(message.id)
-                mentions = ", ".join(mentions)
+                mentions = " ".join(mentions)
 
                 starter_content = await query.get_inbox_starter_content(message.id)
                 starter_content = starter_content or DEFAULT_STARTER_CONTENT
