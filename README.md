@@ -6,6 +6,10 @@ A simple Discord bot for handling ticket systems using channel threads.
 
 ## Contributing
 
+Before submitting any changes, please read and follow the [Contributing Guide]!
+
+[Contributing Guide]: /CONTRIBUTING.md
+
 Want to help out by adding translations? This bot stores them in the [locales/]
 directory. You can [fork this repository], create a new branch, commit your
 PO files there, and make a pull request!
