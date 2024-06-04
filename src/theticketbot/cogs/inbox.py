@@ -120,7 +120,7 @@ class InboxView(discord.ui.View):
 
         try:
             ticket = await interaction.channel.create_thread(
-                name=ticket_name,
+                name=ticket_name[:100],
                 invitable=False,
                 reason=reason,
             )
@@ -245,7 +245,7 @@ class SetInboxStarterContentModal(discord.ui.Modal, title="Starter Message"):
 
 
 class SetTicketDefaultsModal(discord.ui.Modal, title="New Tickets"):
-    name = discord.ui.TextInput(label="Name", max_length=45, required=False)
+    name = discord.ui.TextInput(label="Name", max_length=100, required=False)
 
     def __init__(self, bot: Bot, inbox: discord.Message) -> None:
         super().__init__()
