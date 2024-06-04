@@ -16,6 +16,9 @@ dependencies = [
     "pydantic~=2.7",
 ]
 
+[project.scripts]
+theticketbot = "theticketbot.__main__:main"
+
 [project.optional-dependencies]
 jishaku = ["jishaku>=2.5.2"]
 

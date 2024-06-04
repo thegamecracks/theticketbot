@@ -49,6 +49,8 @@ With Python 3.11+ and Git, you can set up this bot by following these steps:
 4. Start the bot:
 
    ```sh
+   theticketbot
+   # or
    python -m theticketbot
    ```
 
