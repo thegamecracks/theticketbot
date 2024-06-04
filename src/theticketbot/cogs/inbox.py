@@ -659,6 +659,9 @@ class Inbox(
         if thread is None:
             return log.warning("Ignoring unknown thread %d", payload.thread_id)
 
+        if thread.owner_id != guild.me.id:
+            return
+
         user_ids = set(map(int, payload.data.get("removed_member_ids", ())))
 
         async with self.bot.acquire() as conn:
