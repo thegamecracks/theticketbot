@@ -6,11 +6,13 @@ A simple Discord bot for handling ticket systems using channel threads.
 
 ## Contributing
 
-Want to help out by adding translations? [Fork this repository],
-create a new branch, commit your PO files there, and make a pull request!
+Want to help out by adding translations? This bot stores them in the [locales/]
+directory. You can [fork this repository], create a new branch, commit your
+PO files there, and make a pull request!
 See [discord.py-gettext-demo's onboarding] for more information.
 
-[Fork this repository]: https://docs.github.com/en/get-started/quickstart/contributing-to-projects
+[locales/]: /src/theticketbot/locales/
+[fork this repository]: https://docs.github.com/en/get-started/quickstart/contributing-to-projects
 [discord.py-gettext-demo's onboarding]: https://github.com/thegamecracks/discord.py-i18n-demo/blob/main/docs/en/onboarding.md
 
 ## Usage
