@@ -67,18 +67,6 @@ the command `Select this message`. For a short period of time, you can use
 to view, send messages, and create private threads in that channel.
 Currently, there are no limits on the number of inboxes your server can have.
 
-To further customize the inbox, you can select the inbox message and use
-`/inbox staff add` to add members or roles to ping when a user creates
-a ticket. If you want to be more advanced, you can customize the starting
-message with `/inbox new-tickets set-starter`. To keep push notifications
-easy to understand at a glance, make sure the starter message says something
-unique to its inbox at the beginning, like:
-
-> $author Thank you for creating a moderation ticket! $staff will be with you shortly.
-
-Note that role mentions require either the role to be mentionable or the bot
-to have the *Mention all roles* permission in the inbox's channel.
-
 Tickets are managed just like threads. Closing them archives the thread,
 preserving their messages without needing a separate transcript. Staff with
 `MANAGE_THREADS` permissions can also add and remove members afterwards,
@@ -88,12 +76,76 @@ search for them in the future, and can be deleted permanently if desired.
 For consistency in handling tickets, your staff team should devise a procedure
 and adhere to it.
 
+If the owner leaves or is removed from their ticket, the bot will automatically
+archive the ticket. Staff are free to re-open it afterwards.
+
+## Customization
+
+There are various settings that can be customized for each inbox.
+Before you can use the below commands, you must first select an inbox,
+i.e. the message that has the Create Ticket button.
+
+- `/inbox staff add <staff>`
+
+  Add members or roles to be considered staff for an inbox.
+
+- `/inbox new-tickets set-starter`
+
+  Inspect the starting message for new tickets and optionally change it.
+
+  Allowed placeholders are:
+
+  - `$author`
+
+    The ticket owner's mention. Must be included in the message
+    for the owner to be invited.
+
+  - `$staff`
+
+    A comma-separated list of mentions for the inbox's staff members
+    and roles. Must be included in the message for staff to be invited
+    if they do not have the Manage Threads permission.
+
+  To keep push notifications easy to understand at a glance, make sure the
+  starter message says something unique to its inbox at the beginning, like:
+
+  ```
+  $author Thank you for creating a moderation ticket! $staff will be with you shortly.
+  ```
+
+  Note that role mentions require either the role to be mentionable or the bot
+  to have the *Mention all roles* permission in the inbox's channel.
+
+- `/inbox new-tickets set-ticket-name`
+
+  Inspect the default name for new tickets and optionally change it.
+
+  Allowed placeholders are:
+
+  - `$year`
+  - `$month`
+  - `$day`
+  - `$name`
+
+    The ticket owner's display name.
+
+  - `$counter`
+
+    An incrementing 4-digit counter starting from 0001.
+
+    Upon exceeding 9999, the counter will overflow back to 0000.
+    The counter is not guaranteed to be sequential and may skip
+    if the bot is unsuccessful in creating a ticket.
+
+  Note that thread names are limited to 100 characters by Discord.
+
+## Ticket Limits
+
 Each inbox has a per-user ratelimit to help reduce spam. It adjusts according
 to the slowmode you have set for the inbox's channel, but the minimum time
 allowed between tickets is 60 seconds. Inboxes also try to maintain a maximum
 of 1 active thread per user, although it is not guaranteed due to technical
-limitations. If the owner leaves or is removed from their ticket, it will
-automatically be archived.
+limitations.
 
 ## License
 
