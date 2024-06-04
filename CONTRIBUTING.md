@@ -1,3 +1,50 @@
+# Development Setup
+
+When installing the project for development, you can enable [editable mode]
+and install the [Jishaku] extension to help with iterative development and
+debugging:
+
+```sh
+pip install --editable .[jishaku]
+```
+
+[editable mode]: https://setuptools.pypa.io/en/latest/userguide/development_mode.html
+[Jishaku]: https://github.com/Gorialis/jishaku
+
+You can also install this project's [pre-commit] hooks to automatically
+run lints for you:
+
+```sh
+pip install pre-commit
+pre-commit install
+```
+
+[pre-commit]: https://pre-commit.com/
+
+And finally, you should use [Pyright] to type-check your code before committing.
+In VSCode, this is built into the Pylance extension and can be enabled in
+your settings, but you can also install the third-party pyright wrapper
+to manually run it:
+
+```sh
+pip install pyright
+pyright
+```
+
+[Pyright]: https://microsoft.github.io/pyright/
+
+Database migration scripts are stored in [migrations/] and are automatically
+executed upon bot startup. During development, if any changes to the database
+schema are required, please create a backup of your database before adding a
+new migration script.
+
+[migrations/]: /src/theticketbot/migrations/
+
+When updating any file that contains `_()` translatable strings,
+it is recommended to run `utils/merge_po.py` and `utils/build_mo.py`
+just before starting the bot or creating a commit.
+This requires gettext to be installed.
+
 # Python Style Guide
 
 - Code should follow [PEP 8] where possible, unless exempted by this guide
