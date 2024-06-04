@@ -78,6 +78,8 @@ and adhere to it.
 
 If the owner leaves or is removed from their ticket, the bot will automatically
 archive the ticket. Staff are free to re-open it afterwards.
+The bot will also lock the ticket to prevent further discussion if it has
+the Manage Threads permission, which can be set on a per-channel basis.
 
 ## Customization
 

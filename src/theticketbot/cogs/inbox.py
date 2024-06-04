@@ -676,13 +676,15 @@ class Inbox(
         if owner_id not in user_ids:
             return
 
+        can_lock = thread.permissions_for(guild.me).manage_threads
+
         # Message sent when owner leaves their ticket
         # {0}: The owner's mention
         content = _("Archiving ticket as the owner ({0}) has left the thread.")
         content = await translate(content, self.bot, locale=guild.preferred_locale)
         content = content.format(f"<@{owner_id}>")
         await thread.send(content, allowed_mentions=discord.AllowedMentions.none())
-        await thread.edit(archived=True)
+        await thread.edit(archived=True, locked=can_lock)
 
     @tasks.loop(minutes=30)
     async def cleanup_loop(self) -> None:
