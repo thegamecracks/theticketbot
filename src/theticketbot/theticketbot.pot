@@ -26,7 +26,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-03 23:25-0400\n"
+"POT-Creation-Date: 2024-06-04 11:36-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -40,12 +40,15 @@ msgstr ""
 msgid "Create Ticket"
 msgstr ""
 
+#. Message sent when a user tries using a deleted inbox
 #: src/theticketbot/cogs/inbox.py:60
 msgid ""
 "Sorry, this inbox is no longer recognized and must be re-created. Please "
 "notify a server admin!"
 msgstr ""
 
+#. Message sent when trying to create too many tickets
+#. {0}: the ticket's link
 #: src/theticketbot/cogs/inbox.py:78
 #, python-brace-format
 msgid ""
@@ -72,6 +75,7 @@ msgstr ""
 msgid "Ticket created by {0}"
 msgstr ""
 
+#. Message sent when creating a ticket failed due to insufficient permissions
 #: src/theticketbot/cogs/inbox.py:153
 msgid ""
 "I am missing the permissions needed to create a ticket here. Please notify a "
@@ -134,6 +138,7 @@ msgstr ""
 msgid "Manage the server's ticket inboxes."
 msgstr ""
 
+#. Message sent when using a command without selecting an inbox message
 #: src/theticketbot/cogs/inbox.py:338
 msgid ""
 "Before you can use this command, you must select an inbox message. To do "
@@ -176,6 +181,7 @@ msgstr ""
 msgid "I need the following permissions in {0}: {1}"
 msgstr ""
 
+#. Message sent when attempting to create an inbox without a message
 #: src/theticketbot/cogs/inbox.py:412
 msgid ""
 "Before you can use this command, you must select a message to be sent with "
@@ -183,6 +189,8 @@ msgid ""
 "pick the *Select this message* command."
 msgstr ""
 
+#. Message sent when attempting to create an inbox with too large attachments
+#. {0}: The maximum filesize allowed
 #: src/theticketbot/cogs/inbox.py:431
 #, python-brace-format
 msgid ""
@@ -340,6 +348,10 @@ msgstr ""
 msgid "Select this message"
 msgstr ""
 
+#. Message sent when the user selects a message
+#. {0}: the selected message's link
+#. {1}: the total number of messages selected
+#. {2}: the time until the selected message is discarded
 #: src/theticketbot/cogs/select.py:73
 #, python-brace-format
 msgid ""
@@ -348,6 +360,10 @@ msgid ""
 "message."
 msgstr ""
 
+#. Message sent when the user has selected too many messages
+#. {0}: the selected message's link
+#. {1}: the total number of messages selected
+#. {2}: the time until the selected message is discarded
 #: src/theticketbot/cogs/select.py:85
 #, python-brace-format
 msgid ""

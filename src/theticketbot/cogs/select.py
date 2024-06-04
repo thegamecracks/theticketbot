@@ -65,11 +65,11 @@ class Select(commands.Cog):
         if len(queue.messages) < self.MAX_SELECTED_MESSAGES:
             queue.messages.append(message)
 
-            # Message sent when the user selects a message
-            # {0}: the selected message's link
-            # {1}: the total number of messages selected
-            # {2}: the time until the selected message is discarded
             content = _(
+                # Message sent when the user selects a message
+                # {0}: the selected message's link
+                # {1}: the total number of messages selected
+                # {2}: the time until the selected message is discarded
                 "{0}\nMessage #{1} selected! You have {2} seconds to perform "
                 "an action with this message."
             )
@@ -77,11 +77,11 @@ class Select(commands.Cog):
             queue.messages.clear()
             queue.messages.append(message)
 
-            # Message sent when the user has selected too many messages
-            # {0}: the selected message's link
-            # {1}: the total number of messages selected
-            # {2}: the time until the selected message is discarded
             content = _(
+                # Message sent when the user has selected too many messages
+                # {0}: the selected message's link
+                # {1}: the total number of messages selected
+                # {2}: the time until the selected message is discarded
                 "{0}\nYou have selected too many messages! This is now message #{1}."
             )
 

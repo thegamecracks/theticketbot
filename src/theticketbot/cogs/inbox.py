@@ -55,8 +55,8 @@ class InboxView(discord.ui.View):
             # If the database was wiped, this will fail.
             row = await conn.fetchone("SELECT 1 FROM inbox WHERE id = ?", message.id)
             if row is None:
-                # Message sent when a user tries using a deleted inbox
                 content = _(
+                    # Message sent when a user tries using a deleted inbox
                     "Sorry, this inbox is no longer recognized and must be "
                     "re-created. Please notify a server admin!"
                 )
@@ -72,9 +72,9 @@ class InboxView(discord.ui.View):
             max_tickets = await self.get_max_tickets(conn, message.id)
 
         if max_tickets > 0 and len(tickets) >= max_tickets:
-            # Message sent when trying to create too many tickets
-            # {0}: the ticket's link
             content = _(
+                # Message sent when trying to create too many tickets
+                # {0}: the ticket's link
                 "You have too many tickets in this inbox. "
                 "Please close your last ticket {0} before creating a new one."
             )
@@ -148,8 +148,8 @@ class InboxView(discord.ui.View):
             )
             await ticket.send(content[:2000])
         except discord.Forbidden:
-            # Message sent when creating a ticket failed due to insufficient permissions
             content = _(
+                # Message sent when creating a ticket failed due to insufficient permissions
                 "I am missing the permissions needed to create a ticket here. "
                 "Please notify a server admin!"
             )
@@ -333,8 +333,8 @@ class Inbox(
     ) -> discord.Message | None:
         messages = self.bot.get_selected_messages(interaction.user.id)
         if len(messages) < 1:
-            # Message sent when using a command without selecting an inbox message
             content = _(
+                # Message sent when using a command without selecting an inbox message
                 "Before you can use this command, you must select an inbox "
                 "message. To do this, right click or long tap a message, "
                 "then open Apps and pick the *Select this message* command."
@@ -407,8 +407,8 @@ class Inbox(
 
         messages = self.bot.get_selected_messages(interaction.user.id)
         if len(messages) < 1:
-            # Message sent when attempting to create an inbox without a message
             content = _(
+                # Message sent when attempting to create an inbox without a message
                 "Before you can use this command, you must select a message "
                 "to be sent with the inbox. To do this, right click or long tap "
                 "a message, then open Apps and pick the *Select this message* command."
@@ -425,9 +425,9 @@ class Inbox(
 
         max_attachment_size = self.bot.config.bot.inbox.max_attachment_size
         if sum(a.size for a in message.attachments) > max_attachment_size:
-            # Message sent when attempting to create an inbox with too large attachments
-            # {0}: The maximum filesize allowed
             content = _(
+                # Message sent when attempting to create an inbox with too large attachments
+                # {0}: The maximum filesize allowed
                 "The message's attachments are too large! "
                 "The total size must be under {0}."
             )
