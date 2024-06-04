@@ -24,7 +24,7 @@
 #   - Max length of 100 characters
 msgid ""
 msgstr ""
-"Project-Id-Version: 0.1.1a1\n"
+"Project-Id-Version: 0.2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-03 20:31-0400\n"
 "PO-Revision-Date: 2024-06-02 15:17-0400\n"
