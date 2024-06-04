@@ -26,7 +26,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1.1a1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-03 19:57-0400\n"
+"POT-Creation-Date: 2024-06-03 20:31-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -310,20 +310,20 @@ msgstr ""
 
 #. Subcommand name ("inbox new-tickets")
 #: src/theticketbot/cogs/inbox.py:619
-msgid "set-starter"
+msgid "starter"
 msgstr ""
 
-#. Subcommand description ("inbox new-tickets set-starter")
+#. Subcommand description ("inbox new-tickets starter")
 #: src/theticketbot/cogs/inbox.py:621
 msgid "Set the starting message for new tickets."
 msgstr ""
 
 #. Subcommand name ("inbox new-tickets")
 #: src/theticketbot/cogs/inbox.py:636
-msgid "set-ticket-name"
+msgid "name"
 msgstr ""
 
-#. Subcommand description ("inbox new-tickets set-ticket-name")
+#. Subcommand description ("inbox new-tickets name")
 #: src/theticketbot/cogs/inbox.py:638
 msgid "Set the name for new tickets."
 msgstr ""

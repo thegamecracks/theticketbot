@@ -616,11 +616,11 @@ class Inbox(
 
     @new_tickets.command(
         # Subcommand name ("inbox new-tickets")
-        name=_("set-starter"),
-        # Subcommand description ("inbox new-tickets set-starter")
+        name=_("starter"),
+        # Subcommand description ("inbox new-tickets starter")
         description=_("Set the starting message for new tickets."),
     )
-    async def new_tickets_set_starter(self, interaction: discord.Interaction):
+    async def new_tickets_starter(self, interaction: discord.Interaction):
         inbox = await self.maybe_get_inbox_message(interaction)
         if inbox is None:
             return
@@ -633,11 +633,11 @@ class Inbox(
 
     @new_tickets.command(
         # Subcommand name ("inbox new-tickets")
-        name=_("set-ticket-name"),
-        # Subcommand description ("inbox new-tickets set-ticket-name")
+        name=_("name"),
+        # Subcommand description ("inbox new-tickets name")
         description=_("Set the name for new tickets."),
     )
-    async def new_tickets_set_name(self, interaction: discord.Interaction):
+    async def new_tickets_name(self, interaction: discord.Interaction):
         inbox = await self.maybe_get_inbox_message(interaction)
         if inbox is None:
             return

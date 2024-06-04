@@ -89,7 +89,7 @@ i.e. the message that has the Create Ticket button.
 
   Add members or roles to be considered staff for an inbox.
 
-- `/inbox new-tickets set-starter`
+- `/inbox new-tickets starter`
 
   Inspect the starting message for new tickets and optionally change it.
 
@@ -116,7 +116,7 @@ i.e. the message that has the Create Ticket button.
   Note that role mentions require either the role to be mentionable or the bot
   to have the *Mention all roles* permission in the inbox's channel.
 
-- `/inbox new-tickets set-ticket-name`
+- `/inbox new-tickets name`
 
   Inspect the default name for new tickets and optionally change it.
 
