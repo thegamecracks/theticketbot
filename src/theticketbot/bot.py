@@ -26,6 +26,7 @@ class Bot(commands.Bot):
         config = self.refresh_config()
 
         super().__init__(
+            chunk_guilds_at_startup=False,
             command_prefix=commands.when_mentioned,
             intents=config.bot.intents.create_intents(),
             member_cache_flags=discord.MemberCacheFlags.none(),
