@@ -770,8 +770,8 @@ class Inbox(
         if owner_id not in user_ids:
             return
 
-        # Message sent when owner leaves their ticket
-        # {0}: The owner's mention
+        # Message sent when a user leaves their ticket
+        # {0}: The ticket owner's mention
         content = _("Archiving ticket as the owner ({0}) has left the thread.")
         content = await translate(content, self.bot, locale=guild.preferred_locale)
         content = content.format(f"<@{owner_id}>")
@@ -801,8 +801,8 @@ class Inbox(
                 log.warning("Ignoring unknown thread %d", ticket_id)
                 continue
 
-            # Message sent when owner leaves the server with open tickets
-            # {0}: The owner's mention
+            # Message sent when a user leaves a server with open tickets
+            # {0}: The ticket owner's mention
             content = _("Archiving ticket as the owner ({0}) has left the server.")
             content = await translate(content, self.bot, locale=guild.preferred_locale)
             content = content.format(payload.user.mention)
