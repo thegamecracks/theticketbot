@@ -70,7 +70,7 @@ class Select(commands.Cog):
             content = _(
                 # Message sent when selecting a message without a command
                 "You can't select a message right now! "
-                "Please use a slash command that asks for a message first."
+                "Please use a command that asks for a message first."
             )
             content = await translate(content, interaction)
             return await interaction.response.send_message(content, ephemeral=True)

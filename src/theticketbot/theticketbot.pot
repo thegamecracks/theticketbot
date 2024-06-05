@@ -26,7 +26,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-05 10:08-0400\n"
+"POT-Creation-Date: 2024-06-05 10:11-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -438,8 +438,8 @@ msgstr ""
 #. Message sent when selecting a message without a command
 #: src/theticketbot/cogs/select.py:72
 msgid ""
-"You can't select a message right now! Please use a slash command that asks "
-"for a message first."
+"You can't select a message right now! Please use a command that asks for a "
+"message first."
 msgstr ""
 
 #. Message sent when selecting a message too long after their last command
