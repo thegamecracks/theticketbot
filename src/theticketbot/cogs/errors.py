@@ -6,6 +6,7 @@ from typing import Any, ClassVar, Generic, Type, TypeVar
 
 import discord
 from discord import app_commands
+from discord.app_commands import locale_str as _
 from discord.ext import commands
 
 from theticketbot.bot import Bot, Context
@@ -17,27 +18,45 @@ log = logging.getLogger(__name__)
 T = TypeVar("T")
 
 
-def append_error_code(content: str, error_code: str) -> str:
-    return (
-        content
-        + f"\nError code: {error_code}"
-        + "\nIf assistance is needed, please contact <@153551102443257856>."
+async def append_error_code(ctx: object, content: str, error_code: str) -> str:
+    trailer = _(
+        # Message appended to some error responses caused by issues in the bot
+        # {0}: the error code to be reported
+        # {1}: the maintainer's mention
+        "Error code: {0}\n"
+        "If assistance is needed, please contact {1}."
     )
+    trailer = await maybe_translate(ctx, trailer)
+    trailer = trailer.format(error_code, "<@153551102443257856>")
+    return f"{content}\n{trailer}"
 
 
 def generate_error_code():
     return "".join(random.choices("0123456789ABCDEF", k=4))
 
 
+async def maybe_translate(ctx: object, message: str | app_commands.locale_str) -> str:
+    if isinstance(message, str):
+        return message
+    elif isinstance(ctx, discord.Interaction):
+        return await translate(message, ctx)
+    elif isinstance(ctx, commands.Context) and ctx.guild is not None:
+        locale = ctx.guild.preferred_locale
+        return await translate(message, ctx.bot, locale=locale)
+    else:
+        return message.message
+
+
 @dataclass
 class ErrorResponse:
     exc_types: Type[Exception] | tuple[Type[Exception], ...]
-    content: str | None
+    content: str | app_commands.locale_str | None
     show_traceback: bool
 
     async def format(self, ctx: Any, error: Exception) -> str | None:
         if self.content is not None:
-            return self.content.format(error=error)
+            content = await maybe_translate(ctx, self.content)
+            return content.format(error)
 
 
 class AppCommandErrorResponse(ErrorResponse):
@@ -101,7 +120,7 @@ class ErrorHandler(ABC, Generic[T]):
 
         if content is not None:
             if resp.show_traceback:
-                content = append_error_code(content, error_code)
+                content = await append_error_code(ctx, content, error_code)
             await self.send(ctx, content)
 
     def _log_error(self, ctx: T, error: Exception, error_code: str) -> None:
@@ -124,27 +143,32 @@ class PrefixErrorHandler(ErrorHandler[Context]):
         ),
         ErrorResponse(
             commands.CommandOnCooldown,
-            "This command is on cooldown for {error.retry_after:.1f}s.",
+            # Error response for command on cooldown
+            _("This command is on cooldown for {0.retry_after:.1f}s."),
             show_traceback=False,
         ),
         ErrorResponse(
             commands.MaxConcurrencyReached,
-            "Too many people are using this command. Please try again later.",
+            # Error response for exceeding maximum concurrent users of a command
+            _("Too many people are using this command. Please try again later."),
             show_traceback=False,
         ),
         ErrorResponse(
             commands.CheckFailure,
-            "One or more checks failed for this command.",
+            # Error response for not passing all checks required to use a command
+            _("One or more checks failed for this command."),
             show_traceback=False,
         ),
         ErrorResponse(
             commands.UserInputError,
-            "An error occurred with your input: ```py\n{error}```",
+            # Error response for failing to parse the user's input
+            _("An error occurred with your input: ```py\n{0}```"),
             show_traceback=True,
         ),
         ErrorResponse(
             Exception,
-            "An unknown error occurred while running this command.",
+            # Error response for an unexpected failure in a command
+            _("An unknown error occurred while running this command."),
             show_traceback=True,
         ),
     ]
@@ -175,27 +199,32 @@ class TreeErrorHandler(ErrorHandler[discord.Interaction]):
         AppCommandErrorResponse(show_traceback=False),
         ErrorResponse(
             app_commands.CommandOnCooldown,
-            "This command is on cooldown for {error.retry_after:.1f}s.",
+            # Error response for command on cooldown
+            _("This command is on cooldown for {0.retry_after:.1f}s."),
             show_traceback=False,
         ),
         ErrorResponse(
             app_commands.CheckFailure,
-            "One or more checks failed for this command.",
+            # Error response for not passing all checks required to use a command
+            _("One or more checks failed for this command."),
             show_traceback=False,
         ),
         ErrorResponse(
             app_commands.TransformerError,
-            "An error occurred with your input: ```py\n{error}```",
+            # Error response for failing to parse the user's input
+            _("An error occurred with your input: ```py\n{0}```"),
             show_traceback=True,
         ),
         ErrorResponse(
             app_commands.CommandNotFound,
-            "The bot currently does not recognize this command.",
+            # Error response for using a slash command not recognized by the bot
+            _("The bot currently does not recognize this command."),
             show_traceback=True,
         ),
         ErrorResponse(
             Exception,
-            "An unknown error occurred while running this command.",
+            # Error response for an unexpected failure in a command
+            _("An unknown error occurred while running this command."),
             show_traceback=True,
         ),
     ]

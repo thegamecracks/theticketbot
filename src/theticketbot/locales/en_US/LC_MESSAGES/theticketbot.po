@@ -26,7 +26,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-05 09:17-0400\n"
+"POT-Creation-Date: 2024-06-05 10:08-0400\n"
 "PO-Revision-Date: 2024-06-02 15:17-0400\n"
 "Last-Translator: U-LAPTOP-3G2E6T6I\\home <home@laptop-3g2e6t6i>\n"
 "Language-Team: English\n"
@@ -35,6 +35,50 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. Message appended to some error responses caused by issues in the bot
+#. {0}: the error code to be reported
+#. {1}: the maintainer's mention
+#: src/theticketbot/cogs/errors.py:26
+#, python-brace-format
+msgid ""
+"Error code: {0}\n"
+"If assistance is needed, please contact {1}."
+msgstr ""
+
+#. Error response for command on cooldown
+#: src/theticketbot/cogs/errors.py:147 src/theticketbot/cogs/errors.py:203
+#, python-brace-format
+msgid "This command is on cooldown for {0.retry_after:.1f}s."
+msgstr ""
+
+#. Error response for exceeding maximum concurrent users of a command
+#: src/theticketbot/cogs/errors.py:153
+msgid "Too many people are using this command. Please try again later."
+msgstr ""
+
+#. Error response for not passing all checks required to use a command
+#: src/theticketbot/cogs/errors.py:159 src/theticketbot/cogs/errors.py:209
+msgid "One or more checks failed for this command."
+msgstr ""
+
+#. Error response for failing to parse the user's input
+#: src/theticketbot/cogs/errors.py:165 src/theticketbot/cogs/errors.py:215
+#, python-brace-format
+msgid ""
+"An error occurred with your input: ```py\n"
+"{0}```"
+msgstr ""
+
+#. Error response for an unexpected failure in a command
+#: src/theticketbot/cogs/errors.py:171 src/theticketbot/cogs/errors.py:227
+msgid "An unknown error occurred while running this command."
+msgstr ""
+
+#. Error response for using a slash command not recognized by the bot
+#: src/theticketbot/cogs/errors.py:221
+msgid "The bot currently does not recognize this command."
+msgstr ""
 
 #. Button label for creating a new ticket
 #: src/theticketbot/cogs/inbox.py:44
