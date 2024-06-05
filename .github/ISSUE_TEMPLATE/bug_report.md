@@ -11,6 +11,8 @@ assignees: ''
 
 A clear and concise description of what the bug is.
 
+Project version that this has been tested on: [e.g. 1.0.0]
+
 ### To Reproduce
 
 Steps to reproduce the behavior:
@@ -26,9 +28,3 @@ A clear and concise description of what you expected to happen.
 ### Screenshots
 
 If applicable, add screenshots to help explain your problem.
-
-### Version Information
-
-- Operating System: [e.g. Windows 11]
-- Python version: [e.g. 3.11]
-- theticketbot version: [e.g. 1.0.0]
