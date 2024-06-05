@@ -281,6 +281,7 @@ class SetTicketDefaultsModal(discord.ui.Modal, title="New Tickets"):
 
 
 @app_commands.default_permissions(manage_guild=True)
+@app_commands.guild_only()
 class Inbox(
     commands.GroupCog,
     # Command group name
