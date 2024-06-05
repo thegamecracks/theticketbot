@@ -26,7 +26,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-05 10:11-0400\n"
+"POT-Creation-Date: 2024-06-05 10:37-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -425,9 +425,16 @@ msgstr ""
 
 #. Message sent when owner leaves their ticket
 #. {0}: The owner's mention
-#: src/theticketbot/cogs/inbox.py:777
+#: src/theticketbot/cogs/inbox.py:775
 #, python-brace-format
 msgid "Archiving ticket as the owner ({0}) has left the thread."
+msgstr ""
+
+#. Message sent when owner leaves the server with open tickets
+#. {0}: The owner's mention
+#: src/theticketbot/cogs/inbox.py:806
+#, python-brace-format
+msgid "Archiving ticket as the owner ({0}) has left the server."
 msgstr ""
 
 #. Command name

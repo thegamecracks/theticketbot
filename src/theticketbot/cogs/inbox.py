@@ -743,7 +743,7 @@ class Inbox(
         await interaction.response.send_modal(modal)
 
     @commands.Cog.listener("on_raw_thread_member_remove")
-    async def archive_abandoned_tickets(self, payload: discord.RawThreadMembersUpdate):
+    async def on_ticket_owner_remove(self, payload: discord.RawThreadMembersUpdate):
         # NOTE: event may not fire on already-archived tickets
         guild = self.bot.get_guild(payload.guild_id)
         if guild is None:
@@ -770,13 +770,50 @@ class Inbox(
         if owner_id not in user_ids:
             return
 
-        can_lock = thread.permissions_for(guild.me).manage_threads
-
         # Message sent when owner leaves their ticket
         # {0}: The owner's mention
         content = _("Archiving ticket as the owner ({0}) has left the thread.")
         content = await translate(content, self.bot, locale=guild.preferred_locale)
         content = content.format(f"<@{owner_id}>")
+        await self.archive_ticket_with_message(thread, content)
+
+    @commands.Cog.listener("on_raw_member_remove")
+    async def on_ticket_owner_remove_guild(self, payload: discord.RawMemberRemoveEvent):
+        guild = self.bot.get_guild(payload.guild_id)
+        if guild is None:
+            return log.warning("Ignoring unknown guild %d", payload.guild_id)
+
+        async with self.bot.acquire() as conn:
+            rows = await conn.fetchall(
+                "SELECT ticket.id FROM ticket "
+                "JOIN inbox ON inbox.id = inbox_id "
+                "JOIN message ON message.id = inbox.id "
+                "JOIN channel ON channel.id = channel_id "
+                "JOIN guild ON guild.id = guild_id "
+                "WHERE guild_id = ? AND owner_id = ?",
+                payload.guild_id,
+                payload.user.id,
+            )
+
+        for (ticket_id,) in rows:
+            thread = guild.get_thread(ticket_id)
+            if thread is None:
+                log.warning("Ignoring unknown thread %d", ticket_id)
+                continue
+
+            # Message sent when owner leaves the server with open tickets
+            # {0}: The owner's mention
+            content = _("Archiving ticket as the owner ({0}) has left the server.")
+            content = await translate(content, self.bot, locale=guild.preferred_locale)
+            content = content.format(payload.user.mention)
+            await self.archive_ticket_with_message(thread, content)
+
+    async def archive_ticket_with_message(
+        self,
+        thread: discord.Thread,
+        content: str,
+    ) -> None:
+        can_lock = thread.permissions_for(thread.guild.me).manage_threads
         await thread.send(content, allowed_mentions=discord.AllowedMentions.none())
         await thread.edit(archived=True, locked=can_lock)
 
