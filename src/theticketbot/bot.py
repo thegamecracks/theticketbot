@@ -14,6 +14,7 @@ from .migrations import run_default_migrations
 from .translator import GettextTranslator
 
 if TYPE_CHECKING:
+    from .cogs.select import MessageCallback, Select
     from .config import Settings
 
 log = logging.getLogger(__name__)
@@ -52,16 +53,21 @@ class Bot(commands.Bot):
                 async with conn.transaction():
                     yield conn
 
-    def get_selected_messages(self, user_id: int) -> list[discord.Message]:
-        """Return a list of messages recently selected by a user."""
-        if TYPE_CHECKING:
-            from .cogs.select import Select
-
+    def set_message_callback(
+        self,
+        guild_id: int,
+        user_id: int,
+        callback: MessageCallback,
+    ) -> None:
+        """Set the next message callback for the given user."""
         cog = cast("Select | None", self.get_cog("Select"))
         if cog is None:
-            return []
+            return log.warning(
+                "Cannot set message callback for %d, Select cog not loaded",
+                user_id,
+            )
 
-        return cog.get_selected_messages(user_id)
+        return cog.set_message_callback(guild_id, user_id, callback)
 
     async def _maybe_load_jishaku(self) -> None:
         if not self.config.bot.allow_jishaku:

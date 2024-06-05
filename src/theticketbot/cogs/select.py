@@ -1,5 +1,6 @@
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+from typing import Any, Awaitable, Callable
 
 import discord
 from discord import app_commands
@@ -9,15 +10,18 @@ from discord.ext import commands, tasks
 from theticketbot.bot import Bot
 from theticketbot.translator import translate
 
+MessageCallback = Callable[[discord.Interaction, discord.Message], Awaitable[Any]]
+
 
 @dataclass
-class SelectedMessages:
-    timestamp: float = 0
-    messages: list[discord.Message] = field(default_factory=list)
+class MessageCommand:
+    timestamp: float
+    callback: MessageCallback
 
 
 class Select(commands.Cog):
     CLEANUP_INTERVAL = 60
+    CLEANUP_EXPIRED_AFTER = 300
     MESSAGE_EXPIRES_AFTER = 180
     MAX_SELECTED_MESSAGES = 3
 
@@ -34,16 +38,18 @@ class Select(commands.Cog):
         for menu in self.cog_menus:
             bot.tree.add_command(menu)
 
-        self._selected_messages: dict[int, SelectedMessages] = {}
+        self._message_commands: dict[tuple[int, int], MessageCommand] = {}
         self.cleanup_loop.start()
 
-    def get_selected_messages(self, user_id: int) -> list[discord.Message]:
-        """Return a list of messages recently selected by a user."""
-        queue = self._selected_messages.get(user_id)
-        if queue is None:
-            return []
-
-        return queue.messages.copy()
+    def set_message_callback(
+        self,
+        guild_id: int,
+        user_id: int,
+        callback: MessageCallback,
+    ) -> None:
+        """Set the next message callback for the given user."""
+        key = (guild_id, user_id)
+        self._message_commands[key] = MessageCommand(time.monotonic(), callback)
 
     async def cog_unload(self) -> None:
         for menu in self.cog_menus:
@@ -56,54 +62,46 @@ class Select(commands.Cog):
         interaction: discord.Interaction,
         message: discord.Message,
     ):
-        queue = self._selected_messages.setdefault(
-            interaction.user.id,
-            SelectedMessages(),
-        )
-        queue.timestamp = time.monotonic()
+        assert interaction.guild is not None
+        key = (interaction.guild.id, interaction.user.id)
+        command = self._message_commands.get(key)
 
-        if len(queue.messages) < self.MAX_SELECTED_MESSAGES:
-            queue.messages.append(message)
-
+        if command is None:
             content = _(
-                # Message sent when the user selects a message
-                # {0}: the selected message's link
-                # {1}: the total number of messages selected
-                # {2}: the time until the selected message is discarded
-                "{0}\nMessage #{1} selected! You have {2} seconds to perform "
-                "an action with this message."
+                # Message sent when selecting a message without a command
+                "You can't select a message right now! "
+                "Please use a slash command that asks for a message first."
             )
-        else:
-            queue.messages.clear()
-            queue.messages.append(message)
-
+            content = await translate(content, interaction)
+            return await interaction.response.send_message(content, ephemeral=True)
+        elif time.monotonic() > command.timestamp + self.MESSAGE_EXPIRES_AFTER:
             content = _(
-                # Message sent when the user has selected too many messages
-                # {0}: the selected message's link
-                # {1}: the total number of messages selected
-                # {2}: the time until the selected message is discarded
-                "{0}\nYou have selected too many messages! This is now message #{1}."
+                # Message sent when selecting a message too long after their last command
+                "Sorry, your last command has expired. "
+                "Please use a command again and then select this message."
             )
+            content = await translate(content, interaction)
+            return await interaction.response.send_message(content, ephemeral=True)
 
-        content = await translate(content, interaction)
-        content = content.format(
-            message.jump_url,
-            len(queue.messages),
-            self.MESSAGE_EXPIRES_AFTER,
-        )
-        await interaction.response.send_message(content, ephemeral=True)
+        del self._message_commands[key]
+        try:
+            await command.callback(interaction, message)
+        except BaseException:
+            self._message_commands.setdefault(key, command)
+            raise
 
     @tasks.loop(seconds=CLEANUP_INTERVAL)
     async def cleanup_loop(self) -> None:
         now = time.monotonic()
 
-        to_remove: list[int] = []
-        for user_id, queue in self._selected_messages.items():
-            if now > queue.timestamp + self.MESSAGE_EXPIRES_AFTER:
-                to_remove.append(user_id)
+        to_remove: list[tuple[int, int]] = []
+        cleanup_after = self.MESSAGE_EXPIRES_AFTER + self.CLEANUP_EXPIRED_AFTER
+        for key, queue in self._message_commands.items():
+            if now > queue.timestamp + cleanup_after:
+                to_remove.append(key)
 
-        for user_id in to_remove:
-            del self._selected_messages[user_id]
+        for key in to_remove:
+            del self._message_commands[key]
 
 
 async def setup(bot: Bot):

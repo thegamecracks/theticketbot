@@ -1,8 +1,11 @@
+from __future__ import annotations
+
+import functools
 import logging
 import sqlite3
 import string
 import time
-from typing import Awaitable, Callable, Iterable
+from typing import TYPE_CHECKING, Awaitable, Callable, Iterable
 
 import asqlite
 import discord
@@ -13,7 +16,11 @@ from discord.ext import commands, tasks
 
 from theticketbot.bot import Bot
 from theticketbot.database import DatabaseClient
+from theticketbot.errors import AppCommandResponse
 from theticketbot.translator import translate
+
+if TYPE_CHECKING:
+    from .select import MessageCallback
 
 DEFAULT_STARTER_CONTENT = "$author $staff"
 DEFAULT_TICKET_NAME = "$year-$month-$day $name"
@@ -328,42 +335,46 @@ class Inbox(
         per, cooldown = per_cooldown
         return cooldown.update_rate_limit(time.monotonic()) or 0
 
-    async def maybe_get_inbox_message(
+    def set_inbox_callback(
         self,
         interaction: discord.Interaction,
-    ) -> discord.Message | None:
-        messages = self.bot.get_selected_messages(interaction.user.id)
-        if len(messages) < 1:
-            content = _(
-                # Message sent when using a command without selecting an inbox message
-                "Before you can use this command, you must select an inbox "
-                "message. To do this, right click or long tap a message, "
-                "then open Apps and pick the *Select this message* command."
-            )
-            content = await translate(content, interaction)
-            return await interaction.response.send_message(content, ephemeral=True)
+        callback: MessageCallback,
+    ) -> None:
+        async def wrapper(interaction: discord.Interaction, message: discord.Message):
+            await self.check_inbox_message(interaction, message)
+            await callback(interaction, message)
 
-        inbox = messages[-1]
-        if await self.check_inbox_message(interaction, inbox):
-            return inbox
+        assert interaction.guild is not None
+        self.bot.set_message_callback(
+            interaction.guild.id,
+            interaction.user.id,
+            wrapper,
+        )
 
     async def check_inbox_message(
         self,
         interaction: discord.Interaction,
         message: discord.Message,
-    ) -> bool:
+    ) -> None:
+        assert isinstance(interaction.user, discord.Member)
+
         async with self.bot.acquire() as conn:
             row = await conn.fetchone("SELECT 1 FROM inbox WHERE id = ?", message.id)
 
-        if row is not None:
-            return True
+        if row is None:
+            # Message sent when message is not an inbox
+            # {0}: the inbox's link
+            content = await translate(_("{0} is not an inbox."), interaction)
+            content = content.format(message.jump_url)
+            raise AppCommandResponse(content)
 
-        # Message sent when message is not an inbox
-        # {0}: the inbox's link
-        content = await translate(_("{0} is not an inbox."), interaction)
-        content = content.format(message.jump_url)
-        await interaction.response.send_message(content, ephemeral=True)
-        return False
+        permissions = message.channel.permissions_for(interaction.user)
+        if not permissions.manage_guild:
+            # Message sent when a user selects an inbox with insufficient permissions
+            content = _("Sorry, you don't have the permissions to manage this inbox.")
+            content = await translate(content, interaction)
+            content = content.format(message.jump_url)
+            raise AppCommandResponse(content)
 
     @app_commands.command(
         # Subcommand name ("inbox")
@@ -406,18 +417,32 @@ class Inbox(
             content = content.format(channel.mention, missing)
             return await interaction.response.send_message(content, ephemeral=True)
 
-        messages = self.bot.get_selected_messages(interaction.user.id)
-        if len(messages) < 1:
-            content = _(
-                # Message sent when attempting to create an inbox without a message
-                "Before you can use this command, you must select a message "
-                "to be sent with the inbox. To do this, right click or long tap "
-                "a message, then open Apps and pick the *Select this message* command."
-            )
-            content = await translate(content, interaction)
-            return await interaction.response.send_message(content, ephemeral=True)
+        content = _(
+            # Message sent when the user is creating a new inbox in a channel,
+            # and the inbox needs a message to be included
+            # {0}: the channel's mention
+            "The {0} channel has been set as the destination for your new inbox. "
+            "You must now select the message you want your inbox to have. "
+            "To do this, right click or long tap a message, then open Apps "
+            "and pick the *Select this message* command."
+        )
+        content = await translate(content, interaction)
+        content = content.format(channel.mention)
+        await interaction.response.send_message(content, ephemeral=True)
+        self.bot.set_message_callback(
+            interaction.guild.id,
+            interaction.user.id,
+            functools.partial(self.create_inbox, channel=channel),
+        )
 
-        message = messages[-1]
+    async def create_inbox(
+        self,
+        interaction: discord.Interaction,
+        message: discord.Message,
+        channel: discord.TextChannel,
+    ):
+        assert interaction.guild is not None
+
         embeds = [discord.Embed()]
         files: list[discord.File] = []
 
@@ -482,7 +507,7 @@ class Inbox(
             )
             await query.set_inbox_starter_content(message.id, starter_content)
 
-        # Message sent after the user creates an inbox
+        # Message sent after a user creates an inbox
         # {0}: the inbox's link
         content = await translate(_("Your inbox has been created! {0}"), interaction)
         content = content.format(message.jump_url)
@@ -520,10 +545,26 @@ class Inbox(
             content = await translate(content, interaction)
             return await interaction.response.send_message(content, ephemeral=True)
 
-        inbox = await self.maybe_get_inbox_message(interaction)
-        if inbox is None:
-            return
+        content = _(
+            # Message sent when a user is adding staff to an inbox,
+            # and an inbox needs to be selected
+            # {0}: the staff's mention
+            "You must now select the inbox you want {0} to be staff of. "
+            "To do this, right click or long tap a message, then open Apps "
+            "and pick the *Select this message* command."
+        )
+        content = await translate(content, interaction)
+        content = content.format(staff.mention)
+        await interaction.response.send_message(content, ephemeral=True)
+        callback = functools.partial(self.add_inbox_staff, staff=staff)
+        self.set_inbox_callback(interaction, callback)
 
+    async def add_inbox_staff(
+        self,
+        interaction: discord.Interaction,
+        inbox: discord.Message,
+        staff: discord.Member | discord.Role,
+    ):
         try:
             async with self.bot.acquire() as conn:
                 await DatabaseClient(conn).add_inbox_staff(inbox.id, staff.mention)
@@ -562,10 +603,26 @@ class Inbox(
         interaction: discord.Interaction,
         staff: discord.Member | discord.Role,
     ):
-        inbox = await self.maybe_get_inbox_message(interaction)
-        if inbox is None:
-            return
+        content = _(
+            # Message sent when a user is removing staff from an inbox,
+            # and an inbox needs to be selected
+            # {0}: the staff's mention
+            "You must now select the inbox you want {0} removed from staff. "
+            "To do this, right click or long tap a message, then open Apps "
+            "and pick the *Select this message* command."
+        )
+        content = await translate(content, interaction)
+        content = content.format(staff.mention)
+        await interaction.response.send_message(content, ephemeral=True)
+        callback = functools.partial(self.remove_inbox_staff, staff=staff)
+        self.set_inbox_callback(interaction, callback)
 
+    async def remove_inbox_staff(
+        self,
+        interaction: discord.Interaction,
+        inbox: discord.Message,
+        staff: discord.Member | discord.Role,
+    ):
         async with self.bot.acquire() as conn:
             query = DatabaseClient(conn)
             success = await query.remove_inbox_staff(inbox.id, staff.mention)
@@ -592,10 +649,22 @@ class Inbox(
         description=_("List all staff members for an inbox."),
     )
     async def staff_list(self, interaction: discord.Interaction):
-        inbox = await self.maybe_get_inbox_message(interaction)
-        if inbox is None:
-            return
+        content = _(
+            # Message sent when a user is listing an inbox's staff,
+            # and an inbox needs to be selected
+            "You must now select the inbox you want to list staff for. "
+            "To do this, right click or long tap a message, then open Apps "
+            "and pick the *Select this message* command."
+        )
+        content = await translate(content, interaction)
+        await interaction.response.send_message(content, ephemeral=True)
+        self.set_inbox_callback(interaction, self.list_inbox_staff)
 
+    async def list_inbox_staff(
+        self,
+        interaction: discord.Interaction,
+        inbox: discord.Message,
+    ):
         async with self.bot.acquire() as conn:
             mentions = await DatabaseClient(conn).get_inbox_staff(inbox.id)
 
@@ -622,10 +691,22 @@ class Inbox(
         description=_("Set the starting message for new tickets."),
     )
     async def new_tickets_starter(self, interaction: discord.Interaction):
-        inbox = await self.maybe_get_inbox_message(interaction)
-        if inbox is None:
-            return
+        content = _(
+            # Message sent when a user is changing the starter message for new tickets,
+            # and an inbox needs to be selected
+            "You must now select the inbox you want to edit. "
+            "To do this, right click or long tap a message, then open Apps "
+            "and pick the *Select this message* command."
+        )
+        content = await translate(content, interaction)
+        await interaction.response.send_message(content, ephemeral=True)
+        self.set_inbox_callback(interaction, self.edit_new_tickets_starter)
 
+    async def edit_new_tickets_starter(
+        self,
+        interaction: discord.Interaction,
+        inbox: discord.Message,
+    ):
         modal = SetInboxStarterContentModal(self.bot, inbox)
         async with self.bot.acquire() as conn:
             await modal.set_defaults(conn)
@@ -639,10 +720,22 @@ class Inbox(
         description=_("Set the name for new tickets."),
     )
     async def new_tickets_name(self, interaction: discord.Interaction):
-        inbox = await self.maybe_get_inbox_message(interaction)
-        if inbox is None:
-            return
+        content = _(
+            # Message sent when a user is changing the name for new tickets,
+            # and an inbox needs to be selected
+            "You must now select the inbox you want to edit. "
+            "To do this, right click or long tap a message, then open Apps "
+            "and pick the *Select this message* command."
+        )
+        content = await translate(content, interaction)
+        await interaction.response.send_message(content, ephemeral=True)
+        self.set_inbox_callback(interaction, self.edit_new_tickets_name)
 
+    async def edit_new_tickets_name(
+        self,
+        interaction: discord.Interaction,
+        inbox: discord.Message,
+    ):
         modal = SetTicketDefaultsModal(self.bot, inbox)
         async with self.bot.acquire() as conn:
             await modal.set_defaults(conn)

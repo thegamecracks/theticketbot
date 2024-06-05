@@ -69,9 +69,10 @@ To set up an inbox, first post a message with the content you would like your
 inbox message to have. This message may include image attachments, or custom
 embeds sent by a webhook as long as the message has no content.
 
-Afterwards, right-click or long tap the message, open the Apps menu, and use
-the command `Select this message`. For a short period of time, you can use
-`/inbox create` to select a channel to post the inbox. The bot must be able
+Afterwards, use `/inbox create` to choose the channel you want your inbox posted in.
+You will then be prompted to select a message to be sent with your inbox.
+For a short period of time, you can right-click or long tap any message,
+open the Apps menu, and use `Select this message`. The bot must be able
 to view, send messages, and create private threads in that channel.
 Currently, there are no limits on the number of inboxes your server can have.
 
@@ -113,8 +114,9 @@ For now, you cannot change the default invite behaviour for new tickets.
 ## Customization
 
 There are various settings that can be customized for each inbox.
-Before you can use the below commands, you must first select an inbox,
-i.e. the message that has the Create Ticket button.
+When you use the below commands, you will be prompted to select the message
+of the inbox that you want to change, i.e. the message that has the
+Create Ticket button.
 
 - `/inbox staff add <staff>`
 
