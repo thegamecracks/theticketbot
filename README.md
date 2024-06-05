@@ -77,7 +77,7 @@ Currently, there are no limits on the number of inboxes your server can have.
 
 Tickets are managed just like threads. Closing them archives the thread,
 preserving their messages without needing a separate transcript. Staff with
-`MANAGE_THREADS` permissions can also add and remove members afterwards,
+the Manage Threads permission can also add and remove members afterwards,
 useful for bringing in relevant members or for privating the thread to
 continue internal discussions. Tickets can be renamed to make it easier to
 search for them in the future, and can be deleted permanently if desired.
@@ -88,6 +88,27 @@ If the owner leaves or is removed from their ticket, the bot will automatically
 archive the ticket. Staff are free to re-open it afterwards.
 The bot will also lock the ticket to prevent further discussion if it has
 the Manage Threads permission, which can be set on a per-channel basis.
+
+Note that if you have multiple inboxes in one channel, any staff with the
+Manage Threads permission will be able to view and manage all threads in
+that channel, even if they aren't listed as staff for that inbox.
+If maintaining privacy is important, inboxes should be organized into
+different channels according to which staff should be allowed to view
+the threads of those inboxes. This layout can look like:
+
+- `#mod-tickets` (moderators have Manage Threads)
+  - `General Support`
+  - `Member Reports`
+- `#admin-tickets` (admins have Manage Threads)
+  - `Ban Appeals`
+  - `Feedback And Suggestions`
+  - `Staff Applications`
+
+Alternatively, you can choose to not grant the Manage Threads permission
+to staff. This will prevent them from being able to invite other members.
+You can still manually edit a thread to allow anyone to invite members,
+but this also applies to the ticket owner which may not be desired.
+For now, you cannot change the default invite behaviour for new tickets.
 
 ## Customization
 
