@@ -236,7 +236,7 @@ class InboxStaffView(discord.ui.View):
 
         if len(added) == 0 and len(removed) == 0:
             # Message sent when attempting to select the same inbox staff
-            content = _("You have not made any changes to staff!")
+            content = _("You have not made any changes!")
             content = await translate(content, interaction)
             return await interaction.response.send_message(content, ephemeral=True)
 
