@@ -374,6 +374,12 @@ class SetTicketDefaultsModal(discord.ui.Modal, title="New Tickets"):
         await interaction.response.send_message(content, ephemeral=True)
 
 
+def looks_like_an_inbox(bot: Bot, message: discord.Message) -> bool:
+    # Good enough as a heuristic
+    assert bot.user is not None
+    return message.author.id == bot.user.id and len(message.components) > 0
+
+
 class InboxMessageParams(TypedDict):
     embeds: list[discord.Embed]
     files: list[discord.File]
@@ -454,12 +460,22 @@ class Inbox(
             row = await conn.fetchone("SELECT 1 FROM inbox WHERE id = ?", message.id)
 
         if row is None:
-            content = _(
-                # Message sent when selecting a non-inbox message
-                # {0}: the message's link
-                "Sorry, {0} is not an inbox. The message you select should have "
-                "a **Create Ticket** button under it."
-            )
+            if looks_like_an_inbox(self.bot, message):
+                content = _(
+                    # Message sent when selecting a non-inbox message
+                    # that looks like the message used to be an inbox
+                    # {0}: the message's link
+                    "Sorry, {0} is no longer recognized as an inbox "
+                    "and must be re-created."
+                )
+            else:
+                content = _(
+                    # Message sent when selecting a non-inbox message
+                    # {0}: the message's link
+                    "Sorry, {0} is not an inbox. The message you select should have "
+                    "a **Create Ticket** button under it."
+                )
+
             content = await translate(content, interaction)
             content = content.format(message.jump_url)
             raise AppCommandResponse(content)
