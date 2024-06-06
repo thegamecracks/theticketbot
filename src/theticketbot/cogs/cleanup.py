@@ -26,6 +26,11 @@ class Cleanup(commands.Cog):
         async with self.bot.acquire() as conn:
             await conn.execute("DELETE FROM channel WHERE id = ?", channel.id)
 
+    @commands.Cog.listener("on_raw_thread_delete")
+    async def remove_thread(self, payload: discord.RawThreadDeleteEvent):
+        async with self.bot.acquire() as conn:
+            await conn.execute("DELETE FROM channel WHERE id = ?", payload.thread_id)
+
     @commands.Cog.listener("on_raw_message_delete")
     async def remove_message(self, payload: discord.RawMessageDeleteEvent):
         async with self.bot.acquire() as conn:
