@@ -118,9 +118,9 @@ When you use the below commands, you will be prompted to select the message
 of the inbox that you want to change, i.e. the message that has the
 Create Ticket button.
 
-- `/inbox staff add <staff>`
+- `/inbox staff`
 
-  Add members or roles to be considered staff for an inbox.
+  Inspect and manage staff members/roles for an inbox.
 
 - `/inbox new-tickets starter`
 
