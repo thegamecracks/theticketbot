@@ -607,8 +607,7 @@ class Inbox(
         )
         content = await translate(content, interaction)
         await interaction.response.send_message(content, ephemeral=True)
-        callback = functools.partial(self.manage_inbox_staff)
-        self.set_inbox_callback(interaction, callback)
+        self.set_inbox_callback(interaction, self.manage_inbox_staff)
 
     async def manage_inbox_staff(
         self,
