@@ -87,6 +87,7 @@ class Select(commands.Cog):
         try:
             await command.callback(interaction, message)
         except BaseException:
+            command.timestamp = time.monotonic()
             self._message_commands.setdefault(key, command)
             raise
 
