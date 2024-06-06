@@ -454,9 +454,13 @@ class Inbox(
             row = await conn.fetchone("SELECT 1 FROM inbox WHERE id = ?", message.id)
 
         if row is None:
-            # Message sent when selecting a non-inbox message
-            # {0}: the inbox's link
-            content = await translate(_("{0} is not an inbox."), interaction)
+            content = _(
+                # Message sent when selecting a non-inbox message
+                # {0}: the message's link
+                "Sorry, {0} is not an inbox. The message you select should have "
+                "a **Create Ticket** button under it."
+            )
+            content = await translate(content, interaction)
             content = content.format(message.jump_url)
             raise AppCommandResponse(content)
 
