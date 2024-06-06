@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import functools
 import logging
-import sqlite3
+import re
 import string
 import time
 from typing import TYPE_CHECKING, Awaitable, Callable, Iterable
@@ -24,6 +24,7 @@ if TYPE_CHECKING:
 
 DEFAULT_STARTER_CONTENT = "$author $staff"
 DEFAULT_TICKET_NAME = "$year-$month-$day $name"
+MENTION_PATTERN = re.compile(r"<(@|@&)(\d+)>")
 
 InboxRatelimit = Callable[[discord.Message, discord.Member], Awaitable[float]]
 
@@ -208,6 +209,66 @@ class InboxView(discord.ui.View):
         )
         assert row is not None
         return row[0]
+
+
+class InboxStaffView(discord.ui.View):
+    def __init__(self, bot: Bot, inbox_id: int, staff: set[str]) -> None:
+        super().__init__(timeout=None)
+        self.bot = bot
+        self.inbox_id = inbox_id
+        self.staff = staff
+        self.refresh()
+
+    def refresh(self) -> None:
+        staff = [mention_to_snowflake(staff) for staff in self.staff]
+        self.on_staff_select.default_values = staff
+
+    @discord.ui.select(cls=discord.ui.MentionableSelect, min_values=0, max_values=10)
+    async def on_staff_select(
+        self,
+        interaction: discord.Interaction,
+        select: discord.ui.MentionableSelect,
+    ):
+        assert interaction.guild is not None
+
+        if interaction.guild.roles[0] in select.values:
+            # Message sent when attempting to add everyone to inbox staff
+            content = _("The everyone role cannot be added as staff.")
+            content = await translate(content, interaction)
+            return await interaction.response.send_message(content, ephemeral=True)
+
+        ordered_mentions = [m.mention for m in select.values]
+        mentions = set(ordered_mentions)
+        added = mentions - self.staff
+        removed = self.staff - mentions
+
+        if len(added) == 0 and len(removed) == 0:
+            # Message sent when attempting to select the same inbox staff
+            content = _("You have not made any changes to staff!")
+            content = await translate(content, interaction)
+            return await interaction.response.send_message(content, ephemeral=True)
+
+        async with self.bot.acquire() as conn:
+            query = DatabaseClient(conn)
+            for mention in added:
+                await query.add_inbox_staff(self.inbox_id, mention)
+            for mention in removed:
+                await query.remove_inbox_staff(self.inbox_id, mention)
+
+        self.staff = mentions
+        await interaction.response.defer()
+
+
+def mention_to_snowflake(mention: str) -> discord.Object:
+    m = MENTION_PATTERN.fullmatch(mention)
+    if m is None:
+        raise ValueError(f"Invalid user/role mention: {mention!r}")
+
+    if m[1] == "@":
+        return discord.Object(int(m[2]), type=discord.User)
+    elif m[1] == "@&":
+        return discord.Object(int(m[2]), type=discord.Role)
+    raise RuntimeError(f"Unsupported mention type {m[1]!r}")
 
 
 class SetInboxStarterContentModal(discord.ui.Modal, title="Starter Message"):
@@ -513,169 +574,45 @@ class Inbox(
         content = content.format(message.jump_url)
         await interaction.followup.send(content, ephemeral=True)
 
-    staff = app_commands.Group(
-        # Subcommand group name ("inbox")
+    @app_commands.command(
+        # Subcommand name ("inbox")
         name=_("staff"),
-        # Subcommand group description ("inbox staff")
+        # Subcommand description ("inbox staff")
         description=_("Manage staff for an inbox."),
     )
-
-    @staff.command(
-        # Subcommand name ("inbox staff")
-        name=_("add"),
-        # Subcommand description ("inbox staff add")
-        description=_("Add a staff member or role for an inbox."),
-    )
-    @app_commands.rename(
-        # Subcommand parameter name ("inbox staff add")
-        staff=_("staff"),
-    )
-    @app_commands.describe(
-        # Subcommand parameter description ("inbox staff add <staff>")
-        staff=_("The staff member or role to add."),
-    )
-    async def staff_add(
-        self,
-        interaction: discord.Interaction,
-        staff: discord.Member | discord.Role,
-    ):
-        if isinstance(staff, discord.Role) and staff == staff.guild.roles[0]:
-            # Message sent when attempting to add everyone to inbox staff
-            content = _("The everyone role cannot be added as staff.")
-            content = await translate(content, interaction)
-            return await interaction.response.send_message(content, ephemeral=True)
-
+    async def staff(self, interaction: discord.Interaction):
         content = _(
-            # Message sent when a user is adding staff to an inbox,
+            # Message sent when a user is managing staff for an inbox,
             # and an inbox needs to be selected
-            # {0}: the staff's mention
-            "You must now select the inbox you want {0} to be staff of. "
+            "You must now select the inbox you want to manage staff for. "
             "To do this, right click or long tap a message, then open Apps "
             "and pick the *Select this message* command."
         )
         content = await translate(content, interaction)
-        content = content.format(staff.mention)
         await interaction.response.send_message(content, ephemeral=True)
-        callback = functools.partial(self.add_inbox_staff, staff=staff)
+        callback = functools.partial(self.manage_inbox_staff)
         self.set_inbox_callback(interaction, callback)
 
-    async def add_inbox_staff(
-        self,
-        interaction: discord.Interaction,
-        inbox: discord.Message,
-        staff: discord.Member | discord.Role,
-    ):
-        try:
-            async with self.bot.acquire() as conn:
-                await DatabaseClient(conn).add_inbox_staff(inbox.id, staff.mention)
-        except sqlite3.IntegrityError:
-            # Message sent when adding an already existing inbox staff
-            # {0}: the staff's mention
-            # {1}: the inbox's link
-            content = _("{0} is already staff for inbox {1} .")
-            content = await translate(content, interaction)
-            content = content.format(staff.mention, inbox.jump_url)
-            return await interaction.response.send_message(content, ephemeral=True)
-
-        # Message sent when adding staff to an inbox
-        # {0}: the staff's mention
-        # {1}: the inbox's link
-        content = await translate(_("{0} has been added to inbox {1} !"), interaction)
-        content = content.format(staff.mention, inbox.jump_url)
-        await interaction.response.send_message(content, ephemeral=True)
-
-    @staff.command(
-        # Subcommand name ("inbox staff")
-        name=_("remove"),
-        # Subcommand description ("inbox staff remove")
-        description=_("Remove a staff member or role from an inbox."),
-    )
-    @app_commands.rename(
-        # Subcommand parameter name ("inbox staff remove")
-        staff=_("staff"),
-    )
-    @app_commands.describe(
-        # Subcommand parameter description ("inbox staff remove <staff>")
-        staff=_("The staff member or role to remove."),
-    )
-    async def staff_remove(
-        self,
-        interaction: discord.Interaction,
-        staff: discord.Member | discord.Role,
-    ):
-        content = _(
-            # Message sent when a user is removing staff from an inbox,
-            # and an inbox needs to be selected
-            # {0}: the staff's mention
-            "You must now select the inbox you want {0} removed from staff. "
-            "To do this, right click or long tap a message, then open Apps "
-            "and pick the *Select this message* command."
-        )
-        content = await translate(content, interaction)
-        content = content.format(staff.mention)
-        await interaction.response.send_message(content, ephemeral=True)
-        callback = functools.partial(self.remove_inbox_staff, staff=staff)
-        self.set_inbox_callback(interaction, callback)
-
-    async def remove_inbox_staff(
-        self,
-        interaction: discord.Interaction,
-        inbox: discord.Message,
-        staff: discord.Member | discord.Role,
-    ):
-        async with self.bot.acquire() as conn:
-            query = DatabaseClient(conn)
-            success = await query.remove_inbox_staff(inbox.id, staff.mention)
-
-        if success:
-            # Message sent when removing staff from an inbox
-            # {0}: the staff's mention
-            # {1}: the inbox's link
-            content = _("{0} has been removed from inbox {1} !")
-        else:
-            # Message sent when removing non-existent staff from an inbox
-            # {0}: the staff's mention
-            # {1}: the inbox's link
-            content = _("{0} is not staff of inbox {1} .")
-
-        content = await translate(content, interaction)
-        content = content.format(staff.mention, inbox.jump_url)
-        await interaction.response.send_message(content, ephemeral=True)
-
-    @staff.command(
-        # Subcommand name ("inbox staff")
-        name=_("list"),
-        # Subcommand description ("inbox staff list")
-        description=_("List all staff members for an inbox."),
-    )
-    async def staff_list(self, interaction: discord.Interaction):
-        content = _(
-            # Message sent when a user is listing an inbox's staff,
-            # and an inbox needs to be selected
-            "You must now select the inbox you want to list staff for. "
-            "To do this, right click or long tap a message, then open Apps "
-            "and pick the *Select this message* command."
-        )
-        content = await translate(content, interaction)
-        await interaction.response.send_message(content, ephemeral=True)
-        self.set_inbox_callback(interaction, self.list_inbox_staff)
-
-    async def list_inbox_staff(
+    async def manage_inbox_staff(
         self,
         interaction: discord.Interaction,
         inbox: discord.Message,
     ):
         async with self.bot.acquire() as conn:
-            mentions = await DatabaseClient(conn).get_inbox_staff(inbox.id)
+            staff = await DatabaseClient(conn).get_inbox_staff(inbox.id)
 
-        if len(mentions) > 0:
-            mentions = ", ".join(mentions)
-            await interaction.response.send_message(mentions, ephemeral=True)
-        else:
-            # Message sent when no staff can be listed for an inbox
-            content = _("This inbox does not have any staff.")
-            content = await translate(content, interaction)
-            await interaction.response.send_message(content, ephemeral=True)
+        # Message sent when managing staff for an inbox
+        # {0}: the inbox's link
+        content = _("Staff for {0} :")
+        content = await translate(content, interaction)
+        content = content.format(inbox.jump_url)
+        view = InboxStaffView(self.bot, inbox.id, set(staff))
+
+        return await interaction.response.send_message(
+            content,
+            ephemeral=True,
+            view=view,
+        )
 
     new_tickets = app_commands.Group(
         # Subcommand group name ("inbox")
