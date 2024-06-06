@@ -5,7 +5,7 @@ import logging
 import re
 import string
 import time
-from typing import TYPE_CHECKING, Awaitable, Callable, Iterable
+from typing import TYPE_CHECKING, Awaitable, Callable, Iterable, Sequence
 
 import asqlite
 import discord
@@ -144,7 +144,7 @@ class InboxView(discord.ui.View):
 
             async with self.bot.acquire() as conn:
                 query = DatabaseClient(conn)
-                mentions = await query.get_inbox_staff(message.id)
+                mentions = await get_and_filter_inbox_staff(query, guild, message.id)
                 mentions = " ".join(mentions)
 
                 starter_content = await query.get_inbox_starter_content(message.id)
@@ -209,6 +209,31 @@ class InboxView(discord.ui.View):
         )
         assert row is not None
         return row[0]
+
+
+async def get_and_filter_inbox_staff(
+    query: DatabaseClient,
+    guild: discord.Guild,
+    inbox_id: int,
+) -> list[str]:
+    mentions = await query.get_inbox_staff(inbox_id)
+    return await filter_and_update_inbox_staff(query, guild, inbox_id, mentions)
+
+
+async def filter_and_update_inbox_staff(
+    query: DatabaseClient,
+    guild: discord.Guild,
+    inbox_id: int,
+    mentions: Sequence[str],
+) -> list[str]:
+    role_mentions = set(m for m in mentions if m.startswith("<@&"))
+    current_roles = {role.mention for role in guild.roles}
+    removed = role_mentions - current_roles
+
+    for mention in removed:
+        await query.remove_inbox_staff(inbox_id, mention)
+
+    return [m for m in mentions if m.startswith("<@&") and m not in removed]
 
 
 class InboxStaffView(discord.ui.View):
@@ -590,8 +615,10 @@ class Inbox(
         interaction: discord.Interaction,
         inbox: discord.Message,
     ):
+        assert interaction.guild is not None
         async with self.bot.acquire() as conn:
-            staff = await DatabaseClient(conn).get_inbox_staff(inbox.id)
+            query = DatabaseClient(conn)
+            staff = await get_and_filter_inbox_staff(query, interaction.guild, inbox.id)
 
         # Message sent when managing staff for an inbox
         # {0}: the inbox's link
