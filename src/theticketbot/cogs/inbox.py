@@ -64,7 +64,7 @@ class InboxView(discord.ui.View):
             row = await conn.fetchone("SELECT 1 FROM inbox WHERE id = ?", message.id)
             if row is None:
                 content = _(
-                    # Message sent when a user tries using a deleted inbox
+                    # Message sent when an inbox is not recognized
                     "Sorry, this inbox is no longer recognized and must be "
                     "re-created. Please notify a server admin!"
                 )
@@ -260,7 +260,7 @@ class InboxStaffView(discord.ui.View):
         removed = self.staff - mentions
 
         if len(added) == 0 and len(removed) == 0:
-            # Message sent when attempting to select the same inbox staff
+            # Message sent when submitting no changes to inbox staff
             content = _("You have not made any changes!")
             content = await translate(content, interaction)
             return await interaction.response.send_message(content, ephemeral=True)
@@ -305,9 +305,9 @@ class SetInboxStarterContentModal(discord.ui.Modal, title="Starter Message"):
         async def t(s: _) -> str:
             return await translate(s, self.bot, locale=locale)
 
-        # Modal title for setting inbox starter
+        # Modal title for changing an inbox's starter message
         self.title = await t(_("Starter Message"))
-        # Modal text input label for inbox starter content
+        # Modal text input label for an inbox's starter message content
         self.content.label = await t(_("Content"))
 
     async def set_defaults(self, conn: asqlite.Connection) -> None:
@@ -321,7 +321,7 @@ class SetInboxStarterContentModal(discord.ui.Modal, title="Starter Message"):
             query = DatabaseClient(conn)
             await query.set_inbox_starter_content(self.inbox.id, self.content.value)
 
-        # Message sent when setting inbox starter content
+        # Message sent when an inbox's starter message is successfully changed
         # {0}: the inbox's link
         content = _("{0} 's starting message has been set!")
         content = await translate(content, interaction)
@@ -341,7 +341,7 @@ class SetTicketDefaultsModal(discord.ui.Modal, title="New Tickets"):
         async def t(s: _) -> str:
             return await translate(s, self.bot, locale=locale)
 
-        # Modal title for setting new ticket defaults
+        # Modal title for changing an inbox's defaults for new tickets
         self.title = await t(_("New Tickets"))
         # Modal text input label for ticket names
         self.name.label = await t(_("Name"))
@@ -357,7 +357,7 @@ class SetTicketDefaultsModal(discord.ui.Modal, title="New Tickets"):
             query = DatabaseClient(conn)
             await query.set_inbox_default_ticket_name(self.inbox.id, self.name.value)
 
-        # Message sent when setting new ticket defaults
+        # Message sent when an inbox's ticket defaults were successfully changed
         # {0}: the inbox's link
         content = _("{0} 's ticket defaults have been set!")
         content = await translate(content, interaction)
@@ -440,7 +440,7 @@ class Inbox(
             row = await conn.fetchone("SELECT 1 FROM inbox WHERE id = ?", message.id)
 
         if row is None:
-            # Message sent when message is not an inbox
+            # Message sent when selecting a non-inbox message
             # {0}: the inbox's link
             content = await translate(_("{0} is not an inbox."), interaction)
             content = content.format(message.jump_url)
@@ -531,7 +531,7 @@ class Inbox(
         if sum(a.size for a in message.attachments) > max_attachment_size:
             content = _(
                 # Message sent when attempting to create an inbox with too large attachments
-                # {0}: The maximum filesize allowed
+                # {0}: the maximum cumulative filesize
                 "The message's attachments are too large! "
                 "The total size must be under {0}."
             )
@@ -578,7 +578,7 @@ class Inbox(
             )
 
             starter_content = await translate(
-                # The default starter content for new tickets
+                # The default starter message content for new tickets
                 _("$author Thank you for creating a ticket!\n$staff"),
                 interaction,
                 locale=interaction.guild.preferred_locale,
@@ -620,7 +620,7 @@ class Inbox(
             query = DatabaseClient(conn)
             staff = await get_and_filter_inbox_staff(query, interaction.guild, inbox.id)
 
-        # Message sent when managing staff for an inbox
+        # Message sent above select menus when presenting an inbox's staff
         # {0}: the inbox's link
         content = _("Staff for {0} :")
         content = await translate(content, interaction)

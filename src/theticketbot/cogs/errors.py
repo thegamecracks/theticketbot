@@ -144,6 +144,7 @@ class PrefixErrorHandler(ErrorHandler[Context]):
         ErrorResponse(
             commands.CommandOnCooldown,
             # Error response for command on cooldown
+            # {0}: an exception containing the duration to wait in .retry_after
             _("This command is on cooldown for {0.retry_after:.1f}s."),
             show_traceback=False,
         ),
@@ -162,6 +163,7 @@ class PrefixErrorHandler(ErrorHandler[Context]):
         ErrorResponse(
             commands.UserInputError,
             # Error response for failing to parse the user's input
+            # {0}: the error description
             _("An error occurred with your input: ```py\n{0}```"),
             show_traceback=True,
         ),
@@ -200,6 +202,7 @@ class TreeErrorHandler(ErrorHandler[discord.Interaction]):
         ErrorResponse(
             app_commands.CommandOnCooldown,
             # Error response for command on cooldown
+            # {0}: an exception containing the duration to wait in .retry_after
             _("This command is on cooldown for {0.retry_after:.1f}s."),
             show_traceback=False,
         ),
@@ -212,6 +215,7 @@ class TreeErrorHandler(ErrorHandler[discord.Interaction]):
         ErrorResponse(
             app_commands.TransformerError,
             # Error response for failing to parse the user's input
+            # {0}: the error description
             _("An error occurred with your input: ```py\n{0}```"),
             show_traceback=True,
         ),

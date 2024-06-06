@@ -26,7 +26,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-06 07:32-0400\n"
+"POT-Creation-Date: 2024-06-06 12:19-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -46,23 +46,25 @@ msgid ""
 msgstr ""
 
 #. Error response for command on cooldown
-#: src/theticketbot/cogs/errors.py:147 src/theticketbot/cogs/errors.py:203
+#. {0}: an exception containing the duration to wait in .retry_after
+#: src/theticketbot/cogs/errors.py:148 src/theticketbot/cogs/errors.py:206
 #, python-brace-format
 msgid "This command is on cooldown for {0.retry_after:.1f}s."
 msgstr ""
 
 #. Error response for exceeding maximum concurrent users of a command
-#: src/theticketbot/cogs/errors.py:153
+#: src/theticketbot/cogs/errors.py:154
 msgid "Too many people are using this command. Please try again later."
 msgstr ""
 
 #. Error response for not passing all checks required to use a command
-#: src/theticketbot/cogs/errors.py:159 src/theticketbot/cogs/errors.py:209
+#: src/theticketbot/cogs/errors.py:160 src/theticketbot/cogs/errors.py:212
 msgid "One or more checks failed for this command."
 msgstr ""
 
 #. Error response for failing to parse the user's input
-#: src/theticketbot/cogs/errors.py:165 src/theticketbot/cogs/errors.py:215
+#. {0}: the error description
+#: src/theticketbot/cogs/errors.py:167 src/theticketbot/cogs/errors.py:219
 #, python-brace-format
 msgid ""
 "An error occurred with your input: ```py\n"
@@ -70,12 +72,12 @@ msgid ""
 msgstr ""
 
 #. Error response for an unexpected failure in a command
-#: src/theticketbot/cogs/errors.py:171 src/theticketbot/cogs/errors.py:227
+#: src/theticketbot/cogs/errors.py:173 src/theticketbot/cogs/errors.py:231
 msgid "An unknown error occurred while running this command."
 msgstr ""
 
 #. Error response for using a slash command not recognized by the bot
-#: src/theticketbot/cogs/errors.py:221
+#: src/theticketbot/cogs/errors.py:225
 msgid "The bot currently does not recognize this command."
 msgstr ""
 
@@ -84,7 +86,7 @@ msgstr ""
 msgid "Create Ticket"
 msgstr ""
 
-#. Message sent when a user tries using a deleted inbox
+#. Message sent when an inbox is not recognized
 #: src/theticketbot/cogs/inbox.py:68
 msgid ""
 "Sorry, this inbox is no longer recognized and must be re-created. Please "
@@ -138,29 +140,29 @@ msgstr ""
 msgid "Your ticket is ready! {0}"
 msgstr ""
 
-#. Message sent when attempting to select the same inbox staff
+#. Message sent when submitting no changes to inbox staff
 #: src/theticketbot/cogs/inbox.py:264
 msgid "You have not made any changes!"
 msgstr ""
 
-#. Modal title for setting inbox starter
+#. Modal title for changing an inbox's starter message
 #: src/theticketbot/cogs/inbox.py:309
 msgid "Starter Message"
 msgstr ""
 
-#. Modal text input label for inbox starter content
+#. Modal text input label for an inbox's starter message content
 #: src/theticketbot/cogs/inbox.py:311
 msgid "Content"
 msgstr ""
 
-#. Message sent when setting inbox starter content
+#. Message sent when an inbox's starter message is successfully changed
 #. {0}: the inbox's link
 #: src/theticketbot/cogs/inbox.py:326
 #, python-brace-format
 msgid "{0} 's starting message has been set!"
 msgstr ""
 
-#. Modal title for setting new ticket defaults
+#. Modal title for changing an inbox's defaults for new tickets
 #: src/theticketbot/cogs/inbox.py:345
 msgid "New Tickets"
 msgstr ""
@@ -170,7 +172,7 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#. Message sent when setting new ticket defaults
+#. Message sent when an inbox's ticket defaults were successfully changed
 #. {0}: the inbox's link
 #: src/theticketbot/cogs/inbox.py:362
 #, python-brace-format
@@ -187,7 +189,7 @@ msgstr ""
 msgid "Manage the server's ticket inboxes."
 msgstr ""
 
-#. Message sent when message is not an inbox
+#. Message sent when selecting a non-inbox message
 #. {0}: the inbox's link
 #: src/theticketbot/cogs/inbox.py:445
 #, python-brace-format
@@ -240,14 +242,14 @@ msgid ""
 msgstr ""
 
 #. Message sent when attempting to create an inbox with too large attachments
-#. {0}: The maximum filesize allowed
+#. {0}: the maximum cumulative filesize
 #: src/theticketbot/cogs/inbox.py:535
 #, python-brace-format
 msgid ""
 "The message's attachments are too large! The total size must be under {0}."
 msgstr ""
 
-#. The default starter content for new tickets
+#. The default starter message content for new tickets
 #: src/theticketbot/cogs/inbox.py:582
 msgid ""
 "$author Thank you for creating a ticket!\n"
@@ -280,7 +282,7 @@ msgid ""
 "message* command."
 msgstr ""
 
-#. Message sent when managing staff for an inbox
+#. Message sent above select menus when presenting an inbox's staff
 #. {0}: the inbox's link
 #: src/theticketbot/cogs/inbox.py:625
 #, python-brace-format
