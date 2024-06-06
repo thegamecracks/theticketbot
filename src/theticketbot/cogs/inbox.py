@@ -229,14 +229,6 @@ class InboxStaffView(discord.ui.View):
         interaction: discord.Interaction,
         select: discord.ui.MentionableSelect,
     ):
-        assert interaction.guild is not None
-
-        if interaction.guild.roles[0] in select.values:
-            # Message sent when attempting to add everyone to inbox staff
-            content = _("The everyone role cannot be added as staff.")
-            content = await translate(content, interaction)
-            return await interaction.response.send_message(content, ephemeral=True)
-
         ordered_mentions = [m.mention for m in select.values]
         mentions = set(ordered_mentions)
         added = mentions - self.staff
