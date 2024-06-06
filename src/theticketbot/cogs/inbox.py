@@ -5,7 +5,16 @@ import logging
 import re
 import string
 import time
-from typing import TYPE_CHECKING, Awaitable, Callable, Iterable, Sequence
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Awaitable,
+    Callable,
+    Iterable,
+    Sequence,
+    TypedDict,
+    cast,
+)
 
 import asqlite
 import discord
@@ -365,6 +374,11 @@ class SetTicketDefaultsModal(discord.ui.Modal, title="New Tickets"):
         await interaction.response.send_message(content, ephemeral=True)
 
 
+class InboxMessageParams(TypedDict):
+    embeds: list[discord.Embed]
+    files: list[discord.File]
+
+
 @app_commands.default_permissions(manage_guild=True)
 @app_commands.guild_only()
 class Inbox(
@@ -521,50 +535,18 @@ class Inbox(
     ):
         assert interaction.guild is not None
 
-        embeds = [discord.Embed()]
-        files: list[discord.File] = []
-
-        if message.content != "":
-            embeds[0].description = message.content
-
-        max_attachment_size = self.bot.config.bot.inbox.max_attachment_size
-        if sum(a.size for a in message.attachments) > max_attachment_size:
-            content = _(
-                # Message sent when attempting to create an inbox with too large attachments
-                # {0}: the maximum cumulative filesize
-                "The message's attachments are too large! "
-                "The total size must be under {0}."
-            )
-            content = await translate(content, interaction)
-            content = content.format(humanize.naturalsize(max_attachment_size))
-            return await interaction.response.send_message(content, ephemeral=True)
-
-        embeds_copied = False
-        if len(embeds[0]) == 0 and len(message.embeds) > 0:
-            embeds.clear()
-            embeds.extend(embed.copy() for embed in message.embeds)
-            embeds_copied = True
-
-        await interaction.response.defer(ephemeral=True)
-
-        url = channel.jump_url
-        for attachment in message.attachments:
-            f = await attachment.to_file()
-            files.append(f)
-            image_url = f"attachment://{f.filename}"
-
-            if embeds_copied:
-                pass
-            elif embeds[0].url is None:
-                embeds[0].url = url
-                embeds[0].set_image(url=image_url)
-            else:
-                embeds.append(discord.Embed(url=url).set_image(url=image_url))
+        kwargs = await self.create_inbox_message(
+            interaction,
+            message,
+            embed_url=channel.jump_url,
+        )
+        if kwargs is None:
+            return
 
         view = self.create_inbox_view()
         await view.localize(interaction.guild.preferred_locale)
 
-        message = await channel.send(embeds=embeds, files=files, view=view)
+        message = await channel.send(view=view, **kwargs)
         assert message.guild is not None
 
         self._inbox_views[message.id] = view
@@ -589,6 +571,132 @@ class Inbox(
         # {0}: the inbox's link
         content = await translate(_("Your inbox has been created! {0}"), interaction)
         content = content.format(message.jump_url)
+        await interaction.followup.send(content, ephemeral=True)
+
+    async def create_inbox_message(
+        self,
+        interaction: discord.Interaction,
+        message: discord.Message,
+        *,
+        embed_url: str | None = None,
+    ) -> InboxMessageParams | None:
+        embeds = [discord.Embed()]
+        files: list[discord.File] = []
+
+        if message.content != "":
+            embeds[0].description = message.content
+
+        max_attachment_size = self.bot.config.bot.inbox.max_attachment_size
+        if sum(a.size for a in message.attachments) > max_attachment_size:
+            content = _(
+                # Message sent when attempting to create an inbox with too large attachments
+                # {0}: the maximum cumulative filesize
+                "The message's attachments are too large! "
+                "The total size must be under {0}."
+            )
+            content = await translate(content, interaction)
+            content = content.format(humanize.naturalsize(max_attachment_size))
+            await interaction.response.send_message(content, ephemeral=True)
+            return
+
+        embeds_copied = False
+        if len(embeds[0]) == 0 and len(message.embeds) > 0:
+            embeds.clear()
+            embeds.extend(embed.copy() for embed in message.embeds)
+            embeds_copied = True
+
+        await interaction.response.defer(ephemeral=True)
+
+        url = embed_url or message.channel.jump_url
+        for attachment in message.attachments:
+            f = await attachment.to_file()
+            files.append(f)
+            image_url = f"attachment://{f.filename}"
+
+            if embeds_copied:
+                pass
+            elif embeds[0].url is None:
+                embeds[0].url = url
+                embeds[0].set_image(url=image_url)
+            else:
+                embeds.append(discord.Embed(url=url).set_image(url=image_url))
+
+        return {"embeds": embeds, "files": files}
+
+    @app_commands.command(
+        # Subcommand name ("inbox")
+        name=_("message"),
+        # Subcommand description ("inbox message")
+        description=_("Edit the message for an inbox."),
+    )
+    async def message(self, interaction: discord.Interaction):
+        content = _(
+            # Message sent when a user is editing an inbox's message,
+            # and an inbox needs to be selected
+            "You must now select the inbox you want to edit. "
+            "To do this, right click or long tap a message, then open Apps "
+            "and pick the *Select this message* command."
+        )
+        content = await translate(content, interaction)
+        await interaction.response.send_message(content, ephemeral=True)
+        self.set_inbox_callback(interaction, self.select_message_to_edit_inbox)
+
+    async def select_message_to_edit_inbox(
+        self,
+        interaction: discord.Interaction,
+        inbox: discord.Message,
+    ):
+        assert interaction.guild is not None
+        guild_id = interaction.guild.id
+        user_id = interaction.user.id
+
+        # Message sent when a user is editing an inbox's message,
+        # and a second message needs to be selected to copy its contents
+        # {0}: the inbox's link
+        content = _("{0} will be edited. Please select the message you want to copy.")
+        content = await translate(content, interaction)
+        content = content.format(inbox.jump_url)
+        await interaction.response.send_message(content, ephemeral=True)
+        callback = functools.partial(self.edit_inbox_message, inbox=inbox)
+        self.bot.set_message_callback(guild_id, user_id, callback)
+
+    async def edit_inbox_message(
+        self,
+        interaction: discord.Interaction,
+        message: discord.Message,
+        inbox: discord.Message,
+    ):
+        assert interaction.guild is not None
+
+        if message == inbox:
+            content = _(
+                # Message sent when a user tries to edit an inbox message with itself
+                "The inbox message cannot be edited with itself. "
+                "Please select **another** message you want to copy."
+            )
+            raise AppCommandResponse(content)
+
+        kwargs = await self.create_inbox_message(
+            interaction,
+            message,
+            embed_url=inbox.channel.jump_url,
+        )
+        if kwargs is None:
+            return
+
+        kwargs = cast(dict[str, Any], kwargs)
+        kwargs["attachments"] = kwargs.pop("files")
+
+        # In case the guild locale changed, re-edit the view as well
+        view = self.create_inbox_view()
+        await view.localize(interaction.guild.preferred_locale)
+        await inbox.edit(view=view, **kwargs)
+        self._inbox_views[inbox.id] = view
+
+        # Message sent after a user edits an inbox's message
+        # {0}: the inbox's link
+        content = await translate(_("{0} has been updated!"), interaction)
+        content = content.format(inbox.jump_url)
         await interaction.followup.send(content, ephemeral=True)
 
     @app_commands.command(
