@@ -158,7 +158,7 @@ Create Ticket button.
   - `$year`
   - `$month`
   - `$day`
-  - `$name`
+  - `$author`
 
     The ticket owner's display name.
 

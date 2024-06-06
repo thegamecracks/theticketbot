@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     from .select import MessageCallback
 
 DEFAULT_STARTER_CONTENT = "$author $staff"
-DEFAULT_TICKET_NAME = "$year-$month-$day $name"
+DEFAULT_TICKET_NAME = "$year-$month-$day $author"
 MENTION_PATTERN = re.compile(r"<(@|@&)(\d+)>")
 
 InboxRatelimit = Callable[[discord.Message, discord.Member], Awaitable[float]]
@@ -116,7 +116,7 @@ class InboxView(discord.ui.View):
             year=created_at.year,
             month=str(created_at.month).zfill(2),
             day=str(created_at.day).zfill(2),
-            name=interaction.user.display_name,
+            author=interaction.user.display_name,
             counter=str(counter % 10**4).zfill(4),
         )
 
