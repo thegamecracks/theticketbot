@@ -112,7 +112,7 @@ msgid ""
 "before creating a new one."
 msgstr ""
 "Sie haben zu viele Tickets in diesem Panel. Bitte schließen Sie Ihr letztes "
-"Ticket {0}, bevor Sie ein neues erstellen."
+"Ticket {0} , bevor Sie ein neues erstellen."
 
 #. Message sent when user is being ratelimited for an inbox
 #. {0}: the duration in seconds to wait before retrying
