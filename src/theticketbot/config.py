@@ -5,7 +5,15 @@ import tomllib
 from pathlib import Path
 from typing import IO, TYPE_CHECKING, Annotated, Any, Literal, Protocol
 
-from pydantic import AfterValidator, BaseModel, ConfigDict, SecretStr
+from pydantic import (
+    AfterValidator,
+    BaseModel,
+    ConfigDict,
+    SecretStr,
+    ValidationInfo,
+    ValidatorFunctionWrapHandler,
+    WrapValidator,
+)
 
 if TYPE_CHECKING:
     import discord
@@ -70,6 +78,16 @@ def check_single_statement(s: SecretStr) -> SecretStr:
     return SecretStr(s_new)
 
 
+def pass_through_empty_string(
+    s: str,
+    handler: ValidatorFunctionWrapHandler,
+    info: ValidationInfo,
+) -> SecretStr:
+    if s == "":
+        return SecretStr(s)
+    return handler(s)
+
+
 class SettingsDB(_BaseModel):
     path: Path
     """The filepath to write the bot's SQLite database to."""
@@ -81,7 +99,12 @@ class SettingsDB(_BaseModel):
         ]
     ]
     """A list of pragmas used to initialize the database."""
-    key_template: str
+    key_template: Annotated[
+        SecretStr,
+        AfterValidator(check_single_statement),
+        AfterValidator(check_pragma_statement),
+        WrapValidator(pass_through_empty_string),
+    ]
     """The pragma template used to prompt for the passphrase upon startup."""
 
 

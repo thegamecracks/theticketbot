@@ -65,9 +65,10 @@ def main() -> None:
             "and add it to your configuration."
         )
 
-    if bot.config.db.key_template != "":
+    key_template = bot.config.db.key_template.get_secret_value()
+    if key_template != "":
         key = getpass.getpass("Database Key: ")
-        pragma = bot.config.db.key_template.format(key)
+        pragma = key_template.format(key)
         bot.key_pragma = SecretStr(pragma)
 
     log.info(f"Package version: {__version__}")
