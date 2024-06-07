@@ -439,10 +439,15 @@ class Inbox(
         callback: MessageCallback,
     ) -> None:
         async def wrapper(interaction: discord.Interaction, message: discord.Message):
+            # As long as message callbacks are guild-specific,
+            # this assert should always be true
+            assert interaction.guild == original_interaction.guild
+
             await self.check_inbox_message(interaction, message)
             await callback(interaction, message)
 
         assert interaction.guild is not None
+        original_interaction = interaction
         self.bot.set_message_callback(
             interaction.guild.id,
             interaction.user.id,
@@ -476,14 +481,6 @@ class Inbox(
                     "a **Create Ticket** button under it."
                 )
 
-            content = await translate(content, interaction)
-            content = content.format(message.jump_url)
-            raise AppCommandResponse(content)
-
-        permissions = message.channel.permissions_for(interaction.user)
-        if not permissions.manage_guild:
-            # Message sent when a user selects an inbox with insufficient permissions
-            content = _("Sorry, you don't have the permissions to manage this inbox.")
             content = await translate(content, interaction)
             content = content.format(message.jump_url)
             raise AppCommandResponse(content)
