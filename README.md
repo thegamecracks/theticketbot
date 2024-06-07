@@ -100,14 +100,13 @@ open the Apps menu, and use `Select this message`. The bot must be able
 to view, send messages, and create private threads in that channel.
 Currently, there are no limits on the number of inboxes your server can have.
 
-Tickets are managed just like threads. Closing them archives the thread,
+Tickets are managed just like threads. Closing the thread archives it,
 preserving their messages without needing a separate transcript. Staff with
 the Manage Threads permission can also add and remove members afterwards,
-useful for bringing in relevant members or for privating the thread to
-continue internal discussions. Tickets can be renamed to make it easier to
-search for them in the future, and can be deleted permanently if desired.
-For consistency in handling tickets, your staff team should devise a procedure
-and adhere to it.
+useful for bringing in relevant members or for removing the ticket owner
+to allow internal discussions inside the ticket. Tickets can be renamed
+to make it easier to search for them in the future, and can be deleted
+permanently if desired.
 
 If the owner leaves or is removed from their ticket, the bot will automatically
 archive the ticket. Staff are free to re-open it afterwards.
