@@ -69,6 +69,24 @@ With Python 3.11+ and Git, you can set up this bot by following these steps:
 5. Invite your bot to a server and use "<@mention> sync" to synchronize
    the bot's application commands.
 
+   In the [Applications](https://discord.com/developers/applications) > OAuth2 page,
+   select only `bot` for the scope, then in the permissions list below,
+   select at least the following permissions:
+
+   - Read Messages/View Channels
+   - Send Messages
+   - Create Private Threads
+   - Send Messages in Threads
+   - Embed Links
+   - Attach Files
+
+   A few other permissions like Manage Threads and Mention Everyone
+   may be useful, but are not required.
+
+   Leave the Integration Type as "Guild Install", and copy the generated URL
+   at the bottom. You can now use that URL to invite the bot or let others
+   invite the bot if "Public Bot" is ticked in the Bot page.
+
 [config.toml]: /src/theticketbot/config_default.toml
 
 To set up an inbox, first post a message with the content you would like your
