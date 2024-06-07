@@ -192,7 +192,9 @@ limitations.
 
 ## Encryption
 
-> [!WARNING] This feature is experimental and may be removed in the future.
+> [!WARNING]
+>
+> This feature is experimental and may be removed in the future.
 >
 > Currently, derived keys are not cached by the bot, meaning that every connection
 > made to the database, which can be several connections per command, requires
