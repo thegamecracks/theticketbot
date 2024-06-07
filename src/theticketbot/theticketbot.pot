@@ -22,11 +22,15 @@
 # * Subcommand group description
 # * Subcommand parameter description
 #   - Max length of 100 characters
+#
+# Note that if any placeholders are described as "links", avoid placing
+# non-whitespace characters around them, like punctuation. This can break
+# the link and/or cause it to be incorrectly embedded by Discord.
 msgid ""
 msgstr ""
 "Project-Id-Version: 0.2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-06 21:48-0400\n"
+"POT-Creation-Date: 2024-06-07 12:38-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
