@@ -192,6 +192,21 @@ limitations.
 
 ## Encryption
 
+> [!WARNING] This feature is experimental and may be removed in the future.
+>
+> Currently, derived keys are not cached by the bot, meaning that every connection
+> made to the database, which can be several connections per command, requires
+> repeating the same key derivation which may be performance intensive.
+>
+> Encryption is also not a substitute for properly configured file permissions.
+> You should ensure that other users on your system are not able to read the
+> database or the config.toml file. Other secure methods of transferring
+> these files between systems should be applied as well.
+>
+> Also, it's worth noting that this bot avoids storing any sensitive data
+> on users and only persists the bare minimum needed to function.
+> Primary concerns should be preventing your bot token from being leaked.
+
 This bot supports using an encrypted SQLite database with encryption extensions
 like [SQLiteMultipleCiphers], [SQLCipher], or [SEE]. On a Windows system,
 pre-built DLLs can be found for SQLiteMultipleCiphers in their
