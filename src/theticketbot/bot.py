@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, AsyncGenerator, Callable, cast
 import asqlite
 import discord
 from discord.ext import commands
+from pydantic import SecretStr
 
 from . import database
 from .migrations import run_default_migrations
@@ -21,16 +22,20 @@ if TYPE_CHECKING:
 log = logging.getLogger(__name__)
 
 
-def run_config_pragmas(conn: sqlite3.Connection, config: Settings) -> None:
-    pragmas = [p.get_secret_value() for p in config.db.pragmas]
-    conn.executescript(";\n".join(pragmas))
-
-
 # https://discordpy.readthedocs.io/en/stable/ext/commands/api.html
 class Bot(commands.Bot):
+    key_pragma: SecretStr | None
+    """The key pragma to append onto the database pragmas.
+
+    This should be assigned after construction.
+
+    """
+
     def __init__(self, config_refresher: Callable[[], Settings]):
         self._config_refresher = config_refresher
         config = self.refresh_config()
+
+        self.key_pragma = None
 
         super().__init__(
             chunk_guilds_at_startup=False,
@@ -52,13 +57,19 @@ class Bot(commands.Bot):
 
         """
         path = str(self.config.db.path)
-        init = lambda conn: run_config_pragmas(conn, self.config)
+        init = lambda conn: self._run_config_pragmas(conn)
         async with database.connect(path, init=init) as conn:
             if not transaction:
                 yield conn
             else:
                 async with conn.transaction():
                     yield conn
+
+    def _run_config_pragmas(self, conn: sqlite3.Connection) -> None:
+        pragmas = [p.get_secret_value() for p in self.config.db.pragmas]
+        if self.key_pragma is not None:
+            pragmas.append(self.key_pragma.get_secret_value())
+        conn.executescript(";\n".join(pragmas))
 
     def set_message_callback(
         self,
@@ -96,7 +107,7 @@ class Bot(commands.Bot):
     async def setup_hook(self) -> None:
         self.config.db.path.parent.mkdir(parents=True, exist_ok=True)
         with sqlite3.connect(self.config.db.path) as conn:
-            run_config_pragmas(conn, self.config)
+            self._run_config_pragmas(conn)
             run_default_migrations(conn)
 
         for path in self.config.bot.extensions:

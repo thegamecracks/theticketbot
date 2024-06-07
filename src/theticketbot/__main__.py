@@ -1,11 +1,13 @@
 import argparse
 import functools
+import getpass
 import importlib.metadata
 import logging
 import sys
 from pathlib import Path
 
 import discord
+from pydantic import SecretStr
 
 from . import __version__
 from .bot import Bot
@@ -62,6 +64,11 @@ def main() -> None:
             "Please get a Bot Token from https://discord.com/developers/applications "
             "and add it to your configuration."
         )
+
+    if bot.config.db.key_template != "":
+        key = getpass.getpass("Database Key: ")
+        pragma = bot.config.db.key_template.format(key)
+        bot.key_pragma = SecretStr(pragma)
 
     log.info(f"Package version: {__version__}")
     bot.run(

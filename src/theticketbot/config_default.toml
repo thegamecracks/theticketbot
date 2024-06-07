@@ -42,3 +42,4 @@ webhooks = false
 [db]
 path = "data/theticketbot.db"
 pragmas = []
+key_template = ""

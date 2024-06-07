@@ -81,6 +81,8 @@ class SettingsDB(_BaseModel):
         ]
     ]
     """A list of pragmas used to initialize the database."""
+    key_template: str
+    """The pragma template used to prompt for the passphrase upon startup."""
 
 
 Settings.model_rebuild()

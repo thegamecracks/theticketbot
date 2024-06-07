@@ -226,27 +226,25 @@ sqlite> PRAGMA rekey = 'Hello world!';
 sqlite> .exit
 ```
 
-After that, open your config.toml file and add any pragmas you need
+After that, open your config.toml file and add a template for the pragma
 to decrypt your database like so:
 
 ```toml
 [db]
-pragmas = ["PRAGMA key = 'Hello world!'"]
+key_template = "PRAGMA key = '{}'"
 ```
 
 A more complex encryption setup might look like:
 
 ```toml
 [db]
-pragmas = [
-    "PRAGMA cipher = sqlcipher",
-    "PRAGMA kdf_iter = 512000",
-    "PRAGMA hexkey = '796f75722d7365637265742d6b6579'",
-    # NOTE: when first encrypting with hexkey, use hexrekey instead of rekey
-]
+pragmas = ["PRAGMA cipher = sqlcipher", "PRAGMA kdf_iter = 512000"]
+key_template = "PRAGMA hexkey = '{}'"
+# NOTE: when first encrypting with hexkey, use hexrekey instead of rekey
 ```
 
-When the database is opened, all pragmas will be executed in order.
+At startup, you will be prompted to enter the database key.
+Once the database is opened, all pragmas will be executed in order.
 To change encryption key later, shut down the bot and then manually execute
 pragmas according to the documentation for your encryption extension.
 
