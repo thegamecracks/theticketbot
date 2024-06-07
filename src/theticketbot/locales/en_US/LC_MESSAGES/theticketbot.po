@@ -26,7 +26,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-06 21:45-0400\n"
+"POT-Creation-Date: 2024-06-06 21:48-0400\n"
 "PO-Revision-Date: 2024-06-02 15:17-0400\n"
 "Last-Translator: U-LAPTOP-3G2E6T6I\\home <home@laptop-3g2e6t6i>\n"
 "Language-Team: English\n"
@@ -304,7 +304,7 @@ msgstr ""
 #. Message sent when a user tries to edit an inbox message with itself
 #: src/theticketbot/cogs/inbox.py:691
 msgid ""
-"The inbox message cannot be edited with itself. Please select **another** "
+"The inbox message cannot be edited with itself. Please select another "
 "message you want to copy."
 msgstr ""
 

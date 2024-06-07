@@ -689,7 +689,7 @@ class Inbox(
             content = _(
                 # Message sent when a user tries to edit an inbox message with itself
                 "The inbox message cannot be edited with itself. "
-                "Please select **another** message you want to copy."
+                "Please select another message you want to copy."
             )
             raise AppCommandResponse(content)
 
