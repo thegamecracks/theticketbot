@@ -247,8 +247,8 @@ key_template = "PRAGMA hexkey = '{}'"
 
 At startup, you will be prompted to enter the database key.
 Once the database is opened, all pragmas will be executed in order.
-To change encryption key later, shut down the bot and then manually execute
-pragmas according to the documentation for your encryption extension.
+To change the encryption key later, shut down the bot and then manually execute
+the necessary pragmas according to the documentation for your encryption extension.
 
 If you get an error like `file is not a database` or `unsupported file format`,
 this may mean that the bot was unable to decrypt the database, or that the database
