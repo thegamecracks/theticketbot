@@ -96,8 +96,16 @@ embeds sent by a webhook as long as the message has no content.
 Afterwards, use `/inbox create` to choose the channel you want your inbox posted in.
 You will then be prompted to select a message to be sent with your inbox.
 For a short period of time, you can right-click or long tap any message,
-open the Apps menu, and use `Select this message`. The bot must be able
-to view, send messages, and create private threads in that channel.
+open the Apps menu, and use `Select this message`.
+
+When choosing a channel, the bot must be able to view, send messages,
+and create private threads in that channel.
+
+Each inbox has a set of staff that will be mentioned when a new ticket is created.
+Any members or roles that you explicitly grant Manage Threads in the channel's
+permissions will be automatically added as staff for the inbox, but you can
+change this later with `/inbox staff`.
+
 Currently, there are no limits on the number of inboxes your server can have.
 
 Tickets are managed just like threads. Closing the thread archives it,

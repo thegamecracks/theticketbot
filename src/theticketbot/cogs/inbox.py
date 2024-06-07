@@ -297,6 +297,16 @@ def mention_to_snowflake(mention: str) -> discord.Object:
     raise RuntimeError(f"Unsupported mention type {m[1]!r}")
 
 
+def snowflake_to_mention(obj: discord.Member | discord.Role | discord.Object) -> str:
+    if not isinstance(obj, discord.Object):
+        return obj.mention
+    elif issubclass(obj.type, (discord.User, discord.Member)):
+        return f"<@{obj.id}>"
+    elif issubclass(obj.type, discord.Role):
+        return f"<@&{obj.id}>"
+    raise ValueError(f"Unsupported object type {obj.type}")
+
+
 class SetInboxStarterContentModal(discord.ui.Modal, title="Starter Message"):
     content = discord.ui.TextInput(
         label="Content",
@@ -584,6 +594,10 @@ class Inbox(
             )
             await query.set_inbox_starter_content(message.id, starter_content)
 
+            for staff in self.get_default_inbox_staff(channel):
+                mention = snowflake_to_mention(staff)
+                await query.add_inbox_staff(message.id, mention)
+
         # Message sent after a user creates an inbox
         # {0}: the inbox's link
         content = await translate(_("Your inbox has been created! {0}"), interaction)
@@ -639,6 +653,17 @@ class Inbox(
                 embeds.append(discord.Embed(url=url).set_image(url=image_url))
 
         return {"embeds": embeds, "files": files}
+
+    def get_default_inbox_staff(
+        self,
+        channel: discord.TextChannel,
+    ) -> list[discord.Member | discord.Role | discord.Object]:
+        assert self.bot.user is not None
+        return [
+            target
+            for target, overwrite in channel.overwrites.items()
+            if overwrite.manage_threads and target.id != self.bot.user.id
+        ]
 
     @app_commands.command(
         # Subcommand name ("inbox")
