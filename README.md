@@ -110,12 +110,15 @@ permanently if desired.
 
 If the owner leaves or is removed from their ticket, the bot will automatically
 archive the ticket. Staff are free to re-open it afterwards.
+
 The bot will also lock the ticket to prevent further discussion if it has
 the Manage Threads permission, which can be set on a per-channel basis.
+In this case, staff must have the Manage Threads permission to re-open the
+ticket.
 
-Note that if you have multiple inboxes in one channel, any staff with the
-Manage Threads permission will be able to view and manage all threads in
-that channel, even if they aren't listed as staff for that inbox.
+If you have multiple inboxes in one channel, any staff with the Manage Threads
+permission will be able to view and manage all threads in that channel,
+even if they aren't listed as staff for that inbox.
 If maintaining privacy is important, inboxes should be organized into
 different channels according to which staff should be allowed to view
 the threads of those inboxes. This layout can look like:
@@ -129,10 +132,9 @@ the threads of those inboxes. This layout can look like:
   - `Staff Applications`
 
 Alternatively, you can choose to not grant the Manage Threads permission
-to staff. This will prevent them from being able to invite other members.
-You can still manually edit a thread to allow anyone to invite members,
-but this also applies to the ticket owner which may not be desired.
-For now, you cannot change the default invite behaviour for new tickets.
+to some or all staff. This will prevent them from closing tickets by
+themselves, inviting other members, or sending messages in locked tickets.
+This also means that future staff members won't be able to see older tickets.
 
 ## Customization
 
