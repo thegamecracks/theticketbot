@@ -10,6 +10,7 @@ import asqlite
 import discord
 from discord.ext import commands
 
+from . import database
 from .migrations import run_default_migrations
 from .translator import GettextTranslator
 
@@ -18,6 +19,11 @@ if TYPE_CHECKING:
     from .config import Settings
 
 log = logging.getLogger(__name__)
+
+
+def run_config_pragmas(conn: sqlite3.Connection, config: Settings) -> None:
+    pragmas = [p.get_secret_value() for p in config.db.pragmas]
+    conn.executescript(";\n".join(pragmas))
 
 
 # https://discordpy.readthedocs.io/en/stable/ext/commands/api.html
@@ -46,7 +52,8 @@ class Bot(commands.Bot):
 
         """
         path = str(self.config.db.path)
-        async with asqlite.connect(path) as conn:
+        init = lambda conn: run_config_pragmas(conn, self.config)
+        async with database.connect(path, init=init) as conn:
             if not transaction:
                 yield conn
             else:
@@ -89,6 +96,7 @@ class Bot(commands.Bot):
     async def setup_hook(self) -> None:
         self.config.db.path.parent.mkdir(parents=True, exist_ok=True)
         with sqlite3.connect(self.config.db.path) as conn:
+            run_config_pragmas(conn, self.config)
             run_default_migrations(conn)
 
         for path in self.config.bot.extensions:

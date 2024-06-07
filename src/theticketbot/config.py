@@ -3,9 +3,9 @@ from __future__ import annotations
 import importlib.resources
 import tomllib
 from pathlib import Path
-from typing import IO, TYPE_CHECKING, Any, Literal, Protocol
+from typing import IO, TYPE_CHECKING, Annotated, Any, Literal, Protocol
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import AfterValidator, BaseModel, ConfigDict, SecretStr
 
 if TYPE_CHECKING:
     import discord
@@ -57,9 +57,30 @@ class SettingsBotIntents(_BaseModel):
         return discord.Intents(**intents)
 
 
+def check_pragma_statement(s: SecretStr) -> SecretStr:
+    if not s.get_secret_value().strip().lower().startswith("pragma"):
+        raise ValueError("statement must start with PRAGMA")
+    return s
+
+
+def check_single_statement(s: SecretStr) -> SecretStr:
+    s_new = s.get_secret_value().rstrip(";")
+    if ";" in s_new:
+        raise ValueError("string must consist of a single statement")
+    return SecretStr(s_new)
+
+
 class SettingsDB(_BaseModel):
     path: Path
     """The filepath to write the bot's SQLite database to."""
+    pragmas: list[
+        Annotated[
+            SecretStr,
+            AfterValidator(check_single_statement),
+            AfterValidator(check_pragma_statement),
+        ]
+    ]
+    """A list of pragmas used to initialize the database."""
 
 
 Settings.model_rebuild()

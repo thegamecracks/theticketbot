@@ -1,10 +1,9 @@
-from __future__ import annotations
-
+import asyncio
 import re
-from typing import TYPE_CHECKING
+import sqlite3
+from typing import Any, Callable
 
-if TYPE_CHECKING:
-    import asqlite
+import asqlite
 
 INBOX_STAFF_MENTION_PATTERN = re.compile(r"<@\d+>|<@&\d+>")
 
@@ -269,3 +268,46 @@ class DatabaseClient:
         )
         assert row is not None
         return row[0]
+
+
+def connect(
+    database: str | bytes,
+    *,
+    init: Callable[[sqlite3.Connection], None] | None = None,
+    timeout: float | None = None,
+    loop: asyncio.AbstractEventLoop | None = None,
+    **kwargs: Any,
+) -> asqlite._ContextManagerMixin[sqlite3.Connection, asqlite.Connection]:
+    # This is a monkeypatch of asqlite's connect() function since the init=
+    # callback doesn't run before asqlite's own pragmas, which caused
+    # connections to fail on encrypted databases.
+    loop = loop or asyncio.get_event_loop()
+    queue = asqlite._Worker(loop=loop)
+    queue.start()
+
+    def factory(con: sqlite3.Connection) -> asqlite.Connection:
+        return asqlite.Connection(con, queue)
+
+    if init is not None:
+
+        def new_connect(db: str | bytes, **kwargs: Any) -> sqlite3.Connection:
+            # init order flipped, pragmas copied directly from _connect_pragmas()
+            conn = sqlite3.connect(db, **kwargs)
+            init(conn)
+            conn.execute("pragma journal_mode=wal")
+            conn.execute("pragma foreign_keys=ON")
+            conn.isolation_level = None
+            conn.row_factory = sqlite3.Row
+            return conn
+
+    else:
+        new_connect = asqlite._connect_pragmas  # type: ignore
+
+    return asqlite._ContextManagerMixin(
+        queue,
+        factory,
+        new_connect,
+        database,
+        timeout=timeout,
+        **kwargs,
+    )

@@ -190,6 +190,63 @@ allowed between tickets is 60 seconds. Inboxes also try to maintain a maximum
 of 1 active thread per user, although it is not guaranteed due to technical
 limitations.
 
+## Encryption
+
+This bot supports using an encrypted SQLite database with encryption extensions
+like [SQLiteMultipleCiphers], [SQLCipher], or [SEE]. On a Windows system,
+pre-built DLLs can be found for SQLiteMultipleCiphers in their
+[releases](https://github.com/utelle/SQLite3MultipleCiphers/releases) page.
+
+With one of the encryption extensions installed, you can use it to encrypt
+the database and then add the decryption to theticketbot. Run the bot once
+so `data/theticketbot.db` is created (or whatever path you set it to), then
+open the database using the SQLite shell from your encryption extension
+and encrypt it:
+
+```sql
+$ sqlite3 data\theticketbot.db
+SQLite version 3.46.0 2024-05-23 13:25:27 (UTF-16 console I/O) (SQLite3 Multiple Ciphers 1.8.5)
+Enter ".help" for usage hints.
+sqlite> PRAGMA rekey = 'Hello world!';
+sqlite> .exit
+```
+
+After that, open your config.toml file and add any pragmas you need
+to decrypt your database like so:
+
+```toml
+[db]
+pragmas = ["PRAGMA key = 'Hello world!'"]
+```
+
+A more complex encryption setup might look like:
+
+```toml
+[db]
+pragmas = [
+    "PRAGMA cipher = sqlcipher",
+    "PRAGMA kdf_iter = 512000",
+    "PRAGMA hexkey = '796f75722d7365637265742d6b6579'",
+    # NOTE: when first encrypting with hexkey, use hexrekey instead of rekey
+]
+```
+
+When the database is opened, all pragmas will be executed in order.
+To change encryption key later, shut down the bot and then manually execute
+pragmas according to the documentation for your encryption extension.
+
+If you get an error like `file is not a database` or `unsupported file format`,
+this may mean that the bot was unable to decrypt the database, or that the database
+hasn't yet been encrypted. In this case, please double check your pragmas and/or
+try to manually decrypt your database in an SQLite shell.
+
+During encryption, if you get `Rekeying is not supported in WAL journal mode`,
+you will need to run `PRAGMA journal_mode = delete;` before rekeying.
+
+[SQLiteMultipleCiphers]: https://utelle.github.io/SQLite3MultipleCiphers/
+[SQLCipher]: https://www.zetetic.net/sqlcipher/documentation/
+[SEE]: https://sqlite.org/com/see.html
+
 ## License
 
 This project is written under the [MIT] license.
