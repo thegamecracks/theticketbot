@@ -221,7 +221,7 @@ open the database using the SQLite shell from your encryption extension
 and encrypt it:
 
 ```sql
-$ sqlite3 data\theticketbot.db
+$ sqlite3 data/theticketbot.db
 SQLite version 3.46.0 2024-05-23 13:25:27 (UTF-16 console I/O) (SQLite3 Multiple Ciphers 1.8.5)
 Enter ".help" for usage hints.
 sqlite> PRAGMA rekey = 'Hello world!';
