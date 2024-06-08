@@ -242,7 +242,7 @@ async def filter_and_update_inbox_staff(
     for mention in removed:
         await query.remove_inbox_staff(inbox_id, mention)
 
-    return [m for m in mentions if m.startswith("<@&") and m not in removed]
+    return [m for m in mentions if not m.startswith("<@&") or m not in removed]
 
 
 class InboxStaffView(discord.ui.View):
