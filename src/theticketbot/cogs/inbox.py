@@ -300,7 +300,7 @@ def mention_to_snowflake(mention: str) -> discord.Object:
 def snowflake_to_mention(obj: discord.Member | discord.Role | discord.Object) -> str:
     if not isinstance(obj, discord.Object):
         return obj.mention
-    elif issubclass(obj.type, (discord.User, discord.Member)):
+    elif obj.type is discord.abc.User:
         return f"<@{obj.id}>"
     elif issubclass(obj.type, discord.Role):
         return f"<@&{obj.id}>"
