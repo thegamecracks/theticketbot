@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### New Features
+
+- Automatically lock tickets when archived by staff / auto-archived,
+  and bot is given Manage Threads permission ([#5])
+
 ## [0.3.0] - 2024-06-10
 
 ### New Features
@@ -85,6 +90,7 @@ This is theticketbot's first release! 🎉
 [0.1.0]: https://github.com/thegamecracks/theticketbot/releases/tag/v0.1.0
 
 [#8]: https://github.com/thegamecracks/theticketbot/issues/8
+[#5]: https://github.com/thegamecracks/theticketbot/issues/5
 [#4]: https://github.com/thegamecracks/theticketbot/issues/4
 [#3]: https://github.com/thegamecracks/theticketbot/issues/3
 [#2]: https://github.com/thegamecracks/theticketbot/issues/2
