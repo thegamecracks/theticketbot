@@ -23,7 +23,6 @@ class Select(commands.Cog):
     CLEANUP_INTERVAL = 60
     CLEANUP_EXPIRED_AFTER = 300
     MESSAGE_EXPIRES_AFTER = 180
-    MAX_SELECTED_MESSAGES = 3
 
     def __init__(self, bot: Bot):
         self.bot = bot
