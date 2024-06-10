@@ -433,7 +433,7 @@ msgstr ""
 #. Message sent when locking a thread after being archived
 #: src/theticketbot/cogs/inbox.py:961
 msgid "This archived ticket will be locked to moderators only."
-msgstr ""
+msgstr "Dieses archivierte Ticket wird für alle außer Moderatoren gesperrt."
 
 #. Command name
 #: src/theticketbot/cogs/select.py:32
