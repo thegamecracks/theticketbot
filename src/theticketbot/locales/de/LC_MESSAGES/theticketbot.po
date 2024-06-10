@@ -30,7 +30,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-07 18:29-0400\n"
+"POT-Creation-Date: 2024-06-09 23:59-0400\n"
 "PO-Revision-Date: 2024-06-07 17:04+0200\n"
 "Last-Translator: MRGalaxy <108481498+GamingGalaxy200@users.noreply.github."
 "com>\n"
@@ -94,12 +94,12 @@ msgid "The bot currently does not recognize this command."
 msgstr "Der Bot erkennt diesen Befehl derzeit nicht."
 
 #. Button label for creating a new ticket
-#: src/theticketbot/cogs/inbox.py:54
+#: src/theticketbot/cogs/inbox.py:55
 msgid "Create Ticket"
 msgstr "Ticket erstellen"
 
 #. Message sent when an inbox is not recognized
-#: src/theticketbot/cogs/inbox.py:77
+#: src/theticketbot/cogs/inbox.py:78
 msgid ""
 "Sorry, this inbox is no longer recognized and must be re-created. Please "
 "notify a server admin!"
@@ -109,7 +109,7 @@ msgstr ""
 
 #. Message sent when trying to create too many tickets
 #. {0}: the ticket's link
-#: src/theticketbot/cogs/inbox.py:95
+#: src/theticketbot/cogs/inbox.py:96
 #, python-brace-format
 msgid ""
 "You have too many tickets in this inbox. Please close your last ticket {0} "
@@ -120,25 +120,25 @@ msgstr ""
 
 #. Message sent when user is being ratelimited for an inbox
 #. {0}: the duration in seconds to wait before retrying
-#: src/theticketbot/cogs/inbox.py:106
+#: src/theticketbot/cogs/inbox.py:107
 #, python-brace-format
 msgid "You are creating tickets too quickly! Please wait {0:.0f}s."
 msgstr "Sie erstellen Ihre Tickets zu schnell! Bitte warten Sie {0:.0f}s."
 
 #. Message sent when creating a ticket
-#: src/theticketbot/cogs/inbox.py:112
+#: src/theticketbot/cogs/inbox.py:113
 msgid "Creating ticket..."
 msgstr "Erstelle Ticket..."
 
 #. Audit log reason for a user creating a ticket
 #. {0}: the user's name
-#: src/theticketbot/cogs/inbox.py:134
+#: src/theticketbot/cogs/inbox.py:135
 #, python-brace-format
 msgid "Ticket created by {0}"
 msgstr "Ticket wurde von {0} erstellt"
 
 #. Message sent when creating a ticket failed due to insufficient permissions
-#: src/theticketbot/cogs/inbox.py:170
+#: src/theticketbot/cogs/inbox.py:171
 msgid ""
 "I am missing the permissions needed to create a ticket here. Please notify a "
 "server admin!"
@@ -147,70 +147,70 @@ msgstr ""
 "benachrichtigen Sie einen Server-Administrator!"
 
 #. Message sent when creating a ticket failed unexpectedly
-#: src/theticketbot/cogs/inbox.py:177
+#: src/theticketbot/cogs/inbox.py:178
 msgid "An unexpected error occurred while creating the ticket."
 msgstr "Beim Erstellen des Tickets ist ein unerwarteter Fehler aufgetreten."
 
 #. Message sent after successfully creating a ticket
 #. {0}: the ticket's link
-#: src/theticketbot/cogs/inbox.py:184
+#: src/theticketbot/cogs/inbox.py:185
 #, python-brace-format
 msgid "Your ticket is ready! {0}"
 msgstr "Ihr Ticket ist bereit! {0}"
 
 #. Message sent when submitting no changes to inbox staff
-#: src/theticketbot/cogs/inbox.py:273
+#: src/theticketbot/cogs/inbox.py:274
 msgid "You have not made any changes!"
 msgstr "Sie haben keine Änderungen vorgenommen!"
 
 #. Modal title for changing an inbox's starter message
-#: src/theticketbot/cogs/inbox.py:328
+#: src/theticketbot/cogs/inbox.py:329
 msgid "Starter Message"
 msgstr "Startnachricht"
 
 #. Modal text input label for an inbox's starter message content
-#: src/theticketbot/cogs/inbox.py:330
+#: src/theticketbot/cogs/inbox.py:331
 msgid "Content"
 msgstr "Inhalt"
 
 #. Message sent when an inbox's starter message is successfully changed
 #. {0}: the inbox's link
-#: src/theticketbot/cogs/inbox.py:345
+#: src/theticketbot/cogs/inbox.py:346
 #, python-brace-format
 msgid "{0} 's starting message has been set!"
 msgstr "Die Startnachricht von {0} wurde festgelegt!"
 
 #. Modal title for changing an inbox's defaults for new tickets
-#: src/theticketbot/cogs/inbox.py:364
+#: src/theticketbot/cogs/inbox.py:365
 msgid "New Tickets"
 msgstr "Neue Tickets"
 
 #. Modal text input label for ticket names
-#: src/theticketbot/cogs/inbox.py:366
+#: src/theticketbot/cogs/inbox.py:367
 msgid "Name"
 msgstr "Name"
 
 #. Message sent when an inbox's ticket defaults were successfully changed
 #. {0}: the inbox's link
-#: src/theticketbot/cogs/inbox.py:381
+#: src/theticketbot/cogs/inbox.py:382
 #, python-brace-format
 msgid "{0} 's ticket defaults have been set!"
 msgstr "Die Standardeinstellungen von {0} wurden festgelegt!"
 
 #. Command group name
-#: src/theticketbot/cogs/inbox.py:403
+#: src/theticketbot/cogs/inbox.py:404
 msgid "inbox"
 msgstr "panel"
 
 #. Command group description ("inbox")
-#: src/theticketbot/cogs/inbox.py:405
+#: src/theticketbot/cogs/inbox.py:406
 msgid "Manage the server's ticket inboxes."
 msgstr "Verwalten Sie die Ticket-Panels des Servers."
 
 #. Message sent when selecting a non-inbox message
 #. that looks like the message used to be an inbox
 #. {0}: the message's link
-#: src/theticketbot/cogs/inbox.py:483
+#: src/theticketbot/cogs/inbox.py:484
 #, python-brace-format
 msgid "Sorry, {0} is no longer recognized as an inbox and must be re-created."
 msgstr ""
@@ -219,7 +219,7 @@ msgstr ""
 
 #. Message sent when selecting a non-inbox message
 #. {0}: the message's link
-#: src/theticketbot/cogs/inbox.py:490
+#: src/theticketbot/cogs/inbox.py:491
 #, python-brace-format
 msgid ""
 "Sorry, {0} is not an inbox. The message you select should have a **Create "
@@ -229,29 +229,29 @@ msgstr ""
 "sollte eine Schaltfläche **Ticket erstellen** darunter haben."
 
 #. Subcommand name ("inbox")
-#: src/theticketbot/cogs/inbox.py:500
+#: src/theticketbot/cogs/inbox.py:501
 msgid "create"
 msgstr "erstelle"
 
 #. Subcommand description ("inbox create")
-#: src/theticketbot/cogs/inbox.py:502
+#: src/theticketbot/cogs/inbox.py:503
 msgid "Create a new inbox."
 msgstr "Erstellen Sie ein neues Panel."
 
 #. Subcommand parameter name ("inbox create")
-#: src/theticketbot/cogs/inbox.py:506
+#: src/theticketbot/cogs/inbox.py:507
 msgid "channel"
 msgstr "kanal"
 
 #. Subcommand parameter description ("inbox create <channel>")
-#: src/theticketbot/cogs/inbox.py:510
+#: src/theticketbot/cogs/inbox.py:511
 msgid "The channel to post the inbox."
 msgstr "Der Kanal, in dem das Panel gepostet wird."
 
 #. Message sent when attempting to create an inbox with insufficient permissions
 #. {0}: the channel's mention
 #. {1}: a list of permissions that are missing
-#: src/theticketbot/cogs/inbox.py:534
+#: src/theticketbot/cogs/inbox.py:535
 #, python-brace-format
 msgid "I need the following permissions in {0}: {1}"
 msgstr "Ich benötige die folgenden Berechtigungen in {0}: {1}"
@@ -259,7 +259,7 @@ msgstr "Ich benötige die folgenden Berechtigungen in {0}: {1}"
 #. Message sent when the user is creating a new inbox in a channel,
 #. and the inbox needs a message to be included
 #. {0}: the channel's mention
-#: src/theticketbot/cogs/inbox.py:543
+#: src/theticketbot/cogs/inbox.py:544
 #, python-brace-format
 msgid ""
 "The {0} channel has been set as the destination for your new inbox. You must "
@@ -274,7 +274,7 @@ msgstr ""
 "auswählen*."
 
 #. The default starter message content for new tickets
-#: src/theticketbot/cogs/inbox.py:591
+#: src/theticketbot/cogs/inbox.py:592
 msgid ""
 "$author Thank you for creating a ticket!\n"
 "$staff"
@@ -284,14 +284,14 @@ msgstr ""
 
 #. Message sent after a user creates an inbox
 #. {0}: the inbox's link
-#: src/theticketbot/cogs/inbox.py:603
+#: src/theticketbot/cogs/inbox.py:604
 #, python-brace-format
 msgid "Your inbox has been created! {0}"
 msgstr "Ihr Panel wurde erstellt! {0}"
 
 #. Message sent when attempting to create an inbox with too large attachments
 #. {0}: the maximum cumulative filesize
-#: src/theticketbot/cogs/inbox.py:625
+#: src/theticketbot/cogs/inbox.py:626
 #, python-brace-format
 msgid ""
 "The message's attachments are too large! The total size must be under {0}."
@@ -300,12 +300,12 @@ msgstr ""
 "liegen."
 
 #. Subcommand name ("inbox")
-#: src/theticketbot/cogs/inbox.py:670
+#: src/theticketbot/cogs/inbox.py:671
 msgid "message"
 msgstr "nachricht"
 
 #. Subcommand description ("inbox message")
-#: src/theticketbot/cogs/inbox.py:672
+#: src/theticketbot/cogs/inbox.py:673
 msgid "Edit the message for an inbox."
 msgstr "Bearbeiten Sie die Nachricht für ein Panel."
 
@@ -315,8 +315,8 @@ msgstr "Bearbeiten Sie die Nachricht für ein Panel."
 #. and an inbox needs to be selected
 #. Message sent when a user is changing the name for new tickets,
 #. and an inbox needs to be selected
-#: src/theticketbot/cogs/inbox.py:678 src/theticketbot/cogs/inbox.py:802
-#: src/theticketbot/cogs/inbox.py:831
+#: src/theticketbot/cogs/inbox.py:679 src/theticketbot/cogs/inbox.py:803
+#: src/theticketbot/cogs/inbox.py:832
 msgid ""
 "You must now select the inbox you want to edit. To do this, right click or "
 "long tap a message, then open Apps and pick the *Select this message* "
@@ -330,7 +330,7 @@ msgstr ""
 #. Message sent when a user is editing an inbox's message,
 #. and a second message needs to be selected to copy its contents
 #. {0}: the inbox's link
-#: src/theticketbot/cogs/inbox.py:698
+#: src/theticketbot/cogs/inbox.py:699
 #, python-brace-format
 msgid "{0} will be edited. Please select the message you want to copy."
 msgstr ""
@@ -338,7 +338,7 @@ msgstr ""
 "möchten."
 
 #. Message sent when a user tries to edit an inbox message with itself
-#: src/theticketbot/cogs/inbox.py:716
+#: src/theticketbot/cogs/inbox.py:717
 msgid ""
 "The inbox message cannot be edited with itself. Please select another "
 "message you want to copy."
@@ -348,25 +348,25 @@ msgstr ""
 
 #. Message sent after a user edits an inbox's message
 #. {0}: the inbox's link
-#: src/theticketbot/cogs/inbox.py:740
+#: src/theticketbot/cogs/inbox.py:741
 #, python-brace-format
 msgid "{0} has been updated!"
 msgstr "{0} wurde aktualisiert!"
 
 # The German translation means team member which is more fitting in German as we are not employed.
 #. Subcommand name ("inbox")
-#: src/theticketbot/cogs/inbox.py:746
+#: src/theticketbot/cogs/inbox.py:747
 msgid "staff"
 msgstr "teammitglieder"
 
 #. Subcommand description ("inbox staff")
-#: src/theticketbot/cogs/inbox.py:748
+#: src/theticketbot/cogs/inbox.py:749
 msgid "Manage staff for an inbox."
 msgstr "Verwalten Sie die Teammitglieder für ein Panel."
 
 #. Message sent when a user is managing staff for an inbox,
 #. and an inbox needs to be selected
-#: src/theticketbot/cogs/inbox.py:754
+#: src/theticketbot/cogs/inbox.py:755
 msgid ""
 "You must now select the inbox you want to manage staff for. To do this, "
 "right click or long tap a message, then open Apps and pick the *Select this "
@@ -379,44 +379,44 @@ msgstr ""
 
 #. Message sent above select menus when presenting an inbox's staff
 #. {0}: the inbox's link
-#: src/theticketbot/cogs/inbox.py:774
+#: src/theticketbot/cogs/inbox.py:775
 #, python-brace-format
 msgid "Staff for {0} :"
 msgstr "Teammitglieder für {0} :"
 
 #. Subcommand group name ("inbox")
-#: src/theticketbot/cogs/inbox.py:787
+#: src/theticketbot/cogs/inbox.py:788
 msgid "new-tickets"
 msgstr "neue-tickets"
 
 #. Subcommand group description ("inbox new-tickets")
-#: src/theticketbot/cogs/inbox.py:789
+#: src/theticketbot/cogs/inbox.py:790
 msgid "Manage new tickets created by an inbox."
 msgstr "Verwalten Sie neue Tickets, die von einem Panel erstellt wurden."
 
 #. Subcommand name ("inbox new-tickets")
-#: src/theticketbot/cogs/inbox.py:794
+#: src/theticketbot/cogs/inbox.py:795
 msgid "starter"
 msgstr "startnachricht"
 
 #. Subcommand description ("inbox new-tickets starter")
-#: src/theticketbot/cogs/inbox.py:796
+#: src/theticketbot/cogs/inbox.py:797
 msgid "Set the starting message for new tickets."
 msgstr "Legen Sie die Startnachricht für neue Tickets fest."
 
 #. Subcommand name ("inbox new-tickets")
-#: src/theticketbot/cogs/inbox.py:823
+#: src/theticketbot/cogs/inbox.py:824
 msgid "name"
 msgstr "name"
 
 #. Subcommand description ("inbox new-tickets name")
-#: src/theticketbot/cogs/inbox.py:825
+#: src/theticketbot/cogs/inbox.py:826
 msgid "Set the name for new tickets."
 msgstr "Legen Sie den Namen für neue Tickets fest."
 
 #. Message sent when a user leaves their ticket
 #. {0}: The ticket owner's mention
-#: src/theticketbot/cogs/inbox.py:880
+#: src/theticketbot/cogs/inbox.py:881
 #, python-brace-format
 msgid "Archiving ticket as the owner ({0}) has left the thread."
 msgstr ""
@@ -424,11 +424,16 @@ msgstr ""
 
 #. Message sent when a user leaves a server with open tickets
 #. {0}: The ticket owner's mention
-#: src/theticketbot/cogs/inbox.py:911
+#: src/theticketbot/cogs/inbox.py:912
 #, python-brace-format
 msgid "Archiving ticket as the owner ({0}) has left the server."
 msgstr ""
 "Ticket wird archiviert, da der Besitzer ({0}) den Server verlassen hat."
+
+#. Message sent when locking a thread after being archived
+#: src/theticketbot/cogs/inbox.py:961
+msgid "This archived ticket will be locked to moderators only."
+msgstr ""
 
 #. Command name
 #: src/theticketbot/cogs/select.py:33

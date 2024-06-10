@@ -18,6 +18,7 @@ from typing import (
 
 import asqlite
 import discord
+import discord.http
 import humanize
 from discord import app_commands
 from discord.app_commands import locale_str as _
@@ -921,6 +922,48 @@ class Inbox(
         can_lock = thread.permissions_for(thread.guild.me).manage_threads
         await thread.send(content, allowed_mentions=discord.AllowedMentions.none())
         await thread.edit(archived=True, locked=can_lock)
+
+    @commands.Cog.listener("on_raw_thread_update")
+    async def lock_archived_tickets(self, payload: discord.RawThreadUpdateEvent):
+        guild_id = payload.guild_id
+        thread_id = payload.thread_id
+
+        guild = self.bot.get_guild(guild_id)
+        if guild is None:
+            return log.warning("Ignoring unknown guild %d", guild_id)
+
+        if int(payload.data["owner_id"]) != guild.me.id:
+            return
+
+        thread_metadata = payload.data["thread_metadata"]
+        if not thread_metadata["archived"] or thread_metadata.get("locked"):
+            return
+
+        channel_id = int(payload.data["parent_id"])
+        channel = guild.get_channel(channel_id)
+        if channel is None:
+            return log.warning(
+                "Ignoring unknown parent %d for thread %d",
+                channel_id,
+                thread_id,
+            )
+
+        permissions = channel.permissions_for(guild.me)
+        if not permissions.manage_threads:
+            return
+
+        async with self.bot.acquire() as conn:
+            row = await conn.fetchone("SELECT 1 FROM ticket WHERE id = ?", thread_id)
+            if row is None:
+                return
+
+        # Message sent when locking a thread after being archived
+        content = _("This archived ticket will be locked to moderators only.")
+        content = await translate(content, self.bot, locale=guild.preferred_locale)
+
+        params = discord.http.handle_message_parameters(content)
+        await self.bot.http.send_message(thread_id, params=params)
+        await self.bot.http.edit_channel(thread_id, archived=True, locked=True)
 
     @tasks.loop(minutes=30)
     async def cleanup_loop(self) -> None:
