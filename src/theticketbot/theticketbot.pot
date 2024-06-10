@@ -28,7 +28,7 @@
 # the link and/or cause it to be incorrectly embedded by Discord.
 msgid ""
 msgstr ""
-"Project-Id-Version: 0.2.0\n"
+"Project-Id-Version: 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-07 18:29-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
