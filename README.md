@@ -95,8 +95,8 @@ embeds sent by a webhook as long as the message has no content.
 
 Afterwards, use `/inbox create` to choose the channel you want your inbox posted in.
 You will then be prompted to select a message to be sent with your inbox.
-For a short period of time, you can right-click or long tap any message,
-open the Apps menu, and use `Select this message`.
+You can then right-click or long tap the message you sent, open the Apps menu,
+and use `Select this message`.
 
 When choosing a channel, the bot must be able to view, send messages,
 and create private threads in that channel.
@@ -106,15 +106,13 @@ Any members or roles that you explicitly grant Manage Threads in the channel's
 permissions will be automatically added as staff for the inbox, but you can
 change this later with `/inbox staff`.
 
-Currently, there are no limits on the number of inboxes your server can have.
-
-Tickets are managed just like threads. Closing the thread archives it,
-preserving their messages without needing a separate transcript. Staff with
-the Manage Threads permission can also add and remove members afterwards,
+Tickets are managed using Discord's native thread functionality.
+Closing the thread archives it, preserving their messages without
+needing a separate transcript.
+Staff with the Manage Threads permission can also add and remove members,
 useful for bringing in relevant members or for removing the ticket owner
 to allow internal discussions inside the ticket. Tickets can be renamed
-to make it easier to search for them in the future, and can be deleted
-permanently if desired.
+to make them more easily searchable, and can be deleted permanently if desired.
 
 If the owner leaves or is removed from their ticket, the bot will automatically
 archive the ticket. Staff are free to re-open it afterwards.
@@ -125,8 +123,8 @@ In this case, staff must have the Manage Threads permission to re-open the
 ticket.
 
 If you have multiple inboxes in one channel, any staff with the Manage Threads
-permission will be able to view and manage all threads in that channel,
-even if they aren't listed as staff for that inbox.
+permission will be able to view and manage all threads in that channel
+even if they aren't listed as staff for those inboxes.
 If maintaining privacy is important, inboxes should be organized into
 different channels according to which staff should be allowed to view
 the threads of those inboxes. This layout can look like:
@@ -139,10 +137,10 @@ the threads of those inboxes. This layout can look like:
   - `Feedback And Suggestions`
   - `Staff Applications`
 
-Alternatively, you can choose to not grant the Manage Threads permission
-to some or all staff. This will prevent them from closing tickets by
-themselves, inviting other members, or sending messages in locked tickets.
-This also means that future staff members won't be able to see older tickets.
+Alternatively, you can choose to not grant the Manage Threads permission to staff.
+This will prevent them from closing tickets, inviting other members,
+or sending messages in locked tickets.
+This also means future staff members won't be able to view older tickets.
 
 ## Customization
 
@@ -153,7 +151,7 @@ Create Ticket button.
 
 - `/inbox message`
 
-  Edit the message of an inbox with another message.
+  Edit the message of an inbox with a new message.
 
 - `/inbox staff`
 
@@ -176,8 +174,7 @@ Create Ticket button.
     Must be included in the message for staff to be invited
     if they do not have the Manage Threads permission.
 
-  To keep push notifications easy to understand at a glance, make sure the
-  starter message says something unique to its inbox at the beginning, like:
+  For example, a starting message for a moderation inbox might look like:
 
   ```
   $author Thank you for creating a moderation ticket! $staff will be with you shortly.
@@ -188,7 +185,7 @@ Create Ticket button.
 
 - `/inbox new-tickets name`
 
-  Inspect the default name for new tickets and optionally change it.
+  Inspect and manage the default name for new tickets.
 
   Allowed placeholders are:
 
@@ -207,15 +204,16 @@ Create Ticket button.
     The counter is not guaranteed to be sequential and may skip
     if the bot is unsuccessful in creating a ticket.
 
-  Note that thread names are limited to 100 characters by Discord.
+  Thread names will be limited to 100 characters by Discord.
 
 ## Ticket Limits
 
-Each inbox has a per-user ratelimit to help reduce spam. It adjusts according
-to the slowmode you have set for the inbox's channel, but the minimum time
-allowed between tickets is 60 seconds. Inboxes also try to maintain a maximum
-of 1 active thread per user, although it is not guaranteed due to technical
-limitations.
+Each inbox limits users to a minimum of 1 thread every 60 seconds.
+If a channel slowmode above 60 seconds is set, the inbox will match
+that delay to limit new tickets.
+
+Inboxes will also try to limit users to 1 active thread per inbox,
+but may not be guaranteed due to technical limitations.
 
 ## Encryption
 
@@ -223,18 +221,18 @@ limitations.
 >
 > This feature is experimental and may be removed in the future.
 >
-> Currently, derived keys are not cached by the bot, meaning that every connection
-> made to the database, which can be several connections per command, requires
-> repeating the same key derivation which may be performance intensive.
+> This bot does not store any sensitive data on users and persists only
+> the bare minimum needed to function, so encrypting the database is not
+> significantly useful in contrast to protecting your bot's token.
 >
 > Encryption is also not a substitute for properly configured file permissions.
 > You should ensure that other users on your system are not able to read the
 > database or the config.toml file. Other secure methods of transferring
 > these files between systems should be applied as well.
 >
-> Also, it's worth noting that this bot avoids storing any sensitive data
-> on users and only persists the bare minimum needed to function.
-> Primary concerns should be preventing your bot token from being leaked.
+> Finally, derived keys are not cached by the bot, meaning that every connection
+> made to the database, which can be several connections per command, requires
+> repeating the same key derivation which may be performance intensive.
 
 This bot supports using an encrypted SQLite database with encryption extensions
 like [SQLiteMultipleCiphers], [SQLCipher], or [SEE]. On a Windows system,
@@ -269,7 +267,6 @@ A more complex encryption setup might look like:
 [db]
 pragmas = ["PRAGMA cipher = sqlcipher", "PRAGMA kdf_iter = 512000"]
 key_template = "PRAGMA hexkey = '{}'"
-# NOTE: when first encrypting with hexkey, use hexrekey instead of rekey
 ```
 
 At startup, you will be prompted to enter the database key.
