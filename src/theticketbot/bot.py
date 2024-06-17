@@ -30,12 +30,15 @@ class Bot(commands.Bot):
     This should be assigned after construction.
 
     """
+    pool: asqlite.Pool | None
+    """The current connection pool. Initialized at bot startup."""
 
     def __init__(self, config_refresher: Callable[[], Settings]):
         self._config_refresher = config_refresher
         config = self.refresh_config()
 
         self.key_pragma = None
+        self.pool = None
 
         super().__init__(
             chunk_guilds_at_startup=False,
@@ -56,9 +59,10 @@ class Bot(commands.Bot):
         :param transaction: If True, a transaction is opened as well.
 
         """
-        path = str(self.config.db.path)
-        init = lambda conn: self._run_config_pragmas(conn)
-        async with database.connect(path, init=init) as conn:
+        if self.pool is None:
+            raise RuntimeError("Cannot acquire connection until bot has started")
+
+        async with self.pool.acquire() as conn:
             if not transaction:
                 yield conn
             else:
@@ -116,6 +120,13 @@ class Bot(commands.Bot):
         await self._maybe_load_jishaku()
 
         await self.tree.set_translator(GettextTranslator())
+
+    async def start(self, *args, **kwargs) -> None:
+        # FIXME: need to replace asqlite.create_pool() to run init= early
+        path = str(self.config.db.path)
+        init = lambda conn: self._run_config_pragmas(conn)
+        async with asqlite.create_pool(path, init=init) as self.pool:
+            return await super().start(*args, **kwargs)
 
 
 class Context(commands.Context[Bot]): ...
