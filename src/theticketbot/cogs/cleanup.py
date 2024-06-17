@@ -51,6 +51,7 @@ class Cleanup(commands.Cog):
             return
 
         await self.cleanup_guilds()
+        await self.cleanup_channels()
 
     async def cleanup_guilds(self) -> None:
         guild_ids = {guild.id for guild in self.bot.guilds}
@@ -63,6 +64,19 @@ class Cleanup(commands.Cog):
 
         if len(rows) > 0:
             log.info("%d guilds cleaned up", rows)
+
+    async def cleanup_channels(self) -> None:
+        # FIXME: add filtering by guild channel, prevent deletion of DMs and threads
+        channel_ids = {channel.id for channel in self.bot.get_all_channels()}
+        async with self.bot.acquire() as conn:
+            rows = await conn.fetchall("SELECT id FROM channel")
+            rows = {row[0] for row in rows}
+            rows = rows - channel_ids
+            # rows = [(channel_id,) for channel_id in rows]
+            # await conn.executemany("DELETE FROM channel WHERE id = ?", rows)
+
+        if len(rows) > 0:
+            log.info("%d channels would be cleaned up", rows)
 
     # NOTE: users are not removed by any event
     # NOTE: members are not removed by any event, members intent required
