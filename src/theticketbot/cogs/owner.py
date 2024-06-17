@@ -52,6 +52,24 @@ class Owner(commands.Cog):
             f"with a total of {n_localizations} localizations!"
         )
 
+    @commands.command(name="invite")
+    async def invite(self, ctx: Context):
+        """Provide an invite link for the bot with minimal permissions."""
+        assert self.bot.application_id is not None
+        link = discord.utils.oauth_url(
+            self.bot.application_id,
+            permissions=discord.Permissions(
+                read_messages=True,
+                send_messages=True,
+                embed_links=True,
+                attach_files=True,
+                create_private_threads=True,
+                send_messages_in_threads=True,
+            ),
+            scopes=("bot",),
+        )
+        await ctx.reply(link)
+
 
 async def setup(bot: Bot):
     await bot.add_cog(Owner(bot))
