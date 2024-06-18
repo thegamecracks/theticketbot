@@ -58,7 +58,23 @@ With Python 3.11+ and Git, you can set up this bot by following these steps:
    token = "Bot token from https://discord.com/developers/applications"
    ```
 
-4. Start the bot:
+4. Synchronize the bot's application commands:
+
+   ```sh
+   theticketbot --sync
+   # or
+   python -m theticketbot --sync
+   ```
+
+   Once the commands are synced, the bot will exit immediately.
+
+   If the bot is updated with any changes to application commands,
+   you will need to repeat this to sync them again.
+
+   Alternatively, you can use the "<@mention> sync" text command once your bot
+   is in a server to synchronize application commands.
+
+5. Start the bot:
 
    ```sh
    theticketbot
@@ -66,8 +82,7 @@ With Python 3.11+ and Git, you can set up this bot by following these steps:
    python -m theticketbot
    ```
 
-5. Invite your bot to a server and use "<@mention> sync" to synchronize
-   the bot's application commands.
+6. Create an invite link in the Discord Developer Portal to add your bot to a server.
 
    In the [Applications](https://discord.com/developers/applications) > OAuth2 page,
    select only `bot` for the scope, then in the permissions list below,

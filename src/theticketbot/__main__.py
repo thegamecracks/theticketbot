@@ -40,9 +40,16 @@ def main() -> None:
         help="The config file to load",
         type=Path,
     )
+    parser.add_argument(
+        "--sync",
+        action="store_true",
+        dest="sync_at_startup",
+        help="Sync application commands at startup",
+    )
 
     args = parser.parse_args()
     config_file: Path = args.config_file
+    sync_at_startup: bool = args.sync_at_startup
 
     root_level = logging.INFO
     if args.verbose > 0:
@@ -56,7 +63,10 @@ def main() -> None:
         root=True,
     )
 
-    bot = Bot(functools.partial(load_config, config_file))
+    bot = Bot(
+        functools.partial(load_config, config_file),
+        sync_at_startup=sync_at_startup,
+    )
 
     if bot.config.bot.token == "":
         sys.exit(

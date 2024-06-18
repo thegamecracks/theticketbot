@@ -4,6 +4,7 @@ import contextlib
 import importlib.metadata
 import logging
 import sqlite3
+import sys
 from typing import TYPE_CHECKING, AsyncGenerator, Callable, cast
 
 import asqlite
@@ -31,10 +32,16 @@ class Bot(commands.Bot):
 
     """
 
-    def __init__(self, config_refresher: Callable[[], Settings]):
+    def __init__(
+        self,
+        config_refresher: Callable[[], Settings],
+        *,
+        sync_at_startup: bool,
+    ):
         self._config_refresher = config_refresher
         config = self.refresh_config()
 
+        self.sync_at_startup = sync_at_startup
         self.key_pragma = None
 
         super().__init__(
@@ -116,6 +123,11 @@ class Bot(commands.Bot):
         await self._maybe_load_jishaku()
 
         await self.tree.set_translator(GettextTranslator())
+
+        if self.sync_at_startup:
+            commands = await self.tree.sync()
+            log.info("Synced %d application commands", len(commands))
+            sys.exit()
 
 
 class Context(commands.Context[Bot]): ...
