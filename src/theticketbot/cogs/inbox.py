@@ -401,6 +401,7 @@ class InboxMessageParams(TypedDict):
 class Inbox(
     commands.GroupCog,
     # Command group name
+    # (alternatively translated as "panel")
     group_name=_("inbox"),
     # Command group description ("inbox")
     group_description=_("Manage the server's ticket inboxes."),
