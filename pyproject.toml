@@ -11,7 +11,7 @@ readme = "README.md"
 dynamic = ["version"]
 dependencies = [
     "asqlite @ https://github.com/Rapptz/asqlite/archive/fcd8ce0672562e440f99eb4b7a56eba16f6abf4e.tar.gz",
-    "discord.py @ https://github.com/Rapptz/discord.py/archive/0e58a927ddbc300a17ef0137d948faa659565313.tar.gz",
+    "discord.py~=2.4",
     "humanize~=4.9",
     "pydantic~=2.7",
 ]
