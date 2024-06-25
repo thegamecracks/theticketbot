@@ -35,6 +35,7 @@ integrations = false
 invites = false
 message_content = false
 moderation = false
+polls = false
 presences = false
 voice_states = false
 webhooks = false
