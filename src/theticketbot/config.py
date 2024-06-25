@@ -49,8 +49,6 @@ class SettingsBotInbox(_BaseModel):
 class SettingsBotIntents(_BaseModel):
     """The intents used when connecting to the Discord gateway.
 
-    Default intents are enabled but can be overridden here.
-
     .. seealso:: https://discordpy.readthedocs.io/en/stable/api.html#intents
 
     """
@@ -60,9 +58,7 @@ class SettingsBotIntents(_BaseModel):
     def create_intents(self) -> discord.Intents:
         import discord
 
-        intents = dict(discord.Intents.default())
-        intents |= self.model_dump()
-        return discord.Intents(**intents)
+        return discord.Intents(**self.model_dump())
 
 
 def check_pragma_statement(s: SecretStr) -> SecretStr:

@@ -16,7 +16,6 @@ max_attachment_size = 5000000
 
 [bot.intents]
 # https://discordpy.readthedocs.io/en/stable/api.html#intents
-# All default intents are enabled but can be modified here
 guild_messages = true
 guilds = true
 members = true
