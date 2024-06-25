@@ -20,7 +20,6 @@ guild_messages = true
 guilds = true
 members = true
 
-auto_moderation = false
 auto_moderation_configuration = false
 auto_moderation_execution = false
 dm_messages = false
