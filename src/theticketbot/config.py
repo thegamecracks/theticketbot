@@ -157,18 +157,15 @@ def load_config(path: Path, *, merge_default: bool = True) -> Settings:
         if it exists.
     :returns: The settings that were parsed.
     :raises FileNotFoundError:
-        If merge_default is False, this means the configuration file
-        could not be found. Otherwise, it means the default configuration
-        file could not be found.
+        Either the configuration file could not be found,
+        or the default configuration file could not be found.
 
     """
     if not merge_default:
         data = _load_raw_config(path)
-    elif path.exists():
+    else:
         data = _load_raw_config(CONFIG_DEFAULT_RESOURCE)
         overwrites = _load_raw_config(path)
         _recursive_update(data, overwrites)
-    else:
-        data = _load_raw_config(CONFIG_DEFAULT_RESOURCE)
 
     return Settings.model_validate(data)
