@@ -3,6 +3,7 @@ import functools
 import getpass
 import importlib.metadata
 import logging
+import os
 import sys
 from pathlib import Path
 
@@ -78,6 +79,8 @@ def main() -> None:
         sync_at_startup=sync_at_startup,
     )
 
+    check_outdated_database_path(bot.config.db.path, args.config_file)
+
     if bot.config.bot.token == "":
         sys.exit(
             "No bot token has been supplied by the config file.\n"
@@ -96,6 +99,38 @@ def main() -> None:
         bot.config.bot.token,
         log_handler=None,
     )
+
+
+def check_outdated_database_path(path: Path, config_file: str) -> None:
+    if os.getenv("IGNORE_OUTDATED_DATABASE_PATHS") == "1":
+        return
+
+    outdated_paths = [Path("data/theticketbot.db")]
+    for outdated in outdated_paths:
+        if path.resolve() == outdated.resolve():
+            return
+        elif not outdated.exists():
+            continue
+        elif outdated.is_symlink():
+            continue
+
+        log.warning(
+            f"\n"
+            f"A database file was found at {outdated} but db.path is set to\n"
+            f"{path}.\n"
+            f"\n"
+            f"It is recommended you move your database file to db.path\n"
+            f"so theticketbot can continue using the database.\n"
+            f"\n"
+            f"If you want to keep using your database file at {outdated},\n"
+            f'please set path = "{outdated}" in the [db] table\n'
+            f"of your config file, {config_file}.\n"
+            f"\n"
+            f"If you are absolutely sure your database files are correctly placed,\n"
+            f"you may suppress this warning by setting the environment variable\n"
+            f"IGNORE_OUTDATED_DATABASE_PATHS=1."
+        )
+        return
 
 
 if __name__ == "__main__":
