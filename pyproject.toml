@@ -8,6 +8,7 @@ description = "A ticket discord bot."
 requires-python = ">=3.11"
 authors = [{ name = "thegamecracks" }]
 readme = "README.md"
+license = { text = "MIT License" }
 dynamic = ["version"]
 dependencies = [
     "asqlite @ https://github.com/Rapptz/asqlite/archive/fcd8ce0672562e440f99eb4b7a56eba16f6abf4e.tar.gz",
