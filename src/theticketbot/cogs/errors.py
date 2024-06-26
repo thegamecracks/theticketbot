@@ -2,7 +2,7 @@ import logging
 import random
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, ClassVar, Generic, Type, TypeVar
+from typing import Any, ClassVar, Generic, Type, TypeVar, cast
 
 import discord
 from discord import app_commands
@@ -27,8 +27,25 @@ async def append_error_code(ctx: object, content: str, error_code: str) -> str:
         "If assistance is needed, please contact {1}."
     )
     trailer = await maybe_translate(ctx, trailer)
-    trailer = trailer.format(error_code, "<@153551102443257856>")
+    trailer = trailer.format(error_code, get_owner_mention(ctx))
     return f"{content}\n{trailer}"
+
+
+def get_owner_mention(ctx: object) -> str:
+    if isinstance(ctx, discord.Interaction):
+        ctx = cast(discord.Interaction[Bot], ctx)
+        bot = ctx.client
+    elif isinstance(ctx, commands.Context):
+        ctx = cast(commands.Context[Bot], ctx)
+        bot = ctx.bot
+    else:
+        # FIXME: should ctx really be generic?
+        raise TypeError(f"Unsupported context type {type(ctx).__name__}")
+
+    if bot.application is None:
+        raise RuntimeError("Owner mention not available, bot must be logged in")
+
+    return bot.application.owner.mention
 
 
 def generate_error_code():

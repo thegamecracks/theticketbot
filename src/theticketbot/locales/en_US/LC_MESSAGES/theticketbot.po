@@ -30,7 +30,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.4.0.post1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-19 11:09-0400\n"
+"POT-Creation-Date: 2024-06-26 15:06-0400\n"
 "PO-Revision-Date: 2024-06-02 15:17-0400\n"
 "Last-Translator: thegamecracks <61257169+thegamecracks@users.noreply.github."
 "com>\n"
@@ -53,24 +53,24 @@ msgstr ""
 
 #. Error response for command on cooldown
 #. {0}: an exception containing the duration to wait in .retry_after
-#: src/theticketbot/cogs/errors.py:148 src/theticketbot/cogs/errors.py:206
+#: src/theticketbot/cogs/errors.py:165 src/theticketbot/cogs/errors.py:223
 #, python-brace-format
 msgid "This command is on cooldown for {0.retry_after:.1f}s."
 msgstr ""
 
 #. Error response for exceeding maximum concurrent users of a command
-#: src/theticketbot/cogs/errors.py:154
+#: src/theticketbot/cogs/errors.py:171
 msgid "Too many people are using this command. Please try again later."
 msgstr ""
 
 #. Error response for not passing all checks required to use a command
-#: src/theticketbot/cogs/errors.py:160 src/theticketbot/cogs/errors.py:212
+#: src/theticketbot/cogs/errors.py:177 src/theticketbot/cogs/errors.py:229
 msgid "One or more checks failed for this command."
 msgstr ""
 
 #. Error response for failing to parse the user's input
 #. {0}: the error description
-#: src/theticketbot/cogs/errors.py:167 src/theticketbot/cogs/errors.py:219
+#: src/theticketbot/cogs/errors.py:184 src/theticketbot/cogs/errors.py:236
 #, python-brace-format
 msgid ""
 "An error occurred with your input: ```py\n"
@@ -78,12 +78,12 @@ msgid ""
 msgstr ""
 
 #. Error response for an unexpected failure in a command
-#: src/theticketbot/cogs/errors.py:173 src/theticketbot/cogs/errors.py:231
+#: src/theticketbot/cogs/errors.py:190 src/theticketbot/cogs/errors.py:248
 msgid "An unknown error occurred while running this command."
 msgstr ""
 
 #. Error response for using a slash command not recognized by the bot
-#: src/theticketbot/cogs/errors.py:225
+#: src/theticketbot/cogs/errors.py:242
 msgid "The bot currently does not recognize this command."
 msgstr ""
 
