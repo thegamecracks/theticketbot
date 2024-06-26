@@ -40,6 +40,6 @@ voice_states = false
 webhooks = false
 
 [db]
-path = "data/theticketbot.db"
+path = "${USER_DATA_DIR}/theticketbot.db"
 pragmas = []
 key_template = ""

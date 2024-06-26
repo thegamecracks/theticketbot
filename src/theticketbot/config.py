@@ -8,12 +8,15 @@ from typing import IO, TYPE_CHECKING, Annotated, Any, Literal, Protocol
 from pydantic import (
     AfterValidator,
     BaseModel,
+    BeforeValidator,
     ConfigDict,
     SecretStr,
     ValidationInfo,
     ValidatorFunctionWrapHandler,
     WrapValidator,
 )
+
+from .appdirs import expand_app_dirs
 
 if TYPE_CHECKING:
     import discord
@@ -61,6 +64,13 @@ class SettingsBotIntents(_BaseModel):
         return discord.Intents(**self.model_dump())
 
 
+def expand_app_dirs_strict(s: str) -> str:
+    try:
+        return expand_app_dirs(s, strict=True)
+    except KeyError as e:
+        raise ValueError(f"{e.args[0]} not a valid variable") from None
+
+
 def check_pragma_statement(s: SecretStr) -> SecretStr:
     if not s.get_secret_value().strip().lower().startswith("pragma"):
         raise ValueError("statement must start with PRAGMA")
@@ -85,7 +95,7 @@ def pass_through_empty_string(
 
 
 class SettingsDB(_BaseModel):
-    path: Path
+    path: Annotated[Path, BeforeValidator(expand_app_dirs_strict)]
     """The filepath to write the bot's SQLite database to."""
     pragmas: list[
         Annotated[
