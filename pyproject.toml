@@ -28,6 +28,7 @@ classifiers = [
     "Topic :: Communications :: Chat",
     "Typing :: Typed",
 ]
+keywords = ["i18n", "discord", "gettext", "discord.py", "ticketing-system"]
 
 [project.scripts]
 theticketbot = "theticketbot.__main__:main"
