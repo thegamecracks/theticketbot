@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changes
+
+- Add classifiers, license, keywords, and URLs to the project's metadata
+- Unpin discord.py to `~=2.4`
+
+### Fixes
+
+- Disable the polls intent by default, and don't enable any future standard intents
+  when upgrading discord.py
+
 ## [0.3.2] - 2024-06-19
 
 ### New Features
