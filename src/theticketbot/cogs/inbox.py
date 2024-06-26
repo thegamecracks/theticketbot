@@ -78,6 +78,7 @@ class InboxView(discord.ui.View):
                     "Sorry, this inbox is no longer recognized and must be "
                     "re-created. Please notify a server admin!"
                 )
+                content = await translate(content, interaction)
                 return await interaction.response.send_message(content, ephemeral=True)
 
             tickets = await self.get_active_user_tickets(
