@@ -262,12 +262,12 @@ pre-built DLLs can be found for SQLiteMultipleCiphers in their
 
 With one of the encryption extensions installed, you can use it to encrypt
 the database and then add the decryption to theticketbot. Run the bot once
-so `data/theticketbot.db` is created (or whatever path you set it to), then
-open the database using the SQLite shell from your encryption extension
-and encrypt it:
+so your database file is created - use `theticketbot --dump-config` to locate it
+if you didn't explicitly set a `db.path` in your config - then open the database
+using the SQLite shell from your encryption extension and encrypt it:
 
 ```sql
-$ sqlite3 data/theticketbot.db
+$ sqlite3 theticketbot.db
 SQLite version 3.46.0 2024-05-23 13:25:27 (UTF-16 console I/O) (SQLite3 Multiple Ciphers 1.8.5)
 Enter ".help" for usage hints.
 sqlite> PRAGMA rekey = 'Hello world!';
