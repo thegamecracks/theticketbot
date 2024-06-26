@@ -6,6 +6,7 @@ import logging
 import os
 import sys
 from pathlib import Path
+from typing import Type
 
 from pydantic import SecretStr
 
@@ -17,6 +18,21 @@ from .logging import configure_logging
 log = logging.getLogger(__package__)
 
 
+def suppress(*exceptions: Type[BaseException]):
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            try:
+                return func(*args, **kwargs)
+            except exceptions:
+                return
+
+        return wrapper
+
+    return decorator
+
+
+@suppress(KeyboardInterrupt)
 def main() -> None:
     parser = argparse.ArgumentParser(
         prog=__package__,
