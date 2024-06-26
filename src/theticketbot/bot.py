@@ -5,6 +5,7 @@ import importlib.metadata
 import logging
 import sqlite3
 import sys
+from enum import Flag, auto
 from typing import TYPE_CHECKING, AsyncGenerator, Callable, cast
 
 import asqlite
@@ -23,6 +24,11 @@ if TYPE_CHECKING:
 log = logging.getLogger(__name__)
 
 
+class StartupFlags(Flag):
+    SYNC = auto()
+    CLOSE = auto()
+
+
 # https://discordpy.readthedocs.io/en/stable/ext/commands/api.html
 class Bot(commands.Bot):
     key_pragma: SecretStr | None
@@ -36,12 +42,12 @@ class Bot(commands.Bot):
         self,
         config_refresher: Callable[[], Settings],
         *,
-        sync_at_startup: bool,
+        startup_flags: StartupFlags,
     ):
         self._config_refresher = config_refresher
         config = self.refresh_config()
 
-        self.sync_at_startup = sync_at_startup
+        self.startup_flags = startup_flags
         self.key_pragma = None
 
         super().__init__(
@@ -124,9 +130,11 @@ class Bot(commands.Bot):
 
         await self.tree.set_translator(GettextTranslator())
 
-        if self.sync_at_startup:
+        if self.startup_flags & StartupFlags.SYNC:
             commands = await self.tree.sync()
             log.info("Synced %d application commands", len(commands))
+
+        if self.startup_flags & StartupFlags.CLOSE:
             sys.exit()
 
 
