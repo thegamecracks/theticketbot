@@ -7,12 +7,12 @@ import os
 import sys
 from pathlib import Path
 
-import discord
 from pydantic import SecretStr
 
 from . import __version__
 from .bot import Bot
 from .config import load_config
+from .logging import configure_logging
 
 log = logging.getLogger(__package__)
 
@@ -58,17 +58,8 @@ def main() -> None:
     config_file: Path = args.config_file
     sync_at_startup: bool = args.sync_at_startup
 
-    root_level = logging.INFO
-    if args.verbose > 0:
-        log.setLevel(logging.DEBUG)
-    if args.verbose > 1:
-        root_level = logging.DEBUG
-
     # Configure logging early to capture our own initialization
-    discord.utils.setup_logging(
-        level=root_level,
-        root=True,
-    )
+    configure_logging(args.verbose)
 
     if args.dump_config:
         config = load_config(config_file)
