@@ -4,7 +4,6 @@ import platformdirs
 APP_DIRS = platformdirs.PlatformDirs(
     appname="theticketbot",
     appauthor="thegamecracks",
-    ensure_exists=True,
     opinion=True,
 )
 
