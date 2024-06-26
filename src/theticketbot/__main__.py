@@ -40,11 +40,17 @@ def main() -> None:
         help="The config file to load",
         type=Path,
     )
-    parser.add_argument(
+    commands = parser.add_mutually_exclusive_group()
+    commands.add_argument(
         "--sync",
         action="store_true",
         dest="sync_at_startup",
         help="Sync application commands at startup",
+    )
+    commands.add_argument(
+        "--dump-config",
+        action="store_true",
+        help="Dump config file at startup",
     )
 
     args = parser.parse_args()
@@ -62,6 +68,10 @@ def main() -> None:
         level=root_level,
         root=True,
     )
+
+    if args.dump_config:
+        config = load_config(config_file)
+        sys.exit(config.model_dump_json(indent=4, exclude={"bot": {"token"}}))
 
     bot = Bot(
         functools.partial(load_config, config_file),
