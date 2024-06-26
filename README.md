@@ -34,9 +34,6 @@ I am not hosting a public instance of this bot, and I have no endorsements
 for any bots that claim to host this project. Sorry for the inconvenience!
 If you're technically inclined, you can host this bot yourself.
 
-`gettext` is an optional dependency. During installation, `msgfmt` will be
-invoked if available to compile localizations.
-
 With Python 3.11+, you can set up this bot by following these steps:
 
 1. Create a virtual environment and install theticketbot from PyPI:
@@ -46,6 +43,19 @@ With Python 3.11+, you can set up this bot by following these steps:
    source .venv/bin/activate  # or .venv\Scripts\activate on Windows
    pip install theticketbot
    ```
+
+   Alternatively, you can install the latest, in-development version using Git:
+
+   ```sh
+   pip install git+https://github.com/thegamecracks/theticketbot
+   ```
+
+   When installing from the source code like above, localizations may be
+   compiled using gettext's `msgfmt` program if it is available on your system.
+   This dependency is not needed when installing the wheel distributions
+   from PyPI as they already contain the localizations pre-compiled.
+   If you don't have gettext when installing from source, localizations
+   will be disabled.
 
 2. Create a [config.toml] file containing your bot token:
 
