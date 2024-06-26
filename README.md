@@ -2,7 +2,7 @@
 
 A simple Discord bot for handling ticket systems using channel threads.
 
-![](/docs/images/demo.png)
+![](https://raw.githubusercontent.com/thegamecracks/theticketbot/main/docs/images/demo.png)
 
 ## Resources
 
