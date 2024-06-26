@@ -6,6 +6,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.4.2] - 2024-06-26
+
+### New Features
+
+- Automatically prompt to create a config.toml file in a user config directory
+  if no config file is found ([#10])
+  - If a config.toml is found in the current working directory and the
+    new user config isn't present, it will be loaded to preserve backwards
+    compatibility.
+  - This behaviour can be bypassed using the `--config-file` argument.
+- Print loaded config file's path when using `--dump-config`
+
+### Changes
+
+- Suppress KeyboardInterrupt tracebacks in the CLI more reliably
+
+### Fixes
+
+- Fix untranslated message when clicking "Create Ticket" on an unrecognized inbox
+- Raise an exception when `--config-file` is given a non-existent file path
+
 ## [0.4.1] - 2024-06-26
 
 ### New Features
@@ -135,7 +156,8 @@ This is theticketbot's first release to go on [PyPI](https://pypi.org/project/th
 
 This is theticketbot's first release! 🎉
 
-[Unreleased]: https://github.com/thegamecracks/theticketbot/compare/v0.4.1...main
+[Unreleased]: https://github.com/thegamecracks/theticketbot/compare/v0.4.2...main
+[0.4.2]: https://github.com/thegamecracks/theticketbot/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/thegamecracks/theticketbot/compare/v0.4.0.post1...v0.4.1
 [0.4.0.post1]: https://github.com/thegamecracks/theticketbot/compare/v0.4.0...v0.4.0.post1
 [0.4.0]: https://github.com/thegamecracks/theticketbot/compare/v0.3.2...v0.4.0
@@ -145,6 +167,7 @@ This is theticketbot's first release! 🎉
 [0.2.0]: https://github.com/thegamecracks/theticketbot/compare/v0.1.1...v0.2.0
 [0.1.0]: https://github.com/thegamecracks/theticketbot/releases/tag/v0.1.0
 
+[#10]: https://github.com/thegamecracks/theticketbot/issues/10
 [#8]: https://github.com/thegamecracks/theticketbot/issues/8
 [#5]: https://github.com/thegamecracks/theticketbot/issues/5
 [#4]: https://github.com/thegamecracks/theticketbot/issues/4
