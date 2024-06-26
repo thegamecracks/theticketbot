@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.4.1] - 2024-06-26
+
+### New Features
+
+- Add .jsonl logging to user log directory
+
+### Changes
+
+- Replace hardcoded owner mention shown in error messages
+  with the real bot owner given by the Discord API
+- Clarify gettext dependency in readme
+
+### Fixes
+
+- Don't unnecessarily create application / temporary directories at startup
+
 ## [0.4.0.post1] - 2024-06-26
 
 This release adds a couple badges to the readme and fixes the readme image
@@ -119,7 +135,8 @@ This is theticketbot's first release to go on [PyPI](https://pypi.org/project/th
 
 This is theticketbot's first release! 🎉
 
-[Unreleased]: https://github.com/thegamecracks/theticketbot/compare/v0.4.0.post1...main
+[Unreleased]: https://github.com/thegamecracks/theticketbot/compare/v0.4.1...main
+[0.4.1]: https://github.com/thegamecracks/theticketbot/compare/v0.4.0.post1...v0.4.1
 [0.4.0.post1]: https://github.com/thegamecracks/theticketbot/compare/v0.4.0...v0.4.0.post1
 [0.4.0]: https://github.com/thegamecracks/theticketbot/compare/v0.3.2...v0.4.0
 [0.3.2]: https://github.com/thegamecracks/theticketbot/compare/v0.3.1...v0.3.2
