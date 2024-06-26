@@ -34,31 +34,24 @@ If you're technically inclined, you can host this bot yourself.
 `gettext` is an optional dependency. During installation, `msgfmt` will be
 invoked if available to compile localizations.
 
-With Python 3.11+ and Git, you can set up this bot by following these steps:
+With Python 3.11+, you can set up this bot by following these steps:
 
-1. Clone this repository:
-
-   ```sh
-   git clone https://github.com/thegamecracks/theticketbot
-   cd theticketbot
-   ```
-
-2. Create a virtual environment and install the project to it:
+1. Create a virtual environment and install theticketbot from PyPI:
 
    ```sh
    python -m venv .venv
    source .venv/bin/activate  # or .venv\Scripts\activate on Windows
-   pip install -e .
+   pip install theticketbot
    ```
 
-3. Create a [config.toml] file containing your bot token:
+2. Create a [config.toml] file containing your bot token:
 
    ```toml
    [bot]
    token = "Bot token from https://discord.com/developers/applications"
    ```
 
-4. Synchronize the bot's application commands:
+3. Synchronize the bot's application commands:
 
    ```sh
    theticketbot --sync
@@ -74,7 +67,7 @@ With Python 3.11+ and Git, you can set up this bot by following these steps:
    Alternatively, you can use the "<@mention> sync" text command once your bot
    is in a server to synchronize application commands.
 
-5. Start the bot:
+4. Start the bot:
 
    ```sh
    theticketbot
@@ -82,7 +75,7 @@ With Python 3.11+ and Git, you can set up this bot by following these steps:
    python -m theticketbot
    ```
 
-6. Create an invite link in the Discord Developer Portal to add your bot to a server.
+5. Create an invite link in the Discord Developer Portal to add your bot to a server.
 
    In the [Applications](https://discord.com/developers/applications) > OAuth2 page,
    select only `bot` for the scope, then in the permissions list below,
