@@ -128,7 +128,9 @@ def dump_config_and_exit(config_file: Path | None) -> None:
         )
 
     config = load_config(config_file)
-    sys.exit(config.model_dump_json(indent=4, exclude={"bot": {"token"}}))
+    print(config_file)
+    print(config.model_dump_json(indent=4, exclude={"bot": {"token"}}))
+    sys.exit(1)
 
 
 def find_config_file() -> Path | None:
