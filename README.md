@@ -57,30 +57,7 @@ With Python 3.11+, you can set up this bot by following these steps:
    If you don't have gettext when installing from source, localizations
    will be disabled.
 
-2. Create a [config.toml] file containing your bot token:
-
-   ```toml
-   [bot]
-   token = "Bot token from https://discord.com/developers/applications"
-   ```
-
-3. Synchronize the bot's application commands:
-
-   ```sh
-   theticketbot --sync
-   # or
-   python -m theticketbot --sync
-   ```
-
-   Once the commands are synced, the bot will exit immediately.
-
-   If the bot is updated with any changes to application commands,
-   you will need to repeat this to sync them again.
-
-   Alternatively, you can use the "<@mention> sync" text command once your bot
-   is in a server to synchronize application commands.
-
-4. Start the bot:
+2. Start the bot:
 
    ```sh
    theticketbot
@@ -88,7 +65,18 @@ With Python 3.11+, you can set up this bot by following these steps:
    python -m theticketbot
    ```
 
-5. Create an invite link in the Discord Developer Portal to add your bot to a server.
+   You will be prompted to enter your bot token so it can be written to
+   a [config.toml] file in a user-specific directory. After this, the bot
+   will automatically synchronize its application commands for the first time.
+
+   If you update the bot later on, you may need to run `theticketbot --sync`
+   to synchronize the bot's application commands again.
+   See the [changelog] to know if this is needed.
+
+   Alternatively, you can use the "<@mention> sync" text command once your bot
+   is in a server to synchronize application commands.
+
+3. Create an invite link in the Discord Developer Portal to add your bot to a server.
 
    In the [Applications](https://discord.com/developers/applications) > OAuth2 page,
    select only `bot` for the scope, then in the permissions list below,
@@ -109,6 +97,7 @@ With Python 3.11+, you can set up this bot by following these steps:
    invite the bot if "Public Bot" is ticked in the Bot page.
 
 [config.toml]: https://github.com/thegamecracks/theticketbot/tree/main/src/theticketbot/config_default.toml
+[changelog]: https://github.com/thegamecracks/theticketbot/tree/main/CHANGELOG.md
 
 To set up an inbox, first post a message with the content you would like your
 inbox message to have. This message may include image attachments, or custom
