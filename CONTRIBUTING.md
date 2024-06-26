@@ -38,7 +38,7 @@ executed upon bot startup. During development, if any changes to the database
 schema are required, please create a backup of your database before adding a
 new migration script.
 
-[migrations/]: /src/theticketbot/migrations/
+[migrations/]: https://github.com/thegamecracks/theticketbot/tree/main/src/theticketbot/migrations/
 
 When updating any file that contains `_()` translatable strings,
 it is recommended to run `utils/merge_po.py` and `utils/build_mo.py`

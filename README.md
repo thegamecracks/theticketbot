@@ -14,14 +14,14 @@ A simple Discord bot for handling ticket systems using channel threads.
 
 Before submitting any changes, please read and follow the [Contributing Guide]!
 
-[Contributing Guide]: /CONTRIBUTING.md
+[Contributing Guide]: https://github.com/thegamecracks/theticketbot/tree/main/CONTRIBUTING.md
 
 Want to help out by adding translations? This bot stores them in the [locales/]
 directory. You can [fork this repository], create a new branch, commit your
 PO files there, and make a pull request!
 See [discord.py-gettext-demo's onboarding] for more information.
 
-[locales/]: /src/theticketbot/locales/
+[locales/]: https://github.com/thegamecracks/theticketbot/tree/main/src/theticketbot/locales/
 [fork this repository]: https://docs.github.com/en/get-started/quickstart/contributing-to-projects
 [discord.py-gettext-demo's onboarding]: https://github.com/thegamecracks/discord.py-i18n-demo/blob/main/docs/en/onboarding.md
 
@@ -95,7 +95,7 @@ With Python 3.11+, you can set up this bot by following these steps:
    at the bottom. You can now use that URL to invite the bot or let others
    invite the bot if "Public Bot" is ticked in the Bot page.
 
-[config.toml]: /src/theticketbot/config_default.toml
+[config.toml]: https://github.com/thegamecracks/theticketbot/tree/main/src/theticketbot/config_default.toml
 
 To set up an inbox, first post a message with the content you would like your
 inbox message to have. This message may include image attachments, or custom
@@ -298,4 +298,4 @@ you will need to run `PRAGMA journal_mode = delete;` before rekeying.
 
 This project is written under the [MIT] license.
 
-[MIT]: /LICENSE
+[MIT]: https://github.com/thegamecracks/theticketbot/tree/main/LICENSE
