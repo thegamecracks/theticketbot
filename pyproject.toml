@@ -15,6 +15,18 @@ dependencies = [
     "humanize~=4.9",
     "pydantic~=2.7",
 ]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved",
+    "License :: OSI Approved :: MIT License",
+    "Private :: Do Not Upload",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Communications :: Chat",
+    "Typing :: Typed",
+]
 
 [project.scripts]
 theticketbot = "theticketbot.__main__:main"
