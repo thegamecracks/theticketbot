@@ -7,6 +7,7 @@ Original: https://github.com/thegamecracks/discord.py-i18n-demo/blob/main/setup.
 """
 
 # pyright: strict
+import os
 import shutil
 import subprocess
 from pathlib import Path
@@ -49,6 +50,12 @@ class build_mo(Command, SubCommand):
         """
         msgfmt = shutil.which("msgfmt")
         if msgfmt is None:
+            if os.getenv("LOCALE_MANDATORY") == "1":
+                raise RuntimeError(
+                    "msgfmt not available for building localizations, "
+                    "but is required due to LOCALE_MANDATORY=1"
+                )
+
             return warnings.warn(
                 "msgfmt is not available, building .mo files will be skipped",
                 RuntimeWarning,
