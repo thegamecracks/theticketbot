@@ -6,10 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.4.0] - 2024-06-26
+
+This is theticketbot's first release to go on [PyPI](https://pypi.org/project/theticketbot/)! 🎉
+
 ### Changes
 
+- BREAKING CHANGE:
+  The default database path now defaults to a user-specific directory
+  on your current platform.
+  - This path can be revealed by running `theticketbot --dump-config`.
+  - Users who want to revert to the old behaviour must explicitly write
+    `path = "data/theticketbot.db"` in their config file's `[db]` table.
 - Add classifiers, license, keywords, and URLs to the project's metadata
 - Unpin discord.py to `~=2.4`
+- Use PyPI version of asqlite pinned at `==2.0.0`
 
 ### Fixes
 
@@ -103,7 +114,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 This is theticketbot's first release! 🎉
 
-[Unreleased]: https://github.com/thegamecracks/theticketbot/compare/v0.3.2...main
+[Unreleased]: https://github.com/thegamecracks/theticketbot/compare/v0.4.0...main
+[0.4.0]: https://github.com/thegamecracks/theticketbot/compare/v0.3.2...v0.4.0
 [0.3.2]: https://github.com/thegamecracks/theticketbot/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/thegamecracks/theticketbot/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/thegamecracks/theticketbot/compare/v0.2.0...v0.3.0
