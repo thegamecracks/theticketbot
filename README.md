@@ -17,7 +17,7 @@ A simple Discord bot for handling ticket systems using channel threads.
 
 Before submitting any changes, please read and follow the [Contributing Guide]!
 
-[Contributing Guide]: https://github.com/thegamecracks/theticketbot/tree/main/CONTRIBUTING.md
+[Contributing Guide]: https://github.com/thegamecracks/theticketbot/blob/main/CONTRIBUTING.md
 
 Want to help out by adding translations? This bot stores them in the [locales/]
 directory. You can [fork this repository], create a new branch, commit your
@@ -96,8 +96,8 @@ With Python 3.11+, you can set up this bot by following these steps:
    at the bottom. You can now use that URL to invite the bot or let others
    invite the bot if "Public Bot" is ticked in the Bot page.
 
-[config.toml]: https://github.com/thegamecracks/theticketbot/tree/main/src/theticketbot/config_default.toml
-[changelog]: https://github.com/thegamecracks/theticketbot/tree/main/CHANGELOG.md
+[config.toml]: https://github.com/thegamecracks/theticketbot/blob/main/src/theticketbot/config_default.toml
+[changelog]: https://github.com/thegamecracks/theticketbot/blob/main/CHANGELOG.md
 
 To set up an inbox, first post a message with the content you would like your
 inbox message to have. This message may include image attachments, or custom
@@ -300,4 +300,4 @@ you will need to run `PRAGMA journal_mode = delete;` before rekeying.
 
 This project is written under the [MIT] license.
 
-[MIT]: https://github.com/thegamecracks/theticketbot/tree/main/LICENSE
+[MIT]: https://github.com/thegamecracks/theticketbot/blob/main/LICENSE
