@@ -30,6 +30,11 @@ classifiers = [
 ]
 keywords = ["i18n", "discord", "gettext", "discord.py", "ticketing-system"]
 
+[project.urls]
+Homepage = "https://github.com/thegamecracks/theticketbot"
+Issues = "https://github.com/thegamecracks/theticketbot/issues"
+Changelog = "https://github.com/thegamecracks/theticketbot/blob/main/CHANGELOG.md"
+
 [project.scripts]
 theticketbot = "theticketbot.__main__:main"
 
