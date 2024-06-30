@@ -134,8 +134,26 @@ class Bot(commands.Bot):
             commands = await self.tree.sync()
             log.info("Synced %d application commands", len(commands))
 
+        invite_link = self.get_standard_invite()
+        log.info("Invite link:\n%s", invite_link)
+
         if self.startup_flags & StartupFlags.CLOSE:
             sys.exit()
+
+    def get_standard_invite(self) -> str:
+        assert self.application is not None
+        return discord.utils.oauth_url(
+            self.application.id,
+            scopes=("bot",),
+            permissions=discord.Permissions(
+                read_messages=True,
+                send_messages=True,
+                create_private_threads=True,
+                send_messages_in_threads=True,
+                embed_links=True,
+                attach_files=True,
+            ),
+        )
 
 
 class Context(commands.Context[Bot]): ...

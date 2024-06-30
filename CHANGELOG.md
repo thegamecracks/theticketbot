@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### New Features
+
+- At bot startup, print an invite link with pre-configured permissions ([#11])
+
 ## [0.4.2] - 2024-06-26
 
 ### New Features
@@ -167,6 +171,7 @@ This is theticketbot's first release! 🎉
 [0.2.0]: https://github.com/thegamecracks/theticketbot/compare/v0.1.1...v0.2.0
 [0.1.0]: https://github.com/thegamecracks/theticketbot/releases/tag/v0.1.0
 
+[#11]: https://github.com/thegamecracks/theticketbot/issues/11
 [#10]: https://github.com/thegamecracks/theticketbot/issues/10
 [#8]: https://github.com/thegamecracks/theticketbot/issues/8
 [#5]: https://github.com/thegamecracks/theticketbot/issues/5

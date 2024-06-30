@@ -76,10 +76,12 @@ With Python 3.11+, you can set up this bot by following these steps:
    Alternatively, you can use the "<@mention> sync" text command once your bot
    is in a server to synchronize application commands.
 
-3. Create an invite link in the Discord Developer Portal to add your bot to a server.
+3. Invite your bot to a server.
 
-   In the [Applications](https://discord.com/developers/applications) > OAuth2 page,
-   select only `bot` for the scope, then in the permissions list below,
+   Once logged in, the bot will print out an invite link with the appropriate
+   permissions. If you want to manually generate an invite link, you can go to
+   the [Applications](https://discord.com/developers/applications) > OAuth2
+   page, select only `bot` for the scope, then in the permissions list below,
    select at least the following permissions:
 
    - Read Messages/View Channels
