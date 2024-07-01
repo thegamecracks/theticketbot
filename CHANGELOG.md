@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+This release includes changes to application commands.
+Users upgrading to this version or newer should run `theticketbot --sync`.
+
 ### New Features
 
 - Add `/inbox destination` to allow routing tickets to any channel
