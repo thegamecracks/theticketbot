@@ -30,7 +30,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.4.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-01 15:58-0400\n"
+"POT-Creation-Date: 2024-07-01 15:59-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -234,7 +234,7 @@ msgstr ""
 #. {1}: the destination's link
 #: src/theticketbot/cogs/inbox/cog_group.py:360
 #, python-brace-format
-msgid "{0} is already routing tickets to {1}!"
+msgid "{0} is already routing tickets to {1} !"
 msgstr ""
 
 #. Message sent after a user edits an inbox's destination
@@ -243,7 +243,7 @@ msgstr ""
 #. {2}: the new destination's link
 #: src/theticketbot/cogs/inbox/cog_group.py:375
 #, python-brace-format
-msgid "{0} will now route tickets to {2} instead of {1}!"
+msgid "{0} will now route tickets to {2} instead of {1} !"
 msgstr ""
 
 #. Subcommand name ("inbox")

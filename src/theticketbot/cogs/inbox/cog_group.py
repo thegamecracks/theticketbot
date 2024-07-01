@@ -357,7 +357,7 @@ class InboxGroup(
                 # Message sent when an inbox's old and new destination are the same
                 # {0}: the inbox's link
                 # {1}: the destination's link
-                content = _("{0} is already routing tickets to {1}!")
+                content = _("{0} is already routing tickets to {1} !")
                 content = await translate(content, interaction)
                 content = content.format(inbox.jump_url, destination.jump_url)
                 return await interaction.response.send_message(content, ephemeral=True)
@@ -372,7 +372,7 @@ class InboxGroup(
         # {0}: the inbox's link
         # {1}: the old destination's link
         # {2}: the new destination's link
-        content = _("{0} will now route tickets to {2} instead of {1}!")
+        content = _("{0} will now route tickets to {2} instead of {1} !")
         content = await translate(content, interaction)
         content = content.format(inbox.jump_url, old.jump_url, destination.jump_url)
         await interaction.response.send_message(content, ephemeral=True)
