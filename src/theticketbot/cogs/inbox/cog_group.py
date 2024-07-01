@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import functools
 import logging
-import time
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -14,7 +13,7 @@ import discord
 import humanize
 from discord import app_commands
 from discord.app_commands import locale_str as _
-from discord.ext import commands, tasks
+from discord.ext import commands
 
 from theticketbot.bot import Bot
 from theticketbot.database import DatabaseClient
@@ -23,6 +22,7 @@ from theticketbot.translator import translate
 
 from .destination import get_inbox_destination
 from .modals import SetInboxStarterContentModal, SetTicketDefaultsModal
+from .ratelimits import InboxRatelimiter
 from .staff import get_and_filter_inbox_staff
 from .views import InboxStaffView, InboxView
 
@@ -63,44 +63,24 @@ class InboxGroup(
     # Command group description ("inbox")
     group_description=_("Manage the server's ticket inboxes."),
 ):
-    _inbox_ratelimits: dict[tuple[int, int], tuple[float, app_commands.Cooldown]]
-
     def __init__(self, bot: Bot):
         self.bot = bot
 
+        self.inbox_ratelimiter = InboxRatelimiter()
+        self.inbox_ratelimiter.cleanup_loop.start()
+
         self._global_inbox_view = self.create_inbox_view()
         self._inbox_views: dict[int, InboxView] = {}
-        self._inbox_ratelimits = {}
 
-        self.cleanup_loop.start()
         self.bot.add_view(self._global_inbox_view)
 
     def create_inbox_view(self) -> InboxView:
-        return InboxView(self.bot, ratelimit_check=self.check_ratelimit)
+        return InboxView(self.bot, ratelimit_check=self.inbox_ratelimiter)
 
     async def cog_unload(self) -> None:
         self._global_inbox_view.stop()
         for view in self._inbox_views.values():
             view.stop()
-
-    async def check_ratelimit(
-        self,
-        inbox: discord.Message,
-        member: discord.Member,
-    ) -> float:
-        assert isinstance(inbox.channel, discord.TextChannel)
-
-        key = (inbox.id, member.id)
-        per = max(60.0, inbox.channel.slowmode_delay)
-        per_cooldown = self._inbox_ratelimits.get(key)
-
-        # Allow cooldowns to reset when slowmode is changed
-        if per_cooldown is None or per != per_cooldown[0]:
-            per_cooldown = (per, app_commands.Cooldown(1, per))
-            self._inbox_ratelimits[key] = per_cooldown
-
-        per, cooldown = per_cooldown
-        return cooldown.update_rate_limit(time.monotonic()) or 0
 
     def set_inbox_callback(
         self,
@@ -578,15 +558,3 @@ class InboxGroup(
             await modal.set_defaults(conn)
         await modal.localize(interaction.locale)
         await interaction.response.send_modal(modal)
-
-    @tasks.loop(minutes=30)
-    async def cleanup_loop(self) -> None:
-        now = time.monotonic()
-
-        to_remove: list[tuple[int, int]] = []
-        for key, (_, cooldown) in self._inbox_ratelimits.items():
-            if now > cooldown._last + cooldown.per:  # unfortunate reliance on internals
-                to_remove.append(key)
-
-        for key in to_remove:
-            del self._inbox_ratelimits[key]
