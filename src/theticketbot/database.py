@@ -1,7 +1,7 @@
 import asyncio
 import re
 import sqlite3
-from typing import Any, Callable
+from typing import Any, Callable, overload
 
 import asqlite
 
@@ -188,6 +188,52 @@ class DatabaseClient:
         )
         assert row is not None
         return row[0]
+
+    async def get_inbox_destination(self, inbox_id: int) -> int | None:
+        """Get the destination channel for an inbox.
+
+        :returns: The destination channel, if any.
+
+        """
+        row = await self.conn.fetchone(
+            "SELECT destination_id FROM inbox WHERE id = ?",
+            inbox_id,
+        )
+        assert row is not None
+        return row[0]
+
+    @overload
+    async def set_inbox_destination(
+        self,
+        inbox_id: int,
+        destination_id: None,
+    ) -> None: ...
+
+    @overload
+    async def set_inbox_destination(
+        self,
+        inbox_id: int,
+        destination_id: int,
+        *,
+        guild_id: int | None,
+    ) -> None: ...
+
+    async def set_inbox_destination(
+        self,
+        inbox_id: int,
+        destination_id: int | None,
+        *,
+        guild_id: int | None = None,
+    ) -> None:
+        """Set the destination channel for an inbox."""
+        if destination_id is not None:
+            await self.add_channel(destination_id, guild_id=guild_id)
+
+        await self.conn.execute(
+            "UPDATE inbox SET destination_id = ? WHERE id = ?",
+            destination_id,
+            inbox_id,
+        )
 
     async def add_inbox_staff(self, inbox_id: int, mention: str) -> None:
         """Add an inbox staff to the database.

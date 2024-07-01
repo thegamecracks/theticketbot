@@ -116,6 +116,7 @@ class InboxView(discord.ui.View):
 
         async with self.bot.acquire() as conn:
             query = DatabaseClient(conn)
+            destination = await get_inbox_destination(query, interaction.guild, message)
             ticket_name = await query.get_inbox_default_ticket_name(message.id)
             ticket_name = ticket_name or DEFAULT_TICKET_NAME
 
@@ -138,7 +139,7 @@ class InboxView(discord.ui.View):
         reason = reason.format(interaction.user.name)
 
         try:
-            ticket = await interaction.channel.create_thread(
+            ticket = await destination.create_thread(
                 name=ticket_name[:100],
                 invitable=False,
                 reason=reason,
@@ -245,6 +246,25 @@ async def filter_and_update_inbox_staff(
         await query.remove_inbox_staff(inbox_id, mention)
 
     return [m for m in mentions if m not in removed]
+
+
+async def get_inbox_destination(
+    query: DatabaseClient,
+    guild: discord.Guild,
+    inbox: discord.Message,
+) -> discord.TextChannel:
+    assert isinstance(inbox.channel, discord.TextChannel)
+
+    channel_id = await query.get_inbox_destination(inbox.id)
+    if channel_id is None:
+        return inbox.channel
+
+    channel = guild.get_channel(channel_id)
+    if channel is None:
+        return inbox.channel
+
+    assert isinstance(channel, discord.TextChannel)
+    return channel
 
 
 class InboxStaffView(discord.ui.View):
@@ -498,6 +518,29 @@ class Inbox(
             content = content.format(message.jump_url)
             raise AppCommandResponse(content)
 
+    async def check_inbox_permissions(
+        self,
+        interaction: discord.Interaction,
+        channel: discord.TextChannel,
+    ) -> None:
+        bot_permissions = channel.permissions_for(channel.guild.me)
+        required = discord.Permissions(
+            view_channel=True,
+            send_messages=True,
+            create_private_threads=True,
+            send_messages_in_threads=True,
+        )
+        missing = bot_permissions & required ^ required
+        if missing:
+            missing = ", ".join(f"`{name}`" for name, value in missing if value)
+            # Message sent when attempting to create an inbox with insufficient permissions
+            # {0}: the channel's mention
+            # {1}: a list of permissions that are missing
+            content = _("I need the following permissions in {0}: {1}")
+            content = await translate(content, interaction)
+            content = content.format(channel.mention, missing)
+            raise AppCommandResponse(content)
+
     @app_commands.command(
         # Subcommand name ("inbox")
         name=_("create"),
@@ -520,24 +563,7 @@ class Inbox(
         assert interaction.guild is not None
 
         # TODO: limit number of inboxes per guild
-
-        bot_permissions = channel.permissions_for(interaction.guild.me)
-        required = discord.Permissions(
-            view_channel=True,
-            send_messages=True,
-            create_private_threads=True,
-            send_messages_in_threads=True,
-        )
-        missing = bot_permissions & required ^ required
-        if missing:
-            missing = ", ".join(f"`{name}`" for name, value in missing if value)
-            # Message sent when attempting to create an inbox with insufficient permissions
-            # {0}: the channel's mention
-            # {1}: a list of permissions that are missing
-            content = _("I need the following permissions in {0}: {1}")
-            content = await translate(content, interaction)
-            content = content.format(channel.mention, missing)
-            return await interaction.response.send_message(content, ephemeral=True)
+        await self.check_inbox_permissions(interaction, channel)
 
         content = _(
             # Message sent when the user is creating a new inbox in a channel,
@@ -667,6 +693,73 @@ class Inbox(
             for target, overwrite in channel.overwrites.items()
             if overwrite.manage_threads and target.id != self.bot.user.id
         ]
+
+    @app_commands.command(
+        # Subcommand name ("inbox")
+        name=_("destination"),
+        # Subcommand description ("inbox destination")
+        description=_("Edit the destination channel for an inbox."),
+    )
+    @app_commands.rename(
+        # Subcommand parameter name ("inbox destination")
+        channel=_("channel"),
+    )
+    @app_commands.describe(
+        # Subcommand parameter description ("inbox destination <channel>")
+        channel=_("The channel to route new tickets."),
+    )
+    async def channel(
+        self,
+        interaction: discord.Interaction,
+        channel: discord.TextChannel,
+    ):
+        await self.check_inbox_permissions(interaction, channel)
+        content = _(
+            # Message sent when a user is editing an inbox's destination,
+            # and an inbox needs to be selected
+            "You must now select the inbox you want to edit. "
+            "To do this, right click or long tap a message, then open Apps "
+            "and pick the *Select this message* command."
+        )
+        content = await translate(content, interaction)
+        await interaction.response.send_message(content, ephemeral=True)
+        callback = functools.partial(self.edit_inbox_destination, destination=channel)
+        self.set_inbox_callback(interaction, callback)
+
+    async def edit_inbox_destination(
+        self,
+        interaction: discord.Interaction,
+        inbox: discord.Message,
+        destination: discord.TextChannel,
+    ):
+        assert inbox.guild is not None
+        async with self.bot.acquire() as conn:
+            query = DatabaseClient(conn)
+
+            old = await get_inbox_destination(query, inbox.guild, inbox)
+            if old.id == destination.id:
+                # Message sent when an inbox's old and new destination are the same
+                # {0}: the inbox's link
+                # {1}: the destination's link
+                content = _("{0} is already routing tickets to {1}!")
+                content = await translate(content, interaction)
+                content = content.format(inbox.jump_url, destination.jump_url)
+                return await interaction.response.send_message(content, ephemeral=True)
+
+            await query.set_inbox_destination(
+                inbox.id,
+                destination.id,
+                guild_id=destination.guild.id,
+            )
+
+        # Message sent after a user edits an inbox's destination
+        # {0}: the inbox's link
+        # {1}: the old destination's link
+        # {2}: the new destination's link
+        content = _("{0} will now route tickets to {2} instead of {1}!")
+        content = await translate(content, interaction)
+        content = content.format(inbox.jump_url, old.jump_url, destination.jump_url)
+        await interaction.response.send_message(content, ephemeral=True)
 
     @app_commands.command(
         # Subcommand name ("inbox")

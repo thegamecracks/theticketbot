@@ -111,7 +111,8 @@ You can then right-click or long tap the message you sent, open the Apps menu,
 and use `Select this message`.
 
 When choosing a channel, the bot must be able to view, send messages,
-and create private threads in that channel.
+and create private threads in that channel. After the inbox is sent, you may
+use the `/inbox destination` command to route tickets to a different channel.
 
 Each inbox has a set of staff that will be mentioned when a new ticket is created.
 Any members or roles that you explicitly grant Manage Threads in the channel's
@@ -160,6 +161,10 @@ There are various settings that can be customized for each inbox.
 When you use the below commands, you will be prompted to select the message
 of the inbox that you want to change, i.e. the message that has the
 Create Ticket button.
+
+- `/inbox destination`
+
+  Route tickets from an inbox to another channel.
 
 - `/inbox message`
 
