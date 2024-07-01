@@ -2,21 +2,14 @@ from __future__ import annotations
 
 import functools
 import logging
-import re
-import string
 import time
 from typing import (
     TYPE_CHECKING,
     Any,
-    Awaitable,
-    Callable,
-    Iterable,
-    Sequence,
     TypedDict,
     cast,
 )
 
-import asqlite
 import discord
 import discord.http
 import humanize
@@ -29,294 +22,15 @@ from theticketbot.database import DatabaseClient
 from theticketbot.errors import AppCommandResponse
 from theticketbot.translator import translate
 
+from .destination import get_inbox_destination
+from .modals import SetInboxStarterContentModal, SetTicketDefaultsModal
+from .staff import get_and_filter_inbox_staff
+from .views import InboxStaffView, InboxView
+
 if TYPE_CHECKING:
-    from .select import MessageCallback
-
-DEFAULT_STARTER_CONTENT = "$author $staff"
-DEFAULT_TICKET_NAME = "$year-$month-$day $author"
-MENTION_PATTERN = re.compile(r"<(@|@&)(\d+)>")
-
-InboxRatelimit = Callable[[discord.Message, discord.Member], Awaitable[float]]
+    from theticketbot.cogs.select import MessageCallback
 
 log = logging.getLogger(__name__)
-
-
-class InboxView(discord.ui.View):
-    def __init__(self, bot: Bot, ratelimit_check: InboxRatelimit) -> None:
-        super().__init__(timeout=None)
-        self.bot = bot
-        self.ratelimit_check = ratelimit_check
-
-    async def localize(self, locale: discord.Locale) -> None:
-        async def t(s: _) -> str:
-            return await translate(s, self.bot, locale=locale)
-
-        # Button label for creating a new ticket
-        self.create_ticket.label = await t(_("Create Ticket"))
-
-    @discord.ui.button(custom_id="create-ticket", style=discord.ButtonStyle.primary)
-    async def create_ticket(
-        self,
-        interaction: discord.Interaction,
-        button: discord.ui.Button,
-    ):
-        # FIXME: this function is too big, can we do any better?
-        assert isinstance(interaction.channel, discord.TextChannel)
-        assert isinstance(interaction.user, discord.Member)
-        assert interaction.guild is not None
-        assert interaction.message is not None
-
-        guild = interaction.guild
-        message = interaction.message
-
-        async with self.bot.acquire() as conn:
-            # If the database was wiped, this will fail.
-            row = await conn.fetchone("SELECT 1 FROM inbox WHERE id = ?", message.id)
-            if row is None:
-                content = _(
-                    # Message sent when an inbox is not recognized
-                    "Sorry, this inbox is no longer recognized and must be "
-                    "re-created. Please notify a server admin!"
-                )
-                content = await translate(content, interaction)
-                return await interaction.response.send_message(content, ephemeral=True)
-
-            tickets = await self.get_active_user_tickets(
-                interaction.channel.threads,
-                conn,
-                message.id,
-                interaction.user.id,
-            )
-            tickets.sort(key=lambda t: t.id)
-            max_tickets = await self.get_max_tickets(conn, message.id)
-
-        if max_tickets > 0 and len(tickets) >= max_tickets:
-            content = _(
-                # Message sent when trying to create too many tickets
-                # {0}: the ticket's link
-                "You have too many tickets in this inbox. "
-                "Please close your last ticket {0} before creating a new one."
-            )
-            content = await translate(content, interaction)
-            content = content.format(tickets[-1].jump_url)
-            return await interaction.response.send_message(content, ephemeral=True)
-
-        retry_after = await self.ratelimit_check(message, interaction.user)
-        if retry_after > 0:
-            # Message sent when user is being ratelimited for an inbox
-            # {0}: the duration in seconds to wait before retrying
-            content = _("You are creating tickets too quickly! Please wait {0:.0f}s.")
-            content = await translate(content, interaction)
-            content = content.format(retry_after)
-            return await interaction.response.send_message(content, ephemeral=True)
-
-        # Message sent when creating a ticket
-        content = await translate(_("Creating ticket..."), interaction)
-        await interaction.response.send_message(content, ephemeral=True)
-
-        async with self.bot.acquire() as conn:
-            query = DatabaseClient(conn)
-            destination = await get_inbox_destination(query, interaction.guild, message)
-            ticket_name = await query.get_inbox_default_ticket_name(message.id)
-            ticket_name = ticket_name or DEFAULT_TICKET_NAME
-
-            # NOTE: counter may skip if thread creation fails
-            counter = await query.increment_inbox_counter(message.id)
-
-        created_at = interaction.created_at
-        ticket_name = string.Template(ticket_name).safe_substitute(
-            year=created_at.year,
-            month=str(created_at.month).zfill(2),
-            day=str(created_at.day).zfill(2),
-            author=interaction.user.display_name,
-            counter=str(counter % 10**4).zfill(4),
-        )
-
-        # Audit log reason for a user creating a ticket
-        # {0}: the user's name
-        reason = _("Ticket created by {0}")
-        reason = await translate(reason, interaction, locale=guild.preferred_locale)
-        reason = reason.format(interaction.user.name)
-
-        try:
-            ticket = await destination.create_thread(
-                name=ticket_name[:100],
-                invitable=False,
-                reason=reason,
-            )
-
-            async with self.bot.acquire() as conn:
-                query = DatabaseClient(conn)
-                await query.add_ticket(
-                    ticket_id=ticket.id,
-                    inbox_id=message.id,
-                    owner_id=interaction.user.id,
-                    guild_id=guild.id,
-                )
-
-            async with self.bot.acquire() as conn:
-                query = DatabaseClient(conn)
-                mentions = await get_and_filter_inbox_staff(query, guild, message.id)
-                mentions = " ".join(mentions)
-
-                starter_content = await query.get_inbox_starter_content(message.id)
-                starter_content = starter_content or DEFAULT_STARTER_CONTENT
-
-            content = string.Template(starter_content).safe_substitute(
-                author=interaction.user.mention,
-                staff=mentions,
-            )
-            await ticket.send(content[:2000])
-        except discord.Forbidden:
-            content = _(
-                # Message sent when creating a ticket failed due to insufficient permissions
-                "I am missing the permissions needed to create a ticket here. "
-                "Please notify a server admin!"
-            )
-            content = await translate(content, interaction)
-            return await interaction.edit_original_response(content=content)
-        except Exception:
-            # Message sent when creating a ticket failed unexpectedly
-            content = _("An unexpected error occurred while creating the ticket.")
-            content = await translate(content, interaction)
-            await interaction.edit_original_response(content=content)
-            raise
-        else:
-            # Message sent after successfully creating a ticket
-            # {0}: the ticket's link
-            content = _("Your ticket is ready! {0}")
-            content = await translate(content, interaction)
-            content = content.format(ticket.jump_url)
-            await interaction.edit_original_response(content=content)
-
-    async def get_active_user_tickets(
-        self,
-        threads: Iterable[discord.Thread],
-        conn: asqlite.Connection,
-        inbox_id: int,
-        owner_id: int,
-    ) -> list[discord.Thread]:
-        # Should do an intersect here, but this should be small enough
-        c = await conn.execute(
-            "SELECT id FROM ticket WHERE inbox_id = ? AND owner_id = ?",
-            inbox_id,
-            owner_id,
-        )
-        ticket_ids: set[int] = {row[0] for row in await c.fetchall()}
-
-        members_intent = self.bot.intents.members
-        active: list[discord.Thread] = []
-        for t in threads:
-            if t.id not in ticket_ids:
-                continue
-            if members_intent and discord.utils.get(t.members, id=owner_id) is None:
-                continue
-            active.append(t)
-        return active
-
-    async def get_max_tickets(self, conn: asqlite.Connection, inbox_id: int) -> int:
-        row = await conn.fetchone(
-            "SELECT max_tickets_per_user FROM inbox WHERE id = ?",
-            inbox_id,
-        )
-        assert row is not None
-        return row[0]
-
-
-async def get_and_filter_inbox_staff(
-    query: DatabaseClient,
-    guild: discord.Guild,
-    inbox_id: int,
-) -> list[str]:
-    mentions = await query.get_inbox_staff(inbox_id)
-    return await filter_and_update_inbox_staff(query, guild, inbox_id, mentions)
-
-
-async def filter_and_update_inbox_staff(
-    query: DatabaseClient,
-    guild: discord.Guild,
-    inbox_id: int,
-    mentions: Sequence[str],
-) -> list[str]:
-    role_mentions = set(m for m in mentions if m.startswith("<@&"))
-    current_roles = {role.mention for role in guild.roles}
-    removed = role_mentions - current_roles
-
-    for mention in removed:
-        await query.remove_inbox_staff(inbox_id, mention)
-
-    return [m for m in mentions if m not in removed]
-
-
-async def get_inbox_destination(
-    query: DatabaseClient,
-    guild: discord.Guild,
-    inbox: discord.Message,
-) -> discord.TextChannel:
-    assert isinstance(inbox.channel, discord.TextChannel)
-
-    channel_id = await query.get_inbox_destination(inbox.id)
-    if channel_id is None:
-        return inbox.channel
-
-    channel = guild.get_channel(channel_id)
-    if channel is None:
-        return inbox.channel
-
-    assert isinstance(channel, discord.TextChannel)
-    return channel
-
-
-class InboxStaffView(discord.ui.View):
-    def __init__(self, bot: Bot, inbox_id: int, staff: set[str]) -> None:
-        super().__init__(timeout=None)
-        self.bot = bot
-        self.inbox_id = inbox_id
-        self.staff = staff
-        self.refresh()
-
-    def refresh(self) -> None:
-        staff = [mention_to_snowflake(staff) for staff in self.staff]
-        self.on_staff_select.default_values = staff
-
-    @discord.ui.select(cls=discord.ui.MentionableSelect, min_values=0, max_values=10)
-    async def on_staff_select(
-        self,
-        interaction: discord.Interaction,
-        select: discord.ui.MentionableSelect,
-    ):
-        ordered_mentions = [m.mention for m in select.values]
-        mentions = set(ordered_mentions)
-        added = mentions - self.staff
-        removed = self.staff - mentions
-
-        if len(added) == 0 and len(removed) == 0:
-            # Message sent when submitting no changes to inbox staff
-            content = _("You have not made any changes!")
-            content = await translate(content, interaction)
-            return await interaction.response.send_message(content, ephemeral=True)
-
-        async with self.bot.acquire() as conn:
-            query = DatabaseClient(conn)
-            for mention in added:
-                await query.add_inbox_staff(self.inbox_id, mention)
-            for mention in removed:
-                await query.remove_inbox_staff(self.inbox_id, mention)
-
-        self.staff = mentions
-        await interaction.response.defer()
-
-
-def mention_to_snowflake(mention: str) -> discord.Object:
-    m = MENTION_PATTERN.fullmatch(mention)
-    if m is None:
-        raise ValueError(f"Invalid user/role mention: {mention!r}")
-
-    if m[1] == "@":
-        return discord.Object(int(m[2]), type=discord.User)
-    elif m[1] == "@&":
-        return discord.Object(int(m[2]), type=discord.Role)
-    raise RuntimeError(f"Unsupported mention type {m[1]!r}")
 
 
 def snowflake_to_mention(obj: discord.Member | discord.Role | discord.Object) -> str:
@@ -327,83 +41,6 @@ def snowflake_to_mention(obj: discord.Member | discord.Role | discord.Object) ->
     elif issubclass(obj.type, discord.Role):
         return f"<@&{obj.id}>"
     raise ValueError(f"Unsupported object type {obj.type}")
-
-
-class SetInboxStarterContentModal(discord.ui.Modal, title="Starter Message"):
-    content = discord.ui.TextInput(
-        label="Content",
-        style=discord.TextStyle.long,
-        max_length=2000,
-        required=False,
-    )
-
-    def __init__(self, bot: Bot, inbox: discord.Message) -> None:
-        super().__init__()
-        self.bot = bot
-        self.inbox = inbox
-
-    async def localize(self, locale: discord.Locale) -> None:
-        async def t(s: _) -> str:
-            return await translate(s, self.bot, locale=locale)
-
-        # Modal title for changing an inbox's starter message
-        self.title = await t(_("Starter Message"))
-        # Modal text input label for an inbox's starter message content
-        self.content.label = await t(_("Content"))
-
-    async def set_defaults(self, conn: asqlite.Connection) -> None:
-        query = DatabaseClient(conn)
-        starter_content = await query.get_inbox_starter_content(self.inbox.id)
-        starter_content = starter_content or DEFAULT_STARTER_CONTENT
-        self.content.default = starter_content
-
-    async def on_submit(self, interaction: discord.Interaction):
-        async with self.bot.acquire() as conn:
-            query = DatabaseClient(conn)
-            await query.set_inbox_starter_content(self.inbox.id, self.content.value)
-
-        # Message sent when an inbox's starter message is successfully changed
-        # {0}: the inbox's link
-        content = _("{0} 's starting message has been set!")
-        content = await translate(content, interaction)
-        content = content.format(self.inbox.jump_url)
-        await interaction.response.send_message(content, ephemeral=True)
-
-
-class SetTicketDefaultsModal(discord.ui.Modal, title="New Tickets"):
-    name = discord.ui.TextInput(label="Name", max_length=100, required=False)
-
-    def __init__(self, bot: Bot, inbox: discord.Message) -> None:
-        super().__init__()
-        self.bot = bot
-        self.inbox = inbox
-
-    async def localize(self, locale: discord.Locale) -> None:
-        async def t(s: _) -> str:
-            return await translate(s, self.bot, locale=locale)
-
-        # Modal title for changing an inbox's defaults for new tickets
-        self.title = await t(_("New Tickets"))
-        # Modal text input label for ticket names
-        self.name.label = await t(_("Name"))
-
-    async def set_defaults(self, conn: asqlite.Connection) -> None:
-        query = DatabaseClient(conn)
-        ticket_name = await query.get_inbox_default_ticket_name(self.inbox.id)
-        ticket_name = ticket_name or DEFAULT_TICKET_NAME
-        self.name.default = ticket_name
-
-    async def on_submit(self, interaction: discord.Interaction):
-        async with self.bot.acquire() as conn:
-            query = DatabaseClient(conn)
-            await query.set_inbox_default_ticket_name(self.inbox.id, self.name.value)
-
-        # Message sent when an inbox's ticket defaults were successfully changed
-        # {0}: the inbox's link
-        content = _("{0} 's ticket defaults have been set!")
-        content = await translate(content, interaction)
-        content = content.format(self.inbox.jump_url)
-        await interaction.response.send_message(content, ephemeral=True)
 
 
 def looks_like_an_inbox(bot: Bot, message: discord.Message) -> bool:
@@ -1071,7 +708,3 @@ class Inbox(
 
         for key in to_remove:
             del self._inbox_ratelimits[key]
-
-
-async def setup(bot: Bot):
-    await bot.add_cog(Inbox(bot))
