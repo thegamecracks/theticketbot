@@ -166,37 +166,48 @@ class InboxGroup(
     @app_commands.rename(
         # Subcommand parameter name ("inbox create")
         channel=_("channel"),
+        # Subcommand parameter name ("inbox create")
+        destination=_("destination"),
     )
     @app_commands.describe(
         # Subcommand parameter description ("inbox create <channel>")
         channel=_("The channel to post the inbox."),
+        # Subcommand parameter description ("inbox create <channel>")
+        destination=_("The channel to route new tickets."),
     )
     async def create(
         self,
         interaction: discord.Interaction,
         channel: discord.TextChannel,
+        destination: discord.TextChannel | None,
     ):
         assert interaction.guild is not None
 
         # TODO: limit number of inboxes per guild
-        await self.check_inbox_permissions(interaction, channel)
+        destination = destination or channel
+        await self.check_inbox_permissions(interaction, destination)
 
         content = _(
             # Message sent when the user is creating a new inbox in a channel,
             # and the inbox needs a message to be included
             # {0}: the channel's mention
-            "The {0} channel has been set as the destination for your new inbox. "
+            # {1}: the destination's mention
+            "Your inbox will be posted in {0} and tickets will be created in {1}. "
             "You must now select the message you want your inbox to have. "
             "To do this, right click or long tap a message, then open Apps "
             "and pick the *Select this message* command."
         )
         content = await translate(content, interaction)
-        content = content.format(channel.mention)
+        content = content.format(channel.mention, destination.mention)
         await interaction.response.send_message(content, ephemeral=True)
         self.bot.set_message_callback(
             interaction.guild.id,
             interaction.user.id,
-            functools.partial(self.create_inbox, channel=channel),
+            functools.partial(
+                self.create_inbox,
+                channel=channel,
+                destination=destination,
+            ),
         )
 
     async def create_inbox(
@@ -204,6 +215,7 @@ class InboxGroup(
         interaction: discord.Interaction,
         message: discord.Message,
         channel: discord.TextChannel,
+        destination: discord.TextChannel,
     ):
         assert interaction.guild is not None
 
@@ -242,6 +254,13 @@ class InboxGroup(
             for staff in self.get_default_inbox_staff(channel):
                 mention = snowflake_to_mention(staff)
                 await query.add_inbox_staff(message.id, mention)
+
+            if destination != channel:
+                await query.set_inbox_destination(
+                    message.id,
+                    destination.id,
+                    guild_id=message.guild.id,
+                )
 
         # Message sent after a user creates an inbox
         # {0}: the inbox's link

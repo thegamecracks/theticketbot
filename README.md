@@ -110,9 +110,12 @@ You will then be prompted to select a message to be sent with your inbox.
 You can then right-click or long tap the message you sent, open the Apps menu,
 and use `Select this message`.
 
+New tickets will be created in the same channel as the inbox by default.
+If you want to customize this, you can specify a different channel with
+the `/inbox create <destination>` parameter, or use the `/inbox destination`
+command to re-route new tickets from an existing inbox.
 When choosing a channel, the bot must be able to view, send messages,
-and create private threads in that channel. After the inbox is sent, you may
-use the `/inbox destination` command to route tickets to a different channel.
+and create private threads in that channel.
 
 Each inbox has a set of staff that will be mentioned when a new ticket is created.
 Any members or roles that you explicitly grant Manage Threads in the channel's
@@ -164,7 +167,7 @@ Create Ticket button.
 
 - `/inbox destination`
 
-  Route tickets from an inbox to another channel.
+  Route new tickets from an inbox to another channel.
 
 - `/inbox message`
 
