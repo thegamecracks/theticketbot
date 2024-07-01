@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "theticketbot"
-description = "A ticket discord bot."
+description = "A simple Discord ticket bot built on private channel threads."
 requires-python = ">=3.11"
 authors = [{ name = "thegamecracks" }]
 readme = "README.md"
