@@ -315,6 +315,23 @@ class DatabaseClient:
         assert row is not None
         return row[0]
 
+    async def get_setting(self, name: str, default: Any = None) -> Any:
+        row = await self.conn.fetchone("SELECT value FROM setting WHERE name = ?", name)
+        if row is None:
+            return default
+        return row[0]
+
+    async def set_setting(self, name: str, value: Any) -> None:
+        await self.conn.execute(
+            "INSERT INTO setting (name, value) VALUES (?, ?) "
+            "ON CONFLICT (name) DO UPDATE SET value = excluded.value",
+            name,
+            value,
+        )
+
+    async def delete_setting(self, name: str) -> None:
+        await self.conn.execute("DELETE FROM setting WHERE name = ?", name)
+
 
 def connect(
     database: str | bytes,
