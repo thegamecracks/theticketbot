@@ -69,9 +69,9 @@ With Python 3.11+, you can set up this bot by following these steps:
    a [config.toml] file in a user-specific directory. After this, the bot
    will automatically synchronize its application commands for the first time.
 
-   If you update the bot later on, you may need to run `theticketbot --sync`
-   to synchronize the bot's application commands again.
-   See the [changelog] to know if this is needed.
+   On subsequent updates, application commands will automatically be synced
+   as needed. You can also use `theticketbot --sync` to manually synchronize
+   the bot's application commands again.
 
    Alternatively, you can use the "<@mention> sync" text command once your bot
    is in a server to synchronize application commands.
@@ -99,7 +99,6 @@ With Python 3.11+, you can set up this bot by following these steps:
    invite the bot if "Public Bot" is ticked in the Bot page.
 
 [config.toml]: https://github.com/thegamecracks/theticketbot/blob/main/src/theticketbot/config_default.toml
-[changelog]: https://github.com/thegamecracks/theticketbot/blob/main/CHANGELOG.md
 
 To set up an inbox, first post a message with the content you would like your
 inbox message to have. This message may include image attachments, or custom

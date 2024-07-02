@@ -14,6 +14,7 @@ dependencies = [
     "asqlite==2.0.0",
     "discord.py~=2.4",
     "humanize~=4.9",
+    "packaging~=24",
     "platformdirs~=4.2",
     "pydantic~=2.7",
 ]

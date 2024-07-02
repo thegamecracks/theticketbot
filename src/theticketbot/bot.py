@@ -13,9 +13,10 @@ import discord
 from discord.ext import commands
 from pydantic import SecretStr
 
-from . import database
+from .database import DatabaseClient, connect as database_connect
 from .migrations import run_default_migrations
 from .translator import GettextTranslator
+from .versions import CURRENT_VERSION, sync_upgrade_or_downgrade
 
 if TYPE_CHECKING:
     from .cogs.select import MessageCallback, Select
@@ -71,7 +72,7 @@ class Bot(commands.Bot):
         """
         path = str(self.config.db.path)
         init = lambda conn: self._run_config_pragmas(conn)
-        async with database.connect(path, init=init) as conn:
+        async with database_connect(path, init=init) as conn:
             if not transaction:
                 yield conn
             else:
@@ -130,9 +131,8 @@ class Bot(commands.Bot):
 
         await self.tree.set_translator(GettextTranslator())
 
-        if self.startup_flags & StartupFlags.SYNC:
-            commands = await self.tree.sync()
-            log.info("Synced %d application commands", len(commands))
+        async with self.acquire() as conn:
+            await self._maybe_sync_at_startup(DatabaseClient(conn))
 
         invite_link = self.get_standard_invite()
         log.info("Invite link:\n%s", invite_link)
@@ -154,6 +154,27 @@ class Bot(commands.Bot):
                 attach_files=True,
             ),
         )
+
+    async def _maybe_sync_at_startup(self, query: DatabaseClient) -> None:
+        from packaging.version import Version
+
+        last_version = await query.get_setting("last-sync-version", "0.0.0")
+        last_version = Version(last_version)
+        version_grade = sync_upgrade_or_downgrade(last_version, CURRENT_VERSION)
+
+        commands = []
+        reason = ""
+        if self.startup_flags & StartupFlags.SYNC:
+            commands = await self.tree.sync()
+            reason = "manual"
+        elif version_grade != 0:
+            commands = await self.tree.sync()
+            reason = "upgraded" if version_grade > 0 else "downgraded"
+
+        if reason is not None:
+            log.info("Synced %d application commands (%s)", len(commands), reason)
+            if last_version != CURRENT_VERSION:
+                await query.set_setting("last-sync-version", str(CURRENT_VERSION))
 
 
 class Context(commands.Context[Bot]): ...
