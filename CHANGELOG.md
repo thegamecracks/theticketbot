@@ -12,6 +12,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - Can also be set during `/inbox create` with a new `destination` parameter
 - Add version-based automatic synchronization of application commands
   - Users should no longer need to use `theticketbot --sync` after installing an update.
+  - If you are using multiple database files for the same bot, you should pass the
+    `--no-sync` argument after switching databases to skip automatic synchronization.
 
 Localizations have not yet been updated.
 

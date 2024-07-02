@@ -70,6 +70,13 @@ def main() -> None:
         help="Sync application commands at startup",
     )
     commands.add_argument(
+        "--no-sync",
+        action="store_const",
+        const=StartupFlags.SKIP_AUTO_SYNC,
+        dest="startup_flags",
+        help="Skip automatic syncing for the current version",
+    )
+    commands.add_argument(
         "--dump-config",
         action="store_true",
         help="Dump config file at startup",

@@ -28,6 +28,7 @@ log = logging.getLogger(__name__)
 class StartupFlags(Flag):
     SYNC = auto()
     CLOSE = auto()
+    SKIP_AUTO_SYNC = auto()
 
 
 # https://discordpy.readthedocs.io/en/stable/ext/commands/api.html
@@ -167,14 +168,20 @@ class Bot(commands.Bot):
         if self.startup_flags & StartupFlags.SYNC:
             commands = await self.tree.sync()
             reason = "manual"
+        elif self.startup_flags & StartupFlags.SKIP_AUTO_SYNC:
+            reason = "skip"
         elif version_grade != 0:
             commands = await self.tree.sync()
             reason = "upgraded" if version_grade > 0 else "downgraded"
 
-        if reason != "":
+        if reason not in ("skip", ""):
             log.info("Synced %d application commands (%s)", len(commands), reason)
-            if last_version != CURRENT_VERSION:
-                await query.set_setting("last-sync-version", str(CURRENT_VERSION))
+
+        if reason == "skip" and last_version != CURRENT_VERSION:
+            log.info("Skipping automatic sync for current version")
+            await query.set_setting("last-sync-version", str(CURRENT_VERSION))
+        elif reason != "" and last_version != CURRENT_VERSION:
+            await query.set_setting("last-sync-version", str(CURRENT_VERSION))
 
 
 class Context(commands.Context[Bot]): ...
