@@ -29,6 +29,12 @@ from .views import InboxStaffView, InboxView
 if TYPE_CHECKING:
     from theticketbot.cogs.select import MessageCallback
 
+REQUIRED_DESTINATION_PERMISSIONS = discord.Permissions(
+    view_channel=True,
+    create_private_threads=True,
+    send_messages_in_threads=True,
+)
+
 log = logging.getLogger(__name__)
 
 
@@ -134,18 +140,13 @@ class InboxGroup(
             content = content.format(message.jump_url)
             raise AppCommandResponse(content)
 
-    async def check_inbox_permissions(
+    async def check_bot_permissions(
         self,
         interaction: discord.Interaction,
         channel: discord.TextChannel,
+        required: discord.Permissions,
     ) -> None:
         bot_permissions = channel.permissions_for(channel.guild.me)
-        required = discord.Permissions(
-            view_channel=True,
-            send_messages=True,
-            create_private_threads=True,
-            send_messages_in_threads=True,
-        )
         missing = bot_permissions & required ^ required
         if missing:
             missing = ", ".join(f"`{name}`" for name, value in missing if value)
@@ -182,10 +183,19 @@ class InboxGroup(
         destination: discord.TextChannel | None,
     ):
         assert interaction.guild is not None
+        destination = destination or channel
 
         # TODO: limit number of inboxes per guild
-        destination = destination or channel
-        await self.check_inbox_permissions(interaction, destination)
+
+        channel_perms = discord.Permissions(view_channel=True, send_messages=True)
+        destination_perms = REQUIRED_DESTINATION_PERMISSIONS
+
+        if channel != destination:
+            await self.check_bot_permissions(interaction, channel, channel_perms)
+        else:
+            destination_perms = destination_perms | channel_perms
+
+        await self.check_bot_permissions(interaction, destination, destination_perms)
 
         content = _(
             # Message sent when the user is creating a new inbox in a channel,
@@ -348,7 +358,11 @@ class InboxGroup(
         interaction: discord.Interaction,
         channel: discord.TextChannel,
     ):
-        await self.check_inbox_permissions(interaction, channel)
+        await self.check_bot_permissions(
+            interaction,
+            channel,
+            REQUIRED_DESTINATION_PERMISSIONS,
+        )
         content = _(
             # Message sent when a user is editing an inbox's destination,
             # and an inbox needs to be selected
