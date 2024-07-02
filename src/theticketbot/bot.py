@@ -171,7 +171,7 @@ class Bot(commands.Bot):
             commands = await self.tree.sync()
             reason = "upgraded" if version_grade > 0 else "downgraded"
 
-        if reason is not None:
+        if reason != "":
             log.info("Synced %d application commands (%s)", len(commands), reason)
             if last_version != CURRENT_VERSION:
                 await query.set_setting("last-sync-version", str(CURRENT_VERSION))
