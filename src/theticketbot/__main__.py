@@ -131,7 +131,7 @@ def dump_config_and_exit(config_file: Path | None) -> None:
         config_file = find_config_file()
     if config_file is None:
         sys.exit(
-            "The config.toml file is not not present.\n"
+            "The config.toml file is not present.\n"
             "Please run the bot normally to generate a configuration file,\n"
             "or write your own configuration file."
         )
