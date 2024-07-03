@@ -98,7 +98,9 @@ def main() -> None:
     temp_config_file: Path | None = None
     if config_file is None:
         config_file = temp_config_file = prompt_and_create_config_file()
-        startup_flags = StartupFlags.SYNC
+
+        if not startup_flags & StartupFlags.SKIP_AUTO_SYNC:
+            startup_flags |= StartupFlags.SYNC
 
     bot = Bot(
         functools.partial(load_config, config_file),
