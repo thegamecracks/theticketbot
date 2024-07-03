@@ -242,6 +242,9 @@ async def start(bot: Bot, temp_config_file: Path | None) -> None:
             temp_config_file = None
 
             await bot.connect(reconnect=True)
+    except SystemExit:
+        # Prevent --sync argument from rolling back a successful login
+        raise
     except BaseException:
         if temp_config_file is not None:
             temp_config_file.unlink()
