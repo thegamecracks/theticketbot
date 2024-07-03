@@ -97,7 +97,7 @@ def main() -> None:
 
     temp_config_file: Path | None = None
     if config_file is None:
-        config_file = temp_config_file = prompt_and_create_config_file()
+        config_file = temp_config_file = prompt_and_create_config_file(startup_flags)
 
         if not startup_flags & StartupFlags.SKIP_AUTO_SYNC:
             startup_flags |= StartupFlags.SYNC
@@ -158,17 +158,21 @@ def find_config_file() -> Path | None:
         return cwd_config
 
 
-def prompt_and_create_config_file() -> Path:
+def prompt_and_create_config_file(startup_flags: StartupFlags) -> Path:
     print(
         f"No config.toml file was found in the current working directory.\n"
         f"A minimal config file will be written to:\n"
         f"\n"
-        f"    {USER_CONFIG}\n"
-        f"\n"
-        f"Afterwards, the bot will automatically synchronize its application commands\n"
-        f"and start itself. If an error occurs during this process, the config.toml\n"
-        f"will be deleted so you can redo this.\n"
+        f"    {USER_CONFIG}"
     )
+    if startup_flags & StartupFlags.SYNC:
+        print(
+            f"\n"
+            f"Afterwards, the bot will automatically synchronize its application commands\n"
+            f"and start itself. If an error occurs during this process, the config.toml\n"
+            f"will be deleted so you can redo this."
+        )
+    print()
 
     token = input_token()
 
