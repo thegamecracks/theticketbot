@@ -130,7 +130,7 @@ class ErrorHandler(ABC, Generic[T]):
                 content = await resp.format(ctx, error)
                 break
         else:
-            raise ValueError(f"Unable to handle exception: {error!r}")
+            raise TypeError(f"Unable to handle exception: {error!r}")
 
         if resp.show_traceback:
             self._log_error(ctx, error, error_code)

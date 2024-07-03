@@ -28,7 +28,7 @@ def mention_to_snowflake(mention: str) -> discord.Object:
         return discord.Object(int(m[2]), type=discord.User)
     elif m[1] == "@&":
         return discord.Object(int(m[2]), type=discord.Role)
-    raise RuntimeError(f"Unsupported mention type {m[1]!r}")
+    raise ValueError(f"Unsupported mention type {m[1]!r}")
 
 
 class InboxView(discord.ui.View):
