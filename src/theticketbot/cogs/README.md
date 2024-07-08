@@ -1,0 +1,6 @@
+- [`inbox/`](inbox/): Implements the `/inbox` command and ticket creation.
+- [`__init__.py`](__init__.py): Marks this directory as a package.
+- [`cleanup.py`](cleanup.py): Handles database cleanup periodically and from Discord events.
+- [`errors.py`](errors.py): Provides error handling for application and text commands.
+- [`owner.py`](owner.py): Defines commands available only to the bot owner(s).
+- [`select.py`](select.py): Implements the "Select this message" context menu command.
