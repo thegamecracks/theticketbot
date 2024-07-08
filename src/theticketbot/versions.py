@@ -1,5 +1,4 @@
 from typing import Iterable, Iterator, Literal
-from xml.etree.ElementInclude import include
 
 from packaging.version import Version
 
