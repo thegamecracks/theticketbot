@@ -9,6 +9,7 @@ A simple Discord bot for handling ticket systems using channel threads.
 
 ## Resources
 
+- Changelog: https://github.com/thegamecracks/theticketbot/blob/main/CHANGELOG.md
 - Issues: https://github.com/thegamecracks/theticketbot/issues?q=
 - Milestones: https://github.com/thegamecracks/theticketbot/milestones
 - Releases: https://github.com/thegamecracks/theticketbot/releases
