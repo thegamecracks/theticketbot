@@ -1,6 +1,7 @@
 # theticketbot
 
 [![](https://img.shields.io/pypi/v/theticketbot?style=flat-square)](https://pypi.org/project/theticketbot/)
+[![](https://img.shields.io/github/actions/workflow/status/thegamecracks/theticketbot/black-lint.yml?style=flat-square&label=black)](https://black.readthedocs.io/en/stable/)
 [![](https://img.shields.io/github/actions/workflow/status/thegamecracks/theticketbot/pyright-lint.yml?style=flat-square&label=pyright)](https://microsoft.github.io/pyright/#/)
 
 A simple Discord bot for handling ticket systems using channel threads.
