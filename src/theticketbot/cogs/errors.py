@@ -48,7 +48,7 @@ def get_owner_mention(ctx: object) -> str:
     return bot.application.owner.mention
 
 
-def generate_error_code():
+def generate_error_code() -> str:
     return "".join(random.choices("0123456789ABCDEF", k=4))
 
 
@@ -281,23 +281,23 @@ class TreeErrorHandler(ErrorHandler[discord.Interaction]):
 
 
 class Errors(commands.Cog):
-    def __init__(self, bot: Bot):
+    def __init__(self, bot: Bot) -> None:
         self.bot = bot
         self.prefix_handler = PrefixErrorHandler()
         self.tree_handler = TreeErrorHandler()
         self.setup_events()
 
-    async def cog_unload(self):
+    async def cog_unload(self) -> None:
         self.teardown_events()
 
-    def setup_events(self):
+    def setup_events(self) -> None:
         self._old_command_error = self.bot.on_command_error
         self.bot.on_command_error = self.prefix_handler.handle  # type: ignore
 
         self._old_tree_error = self.bot.tree.on_error
         self.bot.tree.error(self.tree_handler.handle)
 
-    def teardown_events(self):
+    def teardown_events(self) -> None:
         self.bot.on_command_error = self._old_command_error
         self.bot.tree.error(self._old_tree_error)  # type: ignore
 

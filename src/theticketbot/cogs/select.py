@@ -24,7 +24,7 @@ class Select(commands.Cog):
     CLEANUP_EXPIRED_AFTER = 300
     MESSAGE_EXPIRES_AFTER = 180
 
-    def __init__(self, bot: Bot):
+    def __init__(self, bot: Bot) -> None:
         self.bot = bot
         self.cog_menus = (
             app_commands.ContextMenu(

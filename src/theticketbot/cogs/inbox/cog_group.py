@@ -69,7 +69,7 @@ class InboxGroup(
     # Command group description ("inbox")
     group_description=_("Manage the server's ticket inboxes."),
 ):
-    def __init__(self, bot: Bot):
+    def __init__(self, bot: Bot) -> None:
         self.bot = bot
 
         self.inbox_ratelimiter = InboxRatelimiter()

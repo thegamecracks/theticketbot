@@ -25,7 +25,7 @@ def count_localizations(command: app_commands.AppCommand) -> int:
 
 
 class Owner(commands.Cog):
-    def __init__(self, bot: Bot):
+    def __init__(self, bot: Bot) -> None:
         self.bot = bot
 
     async def cog_check(self, ctx: Context):  # type: ignore  # async is allowed

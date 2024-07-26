@@ -12,7 +12,7 @@ log = logging.getLogger(__name__)
 
 
 class InboxListeners(commands.Cog):
-    def __init__(self, bot: Bot):
+    def __init__(self, bot: Bot) -> None:
         self.bot = bot
 
     @commands.Cog.listener("on_raw_thread_member_remove")

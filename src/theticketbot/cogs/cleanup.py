@@ -9,7 +9,7 @@ log = logging.getLogger(__name__)
 
 
 class Cleanup(commands.Cog):
-    def __init__(self, bot: Bot):
+    def __init__(self, bot: Bot) -> None:
         self.bot = bot
         self.cleanup_loop.start()
 
