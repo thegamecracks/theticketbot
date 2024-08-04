@@ -173,7 +173,7 @@ class InboxGroup(
     @app_commands.describe(
         # Subcommand parameter description ("inbox create <channel>")
         channel=_("The channel to post the inbox."),
-        # Subcommand parameter description ("inbox create <channel>")
+        # Subcommand parameter description ("inbox create <destination>")
         destination=_("The channel to route new tickets."),
     )
     async def create(

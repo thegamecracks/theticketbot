@@ -30,7 +30,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.4.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-01 22:44-0400\n"
+"POT-Creation-Date: 2024-08-04 14:11-0400\n"
 "PO-Revision-Date: 2024-06-02 15:17-0400\n"
 "Last-Translator: thegamecracks <61257169+thegamecracks@users.noreply.github."
 "com>\n"
@@ -171,7 +171,7 @@ msgstr ""
 msgid "The channel to post the inbox."
 msgstr ""
 
-#. Subcommand parameter description ("inbox create <channel>")
+#. Subcommand parameter description ("inbox create <destination>")
 #. Subcommand parameter description ("inbox destination <channel>")
 #: src/theticketbot/cogs/inbox/cog_group.py:177
 #: src/theticketbot/cogs/inbox/cog_group.py:354
