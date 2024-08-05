@@ -228,7 +228,7 @@ class InboxGroup(
             )
             await query.set_inbox_starter_content(message.id, starter_content)
 
-            for staff in self.get_default_inbox_staff(channel):
+            for staff in self.get_default_inbox_staff(destination):
                 mention = snowflake_to_mention(staff)
                 await query.add_inbox_staff(message.id, mention)
 
