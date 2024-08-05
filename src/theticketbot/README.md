@@ -14,7 +14,6 @@ Here is a summary of the file structure here:
 - [`errors.py`](errors.py): Defines exceptions used in this app.
 - [`logging.py`](logging.py): Handles configuring the app's stream and file logging.
 - [`migrations.py`](migrations.py): Handles versioning and execution of SQLite migrations.
-- [`theticketbot.pot`](theticketbot.pot): Defines the gettext template for this app's translations.
 - [`translator.py`](translator.py): Integrates translations with discord.py.
 - [`versions.py`](versions.py): Defines comparison functions for [PEP 440] version strings.
 

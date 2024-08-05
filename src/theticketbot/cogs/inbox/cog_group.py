@@ -63,11 +63,8 @@ class InboxMessageParams(TypedDict):
 @app_commands.guild_only()
 class InboxGroup(
     commands.GroupCog,
-    # Command group name
-    # (alternatively translated as "panel")
-    group_name=_("inbox"),
-    # Command group description ("inbox")
-    group_description=_("Manage the server's ticket inboxes."),
+    group_name=_("inbox", id="command-inbox"),
+    group_description=_("command-inbox.description"),
 ):
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
@@ -121,24 +118,12 @@ class InboxGroup(
 
         if row is None:
             if looks_like_an_inbox(self.bot, message):
-                content = _(
-                    # Message sent when selecting a non-inbox message
-                    # that looks like the message used to be an inbox
-                    # {0}: the message's link
-                    "Sorry, {0} is no longer recognized as an inbox "
-                    "and must be re-created."
-                )
+                content = _("select-unknown-inbox")
             else:
-                content = _(
-                    # Message sent when selecting a non-inbox message
-                    # {0}: the message's link
-                    "Sorry, {0} is not an inbox. The message you select should have "
-                    "a **Create Ticket** button under it."
-                )
+                content = _("select-invalid-inbox")
 
-            content = await translate(content, interaction)
-            content = content.format(message.jump_url)
-            raise AppCommandResponse(content)
+            data = {"message": message.jump_url}
+            raise AppCommandResponse(content, data)
 
     async def check_bot_permissions(
         self,
@@ -150,31 +135,21 @@ class InboxGroup(
         missing = bot_permissions & required ^ required
         if missing:
             missing = ", ".join(f"`{name}`" for name, value in missing if value)
-            # Message sent when attempting to create an inbox with insufficient permissions
-            # {0}: the channel's mention
-            # {1}: a list of permissions that are missing
-            content = _("I need the following permissions in {0}: {1}")
-            content = await translate(content, interaction)
-            content = content.format(channel.mention, missing)
-            raise AppCommandResponse(content)
+            content = _("inbox-create-insufficient-permissions")
+            data = {"channel": channel.mention, "permissions": missing}
+            raise AppCommandResponse(content, data)
 
     @app_commands.command(
-        # Subcommand name ("inbox")
-        name=_("create"),
-        # Subcommand description ("inbox create")
-        description=_("Create a new inbox."),
+        name=_("create", id="command-inbox-create"),
+        description=_("command-inbox-create.description"),
     )
     @app_commands.rename(
-        # Subcommand parameter name ("inbox create")
-        channel=_("channel"),
-        # Subcommand parameter name ("inbox create")
-        destination=_("destination"),
+        channel=_("channel", id="command-inbox-create.channel-name"),
+        destination=_("destination", id="command-inbox-create.destination-name"),
     )
     @app_commands.describe(
-        # Subcommand parameter description ("inbox create <channel>")
-        channel=_("The channel to post the inbox."),
-        # Subcommand parameter description ("inbox create <destination>")
-        destination=_("The channel to route new tickets."),
+        channel=_("command-inbox-create.channel-description"),
+        destination=_("command-inbox-create.destination-description"),
     )
     async def create(
         self,
@@ -197,18 +172,11 @@ class InboxGroup(
 
         await self.check_bot_permissions(interaction, destination, destination_perms)
 
-        content = _(
-            # Message sent when the user is creating a new inbox in a channel,
-            # and the inbox needs a message to be included
-            # {0}: the channel's mention
-            # {1}: the destination's mention
-            "Your inbox will be posted in {0} and tickets will be created in {1}. "
-            "You must now select the message you want your inbox to have. "
-            "To do this, right click or long tap a message, then open Apps "
-            "and pick the *Select this message* command."
+        content = await translate(
+            _("inbox-create-with-message"),
+            interaction,
+            data={"channel": channel.mention, "destination": destination.mention},
         )
-        content = await translate(content, interaction)
-        content = content.format(channel.mention, destination.mention)
         await interaction.response.send_message(content, ephemeral=True)
         self.bot.set_message_callback(
             interaction.guild.id,
@@ -254,8 +222,7 @@ class InboxGroup(
             )
 
             starter_content = await translate(
-                # The default starter message content for new tickets
-                _("$author Thank you for creating a ticket!\n$staff"),
+                _("ticket-starter-message-content"),
                 interaction,
                 locale=interaction.guild.preferred_locale,
             )
@@ -272,10 +239,11 @@ class InboxGroup(
                     guild_id=message.guild.id,
                 )
 
-        # Message sent after a user creates an inbox
-        # {0}: the inbox's link
-        content = await translate(_("Your inbox has been created! {0}"), interaction)
-        content = content.format(message.jump_url)
+        content = await translate(
+            _("inbox-create-finished"),
+            interaction,
+            data={"inbox": message.jump_url},
+        )
         await interaction.followup.send(content, ephemeral=True)
 
     async def create_inbox_message(
@@ -293,14 +261,11 @@ class InboxGroup(
 
         max_attachment_size = self.bot.config.bot.inbox.max_attachment_size
         if sum(a.size for a in message.attachments) > max_attachment_size:
-            content = _(
-                # Message sent when attempting to create an inbox with too large attachments
-                # {0}: the maximum cumulative filesize
-                "The message's attachments are too large! "
-                "The total size must be under {0}."
+            content = await translate(
+                _("inbox-create-oversized-attachments"),
+                interaction,
+                data={"filesize": humanize.naturalsize(max_attachment_size)},
             )
-            content = await translate(content, interaction)
-            content = content.format(humanize.naturalsize(max_attachment_size))
             await interaction.response.send_message(content, ephemeral=True)
             return
 
@@ -340,18 +305,14 @@ class InboxGroup(
         ]
 
     @app_commands.command(
-        # Subcommand name ("inbox")
-        name=_("destination"),
-        # Subcommand description ("inbox destination")
-        description=_("Edit the destination channel for an inbox."),
+        name=_("destination", id="command-inbox-destination"),
+        description=_("command-inbox-destination.description"),
     )
     @app_commands.rename(
-        # Subcommand parameter name ("inbox destination")
-        channel=_("channel"),
+        channel=_("channel", id="command-inbox-destination.channel-name"),
     )
     @app_commands.describe(
-        # Subcommand parameter description ("inbox destination <channel>")
-        channel=_("The channel to route new tickets."),
+        channel=_("command-inbox-destination.channel-description"),
     )
     async def channel(
         self,
@@ -363,14 +324,7 @@ class InboxGroup(
             channel,
             REQUIRED_DESTINATION_PERMISSIONS,
         )
-        content = _(
-            # Message sent when a user is editing an inbox's destination,
-            # and an inbox needs to be selected
-            "You must now select the inbox you want to edit. "
-            "To do this, right click or long tap a message, then open Apps "
-            "and pick the *Select this message* command."
-        )
-        content = await translate(content, interaction)
+        content = await translate(_("select-inbox-to-edit"), interaction)
         await interaction.response.send_message(content, ephemeral=True)
         callback = functools.partial(self.edit_inbox_destination, destination=channel)
         self.set_inbox_callback(interaction, callback)
@@ -387,12 +341,11 @@ class InboxGroup(
 
             old = await get_inbox_destination(query, inbox.guild, inbox)
             if old.id == destination.id:
-                # Message sent when an inbox's old and new destination are the same
-                # {0}: the inbox's link
-                # {1}: the destination's link
-                content = _("{0} is already routing tickets to {1} !")
-                content = await translate(content, interaction)
-                content = content.format(inbox.jump_url, destination.jump_url)
+                content = await translate(
+                    _("inbox-destination-matches"),
+                    interaction,
+                    data={"inbox": inbox.jump_url, "destination": destination.jump_url},
+                )
                 return await interaction.response.send_message(content, ephemeral=True)
 
             await query.set_inbox_destination(
@@ -401,30 +354,23 @@ class InboxGroup(
                 guild_id=destination.guild.id,
             )
 
-        # Message sent after a user edits an inbox's destination
-        # {0}: the inbox's link
-        # {1}: the old destination's link
-        # {2}: the new destination's link
-        content = _("{0} will now route tickets to {2} instead of {1} !")
-        content = await translate(content, interaction)
-        content = content.format(inbox.jump_url, old.jump_url, destination.jump_url)
+        content = await translate(
+            _("inbox-destination-changed"),
+            interaction,
+            data={
+                "inbox": inbox.jump_url,
+                "old": old.jump_url,
+                "destination": destination.jump_url,
+            },
+        )
         await interaction.response.send_message(content, ephemeral=True)
 
     @app_commands.command(
-        # Subcommand name ("inbox")
-        name=_("message"),
-        # Subcommand description ("inbox message")
-        description=_("Edit the message for an inbox."),
+        name=_("message", id="command-inbox-message"),
+        description=_("command-inbox-message.description"),
     )
     async def message(self, interaction: discord.Interaction):
-        content = _(
-            # Message sent when a user is editing an inbox's message,
-            # and an inbox needs to be selected
-            "You must now select the inbox you want to edit. "
-            "To do this, right click or long tap a message, then open Apps "
-            "and pick the *Select this message* command."
-        )
-        content = await translate(content, interaction)
+        content = await translate(_("select-inbox-to-edit"), interaction)
         await interaction.response.send_message(content, ephemeral=True)
         self.set_inbox_callback(interaction, self.select_message_to_edit_inbox)
 
@@ -437,12 +383,11 @@ class InboxGroup(
         guild_id = interaction.guild.id
         user_id = interaction.user.id
 
-        # Message sent when a user is editing an inbox's message,
-        # and a second message needs to be selected to copy its contents
-        # {0}: the inbox's link
-        content = _("{0} will be edited. Please select the message you want to copy.")
-        content = await translate(content, interaction)
-        content = content.format(inbox.jump_url)
+        content = await translate(
+            _("inbox-message-select"),
+            interaction,
+            data={"inbox": inbox.jump_url},
+        )
         await interaction.response.send_message(content, ephemeral=True)
         callback = functools.partial(self.edit_inbox_message, inbox=inbox)
         self.bot.set_message_callback(guild_id, user_id, callback)
@@ -456,12 +401,7 @@ class InboxGroup(
         assert interaction.guild is not None
 
         if message == inbox:
-            content = _(
-                # Message sent when a user tries to edit an inbox message with itself
-                "The inbox message cannot be edited with itself. "
-                "Please select another message you want to copy."
-            )
-            raise AppCommandResponse(content)
+            raise AppCommandResponse(_("inbox-message-selected-self"))
 
         kwargs = await self.create_inbox_message(
             interaction,
@@ -480,27 +420,19 @@ class InboxGroup(
         await inbox.edit(view=view, **kwargs)
         self._inbox_views[inbox.id] = view
 
-        # Message sent after a user edits an inbox's message
-        # {0}: the inbox's link
-        content = await translate(_("{0} has been updated!"), interaction)
-        content = content.format(inbox.jump_url)
+        content = await translate(
+            _("inbox-message-finished"),
+            interaction,
+            data={"inbox": inbox.jump_url},
+        )
         await interaction.followup.send(content, ephemeral=True)
 
     @app_commands.command(
-        # Subcommand name ("inbox")
-        name=_("staff"),
-        # Subcommand description ("inbox staff")
-        description=_("Manage staff for an inbox."),
+        name=_("staff", id="command-inbox-staff"),
+        description=_("command-inbox-staff.description"),
     )
     async def staff(self, interaction: discord.Interaction):
-        content = _(
-            # Message sent when a user is managing staff for an inbox,
-            # and an inbox needs to be selected
-            "You must now select the inbox you want to manage staff for. "
-            "To do this, right click or long tap a message, then open Apps "
-            "and pick the *Select this message* command."
-        )
-        content = await translate(content, interaction)
+        content = await translate(_("select-inbox-to-edit-staff"), interaction)
         await interaction.response.send_message(content, ephemeral=True)
         self.set_inbox_callback(interaction, self.manage_inbox_staff)
 
@@ -514,11 +446,11 @@ class InboxGroup(
             query = DatabaseClient(conn)
             staff = await get_and_filter_inbox_staff(query, interaction.guild, inbox.id)
 
-        # Message sent above select menus when presenting an inbox's staff
-        # {0}: the inbox's link
-        content = _("Staff for {0} :")
-        content = await translate(content, interaction)
-        content = content.format(inbox.jump_url)
+        content = await translate(
+            _("inbox-staff-message"),
+            interaction,
+            data={"inbox": inbox.jump_url},
+        )
         view = InboxStaffView(self.bot, inbox.id, set(staff))
 
         return await interaction.response.send_message(
@@ -528,27 +460,16 @@ class InboxGroup(
         )
 
     new_tickets = app_commands.Group(
-        # Subcommand group name ("inbox")
-        name=_("new-tickets"),
-        # Subcommand group description ("inbox new-tickets")
-        description=_("Manage new tickets created by an inbox."),
+        name=_("new-tickets", id="command-inbox-new-tickets"),
+        description=_("command-inbox-new-tickets.description"),
     )
 
     @new_tickets.command(
-        # Subcommand name ("inbox new-tickets")
-        name=_("starter"),
-        # Subcommand description ("inbox new-tickets starter")
-        description=_("Set the starting message for new tickets."),
+        name=_("starter", id="command-inbox-new-tickets-starter"),
+        description=_("command-inbox-new-tickets-starter.description"),
     )
     async def new_tickets_starter(self, interaction: discord.Interaction):
-        content = _(
-            # Message sent when a user is changing the starter message for new tickets,
-            # and an inbox needs to be selected
-            "You must now select the inbox you want to edit. "
-            "To do this, right click or long tap a message, then open Apps "
-            "and pick the *Select this message* command."
-        )
-        content = await translate(content, interaction)
+        content = await translate(_("select-inbox-to-edit"), interaction)
         await interaction.response.send_message(content, ephemeral=True)
         self.set_inbox_callback(interaction, self.edit_new_tickets_starter)
 
@@ -564,20 +485,11 @@ class InboxGroup(
         await interaction.response.send_modal(modal)
 
     @new_tickets.command(
-        # Subcommand name ("inbox new-tickets")
-        name=_("name"),
-        # Subcommand description ("inbox new-tickets name")
-        description=_("Set the name for new tickets."),
+        name=_("name", id="command-inbox-new-tickets-name"),
+        description=_("command-inbox-new-tickets-name.description"),
     )
     async def new_tickets_name(self, interaction: discord.Interaction):
-        content = _(
-            # Message sent when a user is changing the name for new tickets,
-            # and an inbox needs to be selected
-            "You must now select the inbox you want to edit. "
-            "To do this, right click or long tap a message, then open Apps "
-            "and pick the *Select this message* command."
-        )
-        content = await translate(content, interaction)
+        content = await translate(_("select-inbox-to-edit"), interaction)
         await interaction.response.send_message(content, ephemeral=True)
         self.set_inbox_callback(interaction, self.edit_new_tickets_name)
 

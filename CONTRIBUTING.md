@@ -40,11 +40,6 @@ new migration script.
 
 [migrations/]: https://github.com/thegamecracks/theticketbot/tree/main/src/theticketbot/migrations/
 
-When updating any file that contains `_()` translatable strings,
-it is recommended to run `utils/merge_po.py` and `utils/build_mo.py`
-just before starting the bot or creating a commit.
-This requires gettext to be installed.
-
 # Python Style Guide
 
 - Code should follow [PEP 8] where possible, unless exempted by this guide

@@ -15,6 +15,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - If you are using multiple database files for the same bot, you should pass the
     `--no-sync` argument after switching databases to skip automatic synchronization.
 
+### Changes
+
+- Switch from gettext to [Project Fluent] via [fluent-compiler] for translations
+
+[Project Fluent]: https://projectfluent.org/
+[fluent-compiler]: https://fluent-compiler.readthedocs.io/en/latest/index.html
+
 Localizations have not yet been updated.
 
 ## [0.4.3] - 2024-07-01

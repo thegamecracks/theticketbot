@@ -42,7 +42,7 @@ class InboxView(discord.ui.View):
             return await translate(s, self.bot, locale=locale)
 
         # Button label for creating a new ticket
-        self.create_ticket.label = await t(_("Create Ticket"))
+        self.create_ticket.label = await t(_("inbox-ticket-button"))
 
     @discord.ui.button(custom_id="create-ticket", style=discord.ButtonStyle.primary)
     async def create_ticket(
@@ -63,12 +63,7 @@ class InboxView(discord.ui.View):
             # If the database was wiped, this will fail.
             row = await conn.fetchone("SELECT 1 FROM inbox WHERE id = ?", message.id)
             if row is None:
-                content = _(
-                    # Message sent when an inbox is not recognized
-                    "Sorry, this inbox is no longer recognized and must be "
-                    "re-created. Please notify a server admin!"
-                )
-                content = await translate(content, interaction)
+                content = await translate(_("inbox-ticket-unknown"), interaction)
                 return await interaction.response.send_message(content, ephemeral=True)
 
             tickets = await self.get_active_user_tickets(
@@ -81,27 +76,24 @@ class InboxView(discord.ui.View):
             max_tickets = await self.get_max_tickets(conn, message.id)
 
         if max_tickets > 0 and len(tickets) >= max_tickets:
-            content = _(
-                # Message sent when trying to create too many tickets
-                # {0}: the ticket's link
-                "You have too many tickets in this inbox. "
-                "Please close your last ticket {0} before creating a new one."
+            content = await translate(
+                _("inbox-ticket-max-per-user"),
+                interaction,
+                data={"ticket": tickets[-1].jump_url},
             )
-            content = await translate(content, interaction)
-            content = content.format(tickets[-1].jump_url)
             return await interaction.response.send_message(content, ephemeral=True)
 
         retry_after = await self.ratelimit_check(message, interaction.user)
         if retry_after > 0:
-            # Message sent when user is being ratelimited for an inbox
-            # {0}: the duration in seconds to wait before retrying
-            content = _("You are creating tickets too quickly! Please wait {0:.0f}s.")
-            content = await translate(content, interaction)
-            content = content.format(retry_after)
+            content = await translate(
+                _("inbox-ticket-on-cooldown"),
+                interaction,
+                data={"duration": retry_after},
+            )
             return await interaction.response.send_message(content, ephemeral=True)
 
         # Message sent when creating a ticket
-        content = await translate(_("Creating ticket..."), interaction)
+        content = await translate(_("inbox-ticket-creating"), interaction)
         await interaction.response.send_message(content, ephemeral=True)
 
         async with self.bot.acquire() as conn:
@@ -122,11 +114,12 @@ class InboxView(discord.ui.View):
             counter=str(counter % 10**4).zfill(4),
         )
 
-        # Audit log reason for a user creating a ticket
-        # {0}: the user's name
-        reason = _("Ticket created by {0}")
-        reason = await translate(reason, interaction, locale=guild.preferred_locale)
-        reason = reason.format(interaction.user.name)
+        reason = await translate(
+            _("inbox-ticket-creating-reason"),
+            interaction,
+            locale=guild.preferred_locale,
+            data={"owner": interaction.user.name},
+        )
 
         try:
             ticket = await destination.create_thread(
@@ -158,25 +151,19 @@ class InboxView(discord.ui.View):
             )
             await ticket.send(content[:2000])
         except discord.Forbidden:
-            content = _(
-                # Message sent when creating a ticket failed due to insufficient permissions
-                "I am missing the permissions needed to create a ticket here. "
-                "Please notify a server admin!"
-            )
+            content = _("inbox-ticket-error-insufficient-bot-permissions")
             content = await translate(content, interaction)
             return await interaction.edit_original_response(content=content)
         except Exception:
-            # Message sent when creating a ticket failed unexpectedly
-            content = _("An unexpected error occurred while creating the ticket.")
-            content = await translate(content, interaction)
+            content = await translate(_("inbox-ticket-error-unknown"), interaction)
             await interaction.edit_original_response(content=content)
             raise
         else:
-            # Message sent after successfully creating a ticket
-            # {0}: the ticket's link
-            content = _("Your ticket is ready! {0}")
-            content = await translate(content, interaction)
-            content = content.format(ticket.jump_url)
+            content = await translate(
+                _("inbox-ticket-finished"),
+                interaction,
+                data={"ticket": ticket.jump_url},
+            )
             await interaction.edit_original_response(content=content)
 
     async def get_active_user_tickets(
@@ -237,9 +224,7 @@ class InboxStaffView(discord.ui.View):
         removed = self.staff - mentions
 
         if len(added) == 0 and len(removed) == 0:
-            # Message sent when submitting no changes to inbox staff
-            content = _("You have not made any changes!")
-            content = await translate(content, interaction)
+            content = await translate(_("inbox-staff-no-edits"), interaction)
             return await interaction.response.send_message(content, ephemeral=True)
 
         async with self.bot.acquire() as conn:

@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-import gettext
 import importlib.resources
-import logging
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Iterator
 
@@ -10,55 +8,42 @@ import discord
 from discord import app_commands
 from discord.app_commands import TranslationContextLocation
 from discord.ext import commands
+from fluent_compiler.bundle import FluentBundle
 
 if TYPE_CHECKING:
     from .bot import Bot
 
 assert __package__ is not None
 _LOCALES_PATH = Path(str(importlib.resources.files(__package__).joinpath("locales")))
-DOMAIN = "theticketbot"
-
-log = logging.getLogger(__name__)
 
 
-def locale_to_gnu(locale: discord.Locale) -> str:
-    return str(locale).replace("-", "_")
-
-
-def yield_mo_paths() -> Iterator[Path]:
+def yield_ftl_paths() -> Iterator[tuple[str, list[Path]]]:
     if not _LOCALES_PATH.is_dir():
         return
 
     for locale in _LOCALES_PATH.iterdir():
-        lc_messages = locale / "LC_MESSAGES"
-        if not lc_messages.is_dir():
-            continue
-
-        yield from lc_messages.glob("*.mo")
+        yield locale.name, list(locale.glob("*.ftl"))
 
 
-class EmptyTranslations(gettext.NullTranslations):
-    """Returns an empty message to indicate no translation is available."""
-
-    def gettext(self, message: str) -> str:
-        return ""
-
-    def ngettext(self, msgid1: str, msgid2: str, n: int) -> str:
-        return ""
-
-    def pgettext(self, context: str, message: str) -> str:
-        return ""
-
-    def npgettext(self, context: str, msgid1: str, msgid2: str, n: int) -> str:
-        return ""
-
-
-class GettextTranslator(app_commands.Translator):
+class FluentTranslator(app_commands.Translator):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
-        if not any(yield_mo_paths()):
-            log.warning("No compiled localizations detected")
+        ftl_paths = list(yield_ftl_paths())
+        ftl_paths = [(locale.replace("_", "-"), paths) for locale, paths in ftl_paths]
+        self.bundles = {
+            discord.Locale(locale): FluentBundle.from_files(
+                locale, list(map(str, paths))
+            )
+            for locale, paths in ftl_paths
+        }
+
+        for locale, bundle in self.bundles.items():
+            errors = bundle.check_messages()
+            if len(errors) > 0:
+                raise ValueError(f"Failed to parse {locale} localizations: {errors}")
+
+        self.bundles[discord.Locale("en-GB")] = self.bundles[discord.Locale("en-US")]
 
     async def translate(
         self,
@@ -66,46 +51,21 @@ class GettextTranslator(app_commands.Translator):
         locale: discord.Locale,
         context: app_commands.TranslationContextTypes,
     ) -> str | None:
-        try:
-            t = gettext.translation(
-                domain=DOMAIN,
-                localedir=str(_LOCALES_PATH),
-                languages=(locale_to_gnu(locale), "en_US"),
-            )
-        except OSError:
+        bundle = self.bundles.get(locale)
+        if bundle is None:
             return
 
-        t.add_fallback(EmptyTranslations())
-
-        plural: str | None = string.extras.get("plural")
-        if plural is not None:
-            if context.location == TranslationContextLocation.choice_name:
-                quantity = context.data.value
-            else:
-                quantity = context.data
-            assert isinstance(quantity, int)
-            translated = t.ngettext(string.message, plural, quantity)
-        else:
-            translated = t.gettext(string.message)
-
         if context.location == TranslationContextLocation.choice_name:
-            translated = translated.format(context.data.value)
+            data = context.data.value
+        else:
+            data = context.data
+
+        message_id = string.extras.get("id", string.message)
+        translated, errors = bundle.format(message_id, data)
+        if len(errors) > 0:
+            raise ValueError(f"Failed to translate {string!r}: {errors}")
 
         return translated or None
-
-
-def plural_locale_str(
-    singular: str,
-    plural: str,
-    **kwargs,
-) -> app_commands.locale_str:
-    """A shorthand for defining a string with singular and plural variants.
-
-    This should be aliased to ngettext, ungettext, or dngettext
-    so the `xgettext` program can recognize the function.
-
-    """
-    return app_commands.locale_str(singular, plural=plural, **kwargs)
 
 
 async def translate(
@@ -123,7 +83,7 @@ async def translate(
     """
     if isinstance(obj, commands.Bot):
         if locale is None:
-            return str(message)
+            locale = discord.Locale("en-US")
 
         assert obj.tree.translator is not None
         context = app_commands.TranslationContext(

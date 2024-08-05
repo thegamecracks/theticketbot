@@ -24,11 +24,9 @@ Before submitting any changes, please read and follow the [Contributing Guide]!
 Want to help out by adding translations? This bot stores them in the [locales/]
 directory. You can [fork this repository], create a new branch, commit your
 PO files there, and make a pull request!
-See [discord.py-gettext-demo's onboarding] for more information.
 
 [locales/]: https://github.com/thegamecracks/theticketbot/tree/main/src/theticketbot/locales/
 [fork this repository]: https://docs.github.com/en/get-started/quickstart/contributing-to-projects
-[discord.py-gettext-demo's onboarding]: https://github.com/thegamecracks/discord.py-i18n-demo/blob/main/docs/en/onboarding.md
 
 ## Usage
 
@@ -51,13 +49,6 @@ With Python 3.11+, you can set up this bot by following these steps:
    ```sh
    pip install git+https://github.com/thegamecracks/theticketbot
    ```
-
-   When installing from the source code like above, localizations may be
-   compiled using gettext's `msgfmt` program if it is available on your system.
-   This dependency is not needed when installing the wheel distributions
-   from PyPI as they already contain the localizations pre-compiled.
-   If you don't have gettext when installing from source, localizations
-   will be disabled.
 
 2. Start the bot:
 

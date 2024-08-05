@@ -15,7 +15,7 @@ from pydantic import SecretStr
 
 from .database import DatabaseClient, connect as database_connect
 from .migrations import run_default_migrations
-from .translator import GettextTranslator
+from .translator import FluentTranslator
 from .versions import CURRENT_VERSION, sync_upgrade_or_downgrade
 
 if TYPE_CHECKING:
@@ -130,7 +130,7 @@ class Bot(commands.Bot):
         log.info("Loaded %d extensions", len(self.config.bot.extensions))
         await self._maybe_load_jishaku()
 
-        await self.tree.set_translator(GettextTranslator())
+        await self.tree.set_translator(FluentTranslator())
 
         async with self.acquire() as conn:
             await self._maybe_sync_at_startup(DatabaseClient(conn))

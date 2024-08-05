@@ -1,8 +1,8 @@
 import logging
 import random
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
-from typing import Any, ClassVar, Generic, Type, TypeVar, cast
+from dataclasses import dataclass, field
+from typing import Any, Callable, ClassVar, Generic, Type, TypeVar, cast
 
 import discord
 from discord import app_commands
@@ -19,15 +19,8 @@ T = TypeVar("T")
 
 
 async def append_error_code(ctx: object, content: str, error_code: str) -> str:
-    trailer = _(
-        # Message appended to some error responses caused by issues in the bot
-        # {0}: the error code to be reported
-        # {1}: the maintainer's mention
-        "Error code: {0}\n"
-        "If assistance is needed, please contact {1}."
-    )
-    trailer = await maybe_translate(ctx, trailer)
-    trailer = trailer.format(error_code, get_owner_mention(ctx))
+    data = {"code": error_code, "maintainer": get_owner_mention(ctx)}
+    trailer = await maybe_translate(ctx, _("error-trailer"), data)
     return f"{content}\n{trailer}"
 
 
@@ -52,16 +45,23 @@ def generate_error_code() -> str:
     return "".join(random.choices("0123456789ABCDEF", k=4))
 
 
-async def maybe_translate(ctx: object, message: str | app_commands.locale_str) -> str:
+async def maybe_translate(
+    ctx: object,
+    message: str | app_commands.locale_str,
+    data: Any = None,
+) -> str:
     if isinstance(message, str):
         return message
     elif isinstance(ctx, discord.Interaction):
-        return await translate(message, ctx)
+        return await translate(message, ctx, data=data)
     elif isinstance(ctx, commands.Context) and ctx.guild is not None:
         locale = ctx.guild.preferred_locale
-        return await translate(message, ctx.bot, locale=locale)
+        return await translate(message, ctx.bot, locale=locale, data=data)
     else:
         return message.message
+
+
+Placeholder = Callable[[Any, Exception], Any]
 
 
 @dataclass
@@ -69,11 +69,15 @@ class ErrorResponse:
     exc_types: Type[Exception] | tuple[Type[Exception], ...]
     content: str | app_commands.locale_str | None
     show_traceback: bool
+    placeholders: dict[str, Placeholder] = field(default_factory=dict)
 
     async def format(self, ctx: Any, error: Exception) -> str | None:
-        if self.content is not None:
-            content = await maybe_translate(ctx, self.content)
-            return content.format(error)
+        if self.content is None:
+            return
+
+        data = {name: func(ctx, error) for name, func in self.placeholders.items()}
+        content = await maybe_translate(ctx, self.content, data)
+        return content.format(error)
 
 
 class AppCommandErrorResponse(ErrorResponse):
@@ -151,6 +155,12 @@ class ErrorHandler(ABC, Generic[T]):
         )
 
 
+def get_cooldown_duration(ctx: Any, error: Exception) -> float:
+    exc_types = (commands.CommandOnCooldown, app_commands.CommandOnCooldown)
+    assert isinstance(error, exc_types)
+    return error.retry_after
+
+
 class PrefixErrorHandler(ErrorHandler[Context]):
     responses = [
         ErrorResponse(
@@ -160,34 +170,29 @@ class PrefixErrorHandler(ErrorHandler[Context]):
         ),
         ErrorResponse(
             commands.CommandOnCooldown,
-            # Error response for command on cooldown
-            # {0}: an exception containing the duration to wait in .retry_after
-            _("This command is on cooldown for {0.retry_after:.1f}s."),
+            _("error-command-on-cooldown"),
             show_traceback=False,
+            placeholders={"duration": get_cooldown_duration},
         ),
         ErrorResponse(
             commands.MaxConcurrencyReached,
-            # Error response for exceeding maximum concurrent users of a command
-            _("Too many people are using this command. Please try again later."),
+            _("error-max-concurrency"),
             show_traceback=False,
         ),
         ErrorResponse(
             commands.CheckFailure,
-            # Error response for not passing all checks required to use a command
-            _("One or more checks failed for this command."),
+            _("error-check-failure"),
             show_traceback=False,
         ),
         ErrorResponse(
             commands.UserInputError,
-            # Error response for failing to parse the user's input
-            # {0}: the error description
-            _("An error occurred with your input: ```py\n{0}```"),
+            _("error-user-input"),
             show_traceback=True,
+            placeholders={"description": lambda ctx, error: str(error)},
         ),
         ErrorResponse(
             Exception,
-            # Error response for an unexpected failure in a command
-            _("An unknown error occurred while running this command."),
+            _("error-unknown"),
             show_traceback=True,
         ),
     ]
@@ -218,34 +223,29 @@ class TreeErrorHandler(ErrorHandler[discord.Interaction]):
         AppCommandErrorResponse(show_traceback=False),
         ErrorResponse(
             app_commands.CommandOnCooldown,
-            # Error response for command on cooldown
-            # {0}: an exception containing the duration to wait in .retry_after
-            _("This command is on cooldown for {0.retry_after:.1f}s."),
+            _("error-command-on-cooldown"),
             show_traceback=False,
+            placeholders={"duration": get_cooldown_duration},
         ),
         ErrorResponse(
             app_commands.CheckFailure,
-            # Error response for not passing all checks required to use a command
-            _("One or more checks failed for this command."),
+            _("error-check-failure"),
             show_traceback=False,
         ),
         ErrorResponse(
             app_commands.TransformerError,
-            # Error response for failing to parse the user's input
-            # {0}: the error description
-            _("An error occurred with your input: ```py\n{0}```"),
+            _("error-user-input"),
             show_traceback=True,
+            placeholders={"description": lambda ctx, error: str(error)},
         ),
         ErrorResponse(
             app_commands.CommandNotFound,
-            # Error response for using a slash command not recognized by the bot
-            _("The bot currently does not recognize this command."),
+            _("error-command-not-found"),
             show_traceback=True,
         ),
         ErrorResponse(
             Exception,
-            # Error response for an unexpected failure in a command
-            _("An unknown error occurred while running this command."),
+            _("error-unknown"),
             show_traceback=True,
         ),
     ]

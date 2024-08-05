@@ -26,10 +26,8 @@ class SetInboxStarterContentModal(discord.ui.Modal, title="Starter Message"):
         async def t(s: _) -> str:
             return await translate(s, self.bot, locale=locale)
 
-        # Modal title for changing an inbox's starter message
-        self.title = await t(_("Starter Message"))
-        # Modal text input label for an inbox's starter message content
-        self.content.label = await t(_("Content"))
+        self.title = await t(_("modal-starter"))
+        self.content.label = await t(_("modal-starter.content"))
 
     async def set_defaults(self, conn: asqlite.Connection) -> None:
         query = DatabaseClient(conn)
@@ -42,11 +40,11 @@ class SetInboxStarterContentModal(discord.ui.Modal, title="Starter Message"):
             query = DatabaseClient(conn)
             await query.set_inbox_starter_content(self.inbox.id, self.content.value)
 
-        # Message sent when an inbox's starter message is successfully changed
-        # {0}: the inbox's link
-        content = _("{0} 's starting message has been set!")
-        content = await translate(content, interaction)
-        content = content.format(self.inbox.jump_url)
+        content = await translate(
+            _("modal-starter-finished"),
+            interaction,
+            data={"inbox": self.inbox.jump_url},
+        )
         await interaction.response.send_message(content, ephemeral=True)
 
 
@@ -62,10 +60,8 @@ class SetTicketDefaultsModal(discord.ui.Modal, title="New Tickets"):
         async def t(s: _) -> str:
             return await translate(s, self.bot, locale=locale)
 
-        # Modal title for changing an inbox's defaults for new tickets
-        self.title = await t(_("New Tickets"))
-        # Modal text input label for ticket names
-        self.name.label = await t(_("Name"))
+        self.title = await t(_("modal-new-tickets"))
+        self.name.label = await t(_("modal-new-tickets.name"))
 
     async def set_defaults(self, conn: asqlite.Connection) -> None:
         query = DatabaseClient(conn)
@@ -78,9 +74,9 @@ class SetTicketDefaultsModal(discord.ui.Modal, title="New Tickets"):
             query = DatabaseClient(conn)
             await query.set_inbox_default_ticket_name(self.inbox.id, self.name.value)
 
-        # Message sent when an inbox's ticket defaults were successfully changed
-        # {0}: the inbox's link
-        content = _("{0} 's ticket defaults have been set!")
-        content = await translate(content, interaction)
-        content = content.format(self.inbox.jump_url)
+        content = await translate(
+            _("inbox-new-tickets-finished"),
+            interaction,
+            data={"inbox": self.inbox.jump_url},
+        )
         await interaction.response.send_message(content, ephemeral=True)

@@ -28,8 +28,7 @@ class Select(commands.Cog):
         self.bot = bot
         self.cog_menus = (
             app_commands.ContextMenu(
-                # Command name
-                name=_("Select this message"),
+                name=_("Select this message", id="command-select"),
                 callback=self.on_message_selected,
             ),
         )
@@ -66,20 +65,10 @@ class Select(commands.Cog):
         command = self._message_commands.get(key)
 
         if command is None:
-            content = _(
-                # Message sent when selecting a message without a command
-                "You can't select a message right now! "
-                "Please use a command that asks for a message first."
-            )
-            content = await translate(content, interaction)
+            content = await translate(_("select-no-command"), interaction)
             return await interaction.response.send_message(content, ephemeral=True)
         elif time.monotonic() > command.timestamp + self.MESSAGE_EXPIRES_AFTER:
-            content = _(
-                # Message sent when selecting a message too long after their last command
-                "Sorry, your last command has expired. "
-                "Please use a command again and then select this message."
-            )
-            content = await translate(content, interaction)
+            content = await translate(_("select-expired"), interaction)
             return await interaction.response.send_message(content, ephemeral=True)
 
         del self._message_commands[key]

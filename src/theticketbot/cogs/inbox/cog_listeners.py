@@ -43,11 +43,12 @@ class InboxListeners(commands.Cog):
         if owner_id not in user_ids:
             return
 
-        # Message sent when a user leaves their ticket
-        # {0}: The ticket owner's mention
-        content = _("Archiving ticket as the owner ({0}) has left the thread.")
-        content = await translate(content, self.bot, locale=guild.preferred_locale)
-        content = content.format(f"<@{owner_id}>")
+        content = await translate(
+            _("ticket-archived-owner-left"),
+            self.bot,
+            locale=guild.preferred_locale,
+            data={"owner": f"<@{owner_id}>"},
+        )
         await self.archive_ticket_with_message(thread, content)
 
     @commands.Cog.listener("on_raw_member_remove")
@@ -74,11 +75,12 @@ class InboxListeners(commands.Cog):
                 log.warning("Ignoring unknown thread %d", ticket_id)
                 continue
 
-            # Message sent when a user leaves a server with open tickets
-            # {0}: The ticket owner's mention
-            content = _("Archiving ticket as the owner ({0}) has left the server.")
-            content = await translate(content, self.bot, locale=guild.preferred_locale)
-            content = content.format(payload.user.mention)
+            content = await translate(
+                _("ticket-archived-owner-left-guild"),
+                self.bot,
+                locale=guild.preferred_locale,
+                data={"owner": payload.user.mention},
+            )
             await self.archive_ticket_with_message(thread, content)
 
     async def archive_ticket_with_message(
@@ -124,9 +126,11 @@ class InboxListeners(commands.Cog):
             if row is None:
                 return
 
-        # Message sent when locking a thread after being archived
-        content = _("This archived ticket will be locked to moderators only.")
-        content = await translate(content, self.bot, locale=guild.preferred_locale)
+        content = await translate(
+            _("ticket-archived-lock"),
+            self.bot,
+            locale=guild.preferred_locale,
+        )
 
         params = discord.http.handle_message_parameters(content)
         await self.bot.http.send_message(thread_id, params=params)
