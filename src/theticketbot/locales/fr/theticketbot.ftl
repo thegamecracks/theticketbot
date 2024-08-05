@@ -154,8 +154,8 @@ inbox-destination-matches = { $inbox } is already routing tickets to { $destinat
 # TODO
 # Message sent after a user edits an inbox's destination
 # { $inbox }: The inbox's link
-# { $old }: The old destination's link
-# { $new }: The new destination's link
+#   { $old }: The old destination's link
+#   { $new }: The new destination's link
 inbox-destination-changed = { $inbox } will now route tickets to { $new } instead of { $old } !
 
 # Message sent when a user is editing an inbox's message,
