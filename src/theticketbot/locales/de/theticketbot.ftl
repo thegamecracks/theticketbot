@@ -59,7 +59,7 @@ command-inbox-new-tickets = neue-tickets
     .description = Verwalten Sie neue Tickets, die von einem Panel erstellt wurden.
 
 command-inbox-new-tickets-starter = startnachricht
-    .description =Legen Sie die Startnachricht für neue Tickets fest.
+    .description = Legen Sie die Startnachricht für neue Tickets fest.
 
 command-inbox-new-tickets-name = name
     .description = Legen Sie den Namen für neue Tickets fest.
