@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.5.0] - 2024-08-05
+
+> [!NOTE]
+>
+> Localizations have not yet been synced in this release.
+> **10** of **124** strings across **2** languages are out of date.
+
 ### New Features
 
 - Add `/inbox destination` to allow routing tickets to any channel
@@ -17,12 +24,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changes
 
-- Switch from gettext to [Project Fluent] via [fluent-compiler] for translations
+- Replace gettext localization system with more flexible [Project Fluent] files
+  - Compilation no longer required to use localizations
 
 [Project Fluent]: https://projectfluent.org/
-[fluent-compiler]: https://fluent-compiler.readthedocs.io/en/latest/index.html
-
-Localizations have not yet been updated.
 
 ## [0.4.3] - 2024-07-01
 
@@ -180,7 +185,8 @@ This is theticketbot's first release to go on [PyPI](https://pypi.org/project/th
 
 This is theticketbot's first release! 🎉
 
-[Unreleased]: https://github.com/thegamecracks/theticketbot/compare/v0.4.3...main
+[Unreleased]: https://github.com/thegamecracks/theticketbot/compare/v0.5.0...main
+[0.5.0]: https://github.com/thegamecracks/theticketbot/compare/v0.4.3...v0.5.0
 [0.4.3]: https://github.com/thegamecracks/theticketbot/compare/v0.4.2...v0.4.3
 [0.4.2]: https://github.com/thegamecracks/theticketbot/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/thegamecracks/theticketbot/compare/v0.4.0.post1...v0.4.1
