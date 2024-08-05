@@ -111,6 +111,7 @@ def plural_locale_str(
 async def translate(
     message: app_commands.locale_str,
     obj: Bot | discord.Interaction,
+    *,
     locale: discord.Locale | None = None,
     data: Any = None,
 ) -> str:
