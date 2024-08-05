@@ -4,11 +4,10 @@ from typing import Any, Awaitable, Callable
 
 import discord
 from discord import app_commands
-from discord.app_commands import locale_str as _
 from discord.ext import commands, tasks
 
 from theticketbot.bot import Bot
-from theticketbot.translator import translate
+from theticketbot.translator import locale_str as _, translate
 
 MessageCallback = Callable[[discord.Interaction, discord.Message], Awaitable[Any]]
 
@@ -28,7 +27,7 @@ class Select(commands.Cog):
         self.bot = bot
         self.cog_menus = (
             app_commands.ContextMenu(
-                name=_("Select this message", id="command-select"),
+                name=_("command-select"),
                 callback=self.on_message_selected,
             ),
         )

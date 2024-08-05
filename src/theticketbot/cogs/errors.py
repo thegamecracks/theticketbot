@@ -6,12 +6,11 @@ from typing import Any, Callable, ClassVar, Generic, Type, TypeVar, cast
 
 import discord
 from discord import app_commands
-from discord.app_commands import locale_str as _
 from discord.ext import commands
 
 from theticketbot.bot import Bot, Context
 from theticketbot.errors import AppCommandResponse
-from theticketbot.translator import translate
+from theticketbot.translator import locale_str as _, translate
 
 log = logging.getLogger(__name__)
 

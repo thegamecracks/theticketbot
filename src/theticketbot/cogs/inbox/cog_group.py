@@ -12,13 +12,12 @@ from typing import (
 import discord
 import humanize
 from discord import app_commands
-from discord.app_commands import locale_str as _
 from discord.ext import commands
 
 from theticketbot.bot import Bot
 from theticketbot.database import DatabaseClient
 from theticketbot.errors import AppCommandResponse
-from theticketbot.translator import translate
+from theticketbot.translator import locale_str as _, translate
 
 from .destination import get_inbox_destination
 from .modals import SetInboxStarterContentModal, SetTicketDefaultsModal
@@ -63,7 +62,7 @@ class InboxMessageParams(TypedDict):
 @app_commands.guild_only()
 class InboxGroup(
     commands.GroupCog,
-    group_name=_("inbox", id="command-inbox"),
+    group_name=_("command-inbox"),
     group_description=_("command-inbox.description"),
 ):
     def __init__(self, bot: Bot) -> None:
@@ -140,12 +139,12 @@ class InboxGroup(
             raise AppCommandResponse(content, data)
 
     @app_commands.command(
-        name=_("create", id="command-inbox-create"),
+        name=_("command-inbox-create"),
         description=_("command-inbox-create.description"),
     )
     @app_commands.rename(
-        channel=_("channel", id="command-inbox-create.channel-name"),
-        destination=_("destination", id="command-inbox-create.destination-name"),
+        channel=_("command-inbox-create.channel-name"),
+        destination=_("command-inbox-create.destination-name"),
     )
     @app_commands.describe(
         channel=_("command-inbox-create.channel-description"),
@@ -305,11 +304,11 @@ class InboxGroup(
         ]
 
     @app_commands.command(
-        name=_("destination", id="command-inbox-destination"),
+        name=_("command-inbox-destination"),
         description=_("command-inbox-destination.description"),
     )
     @app_commands.rename(
-        channel=_("channel", id="command-inbox-destination.channel-name"),
+        channel=_("command-inbox-destination.channel-name"),
     )
     @app_commands.describe(
         channel=_("command-inbox-destination.channel-description"),
@@ -366,7 +365,7 @@ class InboxGroup(
         await interaction.response.send_message(content, ephemeral=True)
 
     @app_commands.command(
-        name=_("message", id="command-inbox-message"),
+        name=_("command-inbox-message"),
         description=_("command-inbox-message.description"),
     )
     async def message(self, interaction: discord.Interaction):
@@ -428,7 +427,7 @@ class InboxGroup(
         await interaction.followup.send(content, ephemeral=True)
 
     @app_commands.command(
-        name=_("staff", id="command-inbox-staff"),
+        name=_("command-inbox-staff"),
         description=_("command-inbox-staff.description"),
     )
     async def staff(self, interaction: discord.Interaction):
@@ -460,12 +459,12 @@ class InboxGroup(
         )
 
     new_tickets = app_commands.Group(
-        name=_("new-tickets", id="command-inbox-new-tickets"),
+        name=_("command-inbox-new-tickets"),
         description=_("command-inbox-new-tickets.description"),
     )
 
     @new_tickets.command(
-        name=_("starter", id="command-inbox-new-tickets-starter"),
+        name=_("command-inbox-new-tickets-starter"),
         description=_("command-inbox-new-tickets-starter.description"),
     )
     async def new_tickets_starter(self, interaction: discord.Interaction):
@@ -485,7 +484,7 @@ class InboxGroup(
         await interaction.response.send_modal(modal)
 
     @new_tickets.command(
-        name=_("name", id="command-inbox-new-tickets-name"),
+        name=_("command-inbox-new-tickets-name"),
         description=_("command-inbox-new-tickets-name.description"),
     )
     async def new_tickets_name(self, interaction: discord.Interaction):

@@ -1,10 +1,9 @@
 import asqlite
 import discord
-from discord.app_commands import locale_str as _
 
 from theticketbot.bot import Bot
 from theticketbot.database import DatabaseClient
-from theticketbot.translator import translate
+from theticketbot.translator import locale_str as _, translate
 
 from .constants import DEFAULT_STARTER_CONTENT, DEFAULT_TICKET_NAME
 
