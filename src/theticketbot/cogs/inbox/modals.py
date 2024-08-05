@@ -1,5 +1,6 @@
 import asqlite
 import discord
+from discord.app_commands import locale_str
 
 from theticketbot.bot import Bot
 from theticketbot.database import DatabaseClient
@@ -22,7 +23,7 @@ class SetInboxStarterContentModal(discord.ui.Modal, title="Starter Message"):
         self.inbox = inbox
 
     async def localize(self, locale: discord.Locale) -> None:
-        async def t(s: _) -> str:
+        async def t(s: locale_str) -> str:
             return await translate(s, self.bot, locale=locale)
 
         self.title = await t(_("modal-starter"))
@@ -56,7 +57,7 @@ class SetTicketDefaultsModal(discord.ui.Modal, title="New Tickets"):
         self.inbox = inbox
 
     async def localize(self, locale: discord.Locale) -> None:
-        async def t(s: _) -> str:
+        async def t(s: locale_str) -> str:
             return await translate(s, self.bot, locale=locale)
 
         self.title = await t(_("modal-new-tickets"))

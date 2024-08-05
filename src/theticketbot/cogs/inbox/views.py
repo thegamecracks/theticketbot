@@ -4,6 +4,7 @@ from typing import Awaitable, Callable, Iterable
 
 import asqlite
 import discord
+from discord.app_commands import locale_str
 
 from theticketbot.bot import Bot
 from theticketbot.database import DatabaseClient
@@ -37,7 +38,7 @@ class InboxView(discord.ui.View):
         self.ratelimit_check = ratelimit_check
 
     async def localize(self, locale: discord.Locale) -> None:
-        async def t(s: _) -> str:
+        async def t(s: locale_str) -> str:
             return await translate(s, self.bot, locale=locale)
 
         # Button label for creating a new ticket
