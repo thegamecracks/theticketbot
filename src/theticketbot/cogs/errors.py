@@ -91,7 +91,7 @@ class AppCommandErrorResponse(ErrorResponse):
         assert isinstance(error, AppCommandResponse)
         message = error.message
         if isinstance(message, app_commands.locale_str):
-            message = await translate(message, ctx, error.data)
+            message = await translate(message, ctx, data=error.data)
         return message
 
 
