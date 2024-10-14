@@ -8,8 +8,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      LOCALE_MANDATORY: '1'
     steps:
       - uses: actions/checkout@v4
         with:
