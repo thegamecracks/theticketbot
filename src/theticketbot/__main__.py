@@ -5,6 +5,7 @@ import getpass
 import importlib.metadata
 import logging
 import os
+import re
 import sys
 from pathlib import Path
 from typing import Type
@@ -185,9 +186,6 @@ def prompt_and_create_config_file(startup_flags: StartupFlags) -> Path:
 
 
 def input_token() -> str:
-    import getpass
-    import re
-
     while True:
         token = getpass.getpass("Bot Token: ").strip()
         if re.fullmatch(r"\w+\.\w+\.\S+", token) is not None:
