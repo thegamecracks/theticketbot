@@ -150,6 +150,18 @@ This will prevent them from closing tickets, inviting other members,
 or sending messages in locked tickets.
 This also means future staff members won't be able to view older tickets.
 
+With all the above said, the recommended workflow for most community servers
+is to give your staff and the bot Manage Threads permission for a single channel.
+When staff needs to close a ticket, they should remove all invited members first,
+then the ticket owner last to automatically trigger archival and locking of the ticket.
+Staff are free to continue conversations in the ticket if needed, which
+automatically re-opens it.
+
+If you need to deviate from this workflow to accommodate alternative requirements,
+like allowing ticket owners to read their past tickets or having multiple staff
+roles with different management permissions, feel free to develop and document
+a new procedure for your staff team to follow.
+
 ## Customization
 
 There are various settings that can be customized for each inbox.
