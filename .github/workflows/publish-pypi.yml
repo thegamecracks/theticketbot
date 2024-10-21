@@ -39,3 +39,5 @@ jobs:
           path: dist/
           merge-multiple: true
       - uses: pypa/gh-action-pypi-publish@v1.10.3
+        with:
+          attestations: true
