@@ -6,6 +6,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.5.1] - 2024-10-23
+
+> [!NOTE]
+>
+> Localizations have not yet been synced in this release.
+> **10** of **124** strings across **2** languages are out of date.
+
+This release contains a few tweaks, but nothing that visibly affects
+the bot's functionality.
+
+### Changes
+
+- Document recommended workflow in readme
+- Slightly refactor a few source files
+- Optimize a couple foreign key delete constraints
+- Bump CI/CD and pre-commit actions
+
 ## [0.5.0] - 2024-08-05
 
 > [!NOTE]
@@ -185,7 +202,8 @@ This is theticketbot's first release to go on [PyPI](https://pypi.org/project/th
 
 This is theticketbot's first release! 🎉
 
-[Unreleased]: https://github.com/thegamecracks/theticketbot/compare/v0.5.0...main
+[Unreleased]: https://github.com/thegamecracks/theticketbot/compare/v0.5.1...main
+[0.5.1]: https://github.com/thegamecracks/theticketbot/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/thegamecracks/theticketbot/compare/v0.4.3...v0.5.0
 [0.4.3]: https://github.com/thegamecracks/theticketbot/compare/v0.4.2...v0.4.3
 [0.4.2]: https://github.com/thegamecracks/theticketbot/compare/v0.4.1...v0.4.2
