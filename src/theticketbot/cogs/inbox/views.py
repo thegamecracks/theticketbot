@@ -9,6 +9,7 @@ from discord.app_commands import locale_str
 from theticketbot.bot import Bot
 from theticketbot.database import DatabaseClient
 from theticketbot.translator import locale_str as _, translate
+from theticketbot.views import View
 
 from .constants import DEFAULT_STARTER_CONTENT, DEFAULT_TICKET_NAME
 from .destination import get_inbox_destination
@@ -31,7 +32,7 @@ def mention_to_snowflake(mention: str) -> discord.Object:
     raise ValueError(f"Unsupported mention type {m[1]!r}")
 
 
-class InboxView(discord.ui.View):
+class InboxView(View):
     def __init__(self, bot: Bot, ratelimit_check: InboxRatelimit) -> None:
         super().__init__(timeout=None)
         self.bot = bot
@@ -200,7 +201,7 @@ class InboxView(discord.ui.View):
         return row[0]
 
 
-class InboxStaffView(discord.ui.View):
+class InboxStaffView(View):
     def __init__(self, bot: Bot, inbox_id: int, staff: set[str]) -> None:
         super().__init__(timeout=None)
         self.bot = bot
