@@ -1,6 +1,9 @@
 from typing import Any
 
+import discord
 from discord import app_commands
+
+from .translator import translate
 
 
 class AppCommandResponse(app_commands.AppCommandError):
@@ -24,3 +27,9 @@ class AppCommandResponse(app_commands.AppCommandError):
         super().__init__(str(message))
         self.message = message
         self.data = data
+
+    async def translate(self, interaction: discord.Interaction) -> str:
+        if isinstance(self.message, str):
+            return self.message
+
+        return await translate(self.message, interaction, data=self.data)

@@ -92,10 +92,7 @@ class AppCommandErrorResponse(ErrorResponse):
 
     async def format(self, ctx: discord.Interaction, error: Exception) -> str | None:
         assert isinstance(error, AppCommandResponse)
-        message = error.message
-        if isinstance(message, app_commands.locale_str):
-            message = await translate(message, ctx, data=error.data)
-        return message
+        return await error.translate(ctx)
 
 
 class ErrorHandler(ABC, Generic[T]):
