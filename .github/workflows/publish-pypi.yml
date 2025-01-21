@@ -17,7 +17,7 @@ jobs:
         with:
           cache: pip
           cache-dependency-path: pyproject.toml
-          python-version: "3.11"
+          python-version: '3.11'
       - run: pip install build
       - run: python -m build
       - uses: actions/upload-artifact@v4
