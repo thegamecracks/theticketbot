@@ -45,7 +45,7 @@ class SetInboxStarterContentModal(discord.ui.Modal, title="Starter Message"):
             interaction,
             data={"inbox": self.inbox.jump_url},
         )
-        await interaction.response.send_message(content, ephemeral=True)
+        await interaction.response.edit_message(content=content)
 
 
 class SetTicketDefaultsModal(discord.ui.Modal, title="New Tickets"):
@@ -79,4 +79,4 @@ class SetTicketDefaultsModal(discord.ui.Modal, title="New Tickets"):
             interaction,
             data={"inbox": self.inbox.jump_url},
         )
-        await interaction.response.send_message(content, ephemeral=True)
+        await interaction.response.edit_message(content=content)

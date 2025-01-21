@@ -265,8 +265,7 @@ class InboxGroup(
                 interaction,
                 data={"filesize": humanize.naturalsize(max_attachment_size)},
             )
-            await interaction.response.send_message(content, ephemeral=True)
-            return
+            return await interaction.response.edit_message(content=content)
 
         embeds_copied = False
         if len(embeds[0]) == 0 and len(message.embeds) > 0:
@@ -345,7 +344,7 @@ class InboxGroup(
                     interaction,
                     data={"inbox": inbox.jump_url, "destination": destination.jump_url},
                 )
-                return await interaction.response.send_message(content, ephemeral=True)
+                return await interaction.response.edit_message(content=content)
 
             await query.set_inbox_destination(
                 inbox.id,
@@ -362,7 +361,7 @@ class InboxGroup(
                 "destination": destination.jump_url,
             },
         )
-        await interaction.response.send_message(content, ephemeral=True)
+        await interaction.response.edit_message(content=content)
 
     @app_commands.command(
         name=_("command-inbox-message"),
@@ -387,7 +386,7 @@ class InboxGroup(
             interaction,
             data={"inbox": inbox.jump_url},
         )
-        await interaction.response.send_message(content, ephemeral=True)
+        await interaction.response.edit_message(content=content)
         callback = functools.partial(self.edit_inbox_message, inbox=inbox)
         self.bot.set_message_callback(guild_id, user_id, callback)
 
@@ -452,11 +451,7 @@ class InboxGroup(
         )
         view = InboxStaffView(self.bot, inbox.id, set(staff))
 
-        return await interaction.response.send_message(
-            content,
-            ephemeral=True,
-            view=view,
-        )
+        await interaction.response.edit_message(content=content, view=view)
 
     new_tickets = app_commands.Group(
         name=_("command-inbox-new-tickets"),
