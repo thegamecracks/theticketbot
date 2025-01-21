@@ -21,7 +21,7 @@ jobs:
       with:
         cache: pip
         cache-dependency-path: pyproject.toml
-        python-version-file: pyproject.toml
+        python-version: '3.11'
     - run: pip install pyright
     - run: pip install .
     - run: pyright
