@@ -5,6 +5,10 @@ import logging
 from typing import (
     TYPE_CHECKING,
     Any,
+    Awaitable,
+    Callable,
+    ParamSpec,
+    TypeVar,
     TypedDict,
     cast,
 )
@@ -27,6 +31,9 @@ from .views import InboxStaffView, InboxView
 
 if TYPE_CHECKING:
     from theticketbot.cogs.select import MessageCallback
+
+P = ParamSpec("P")
+T = TypeVar("T")
 
 REQUIRED_DESTINATION_PERMISSIONS = discord.Permissions(
     view_channel=True,
@@ -51,6 +58,22 @@ def looks_like_an_inbox(bot: Bot, message: discord.Message) -> bool:
     # Good enough as a heuristic
     assert bot.user is not None
     return message.author.id == bot.user.id and len(message.components) > 0
+
+
+def delete_interaction_and_call(
+    callback: Callable[P, Awaitable[T]],
+    interaction: discord.Interaction,
+) -> Callable[P, Awaitable[T]]:
+    @functools.wraps(callback)
+    async def wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
+        if not interaction.response.is_done():
+            raise RuntimeError("No previous response was sent for this interaction")
+        elif not interaction.is_expired():
+            await interaction.delete_original_response()
+
+        return await callback(*args, **kwargs)
+
+    return wrapper
 
 
 class InboxMessageParams(TypedDict):
@@ -181,7 +204,7 @@ class InboxGroup(
             interaction.guild.id,
             interaction.user.id,
             functools.partial(
-                self.create_inbox,
+                delete_interaction_and_call(self.create_inbox, interaction),
                 channel=channel,
                 destination=destination,
             ),
@@ -243,7 +266,7 @@ class InboxGroup(
             interaction,
             data={"inbox": message.jump_url},
         )
-        await interaction.edit_original_response(content=content)
+        await interaction.followup.send(content, ephemeral=True)
 
     async def create_inbox_message(
         self,
@@ -265,7 +288,7 @@ class InboxGroup(
                 interaction,
                 data={"filesize": humanize.naturalsize(max_attachment_size)},
             )
-            return await interaction.response.edit_message(content=content)
+            return await interaction.response.send_message(content, ephemeral=True)
 
         embeds_copied = False
         if len(embeds[0]) == 0 and len(message.embeds) > 0:
@@ -324,8 +347,13 @@ class InboxGroup(
         )
         content = await translate(_("select-inbox-to-edit"), interaction)
         await interaction.response.send_message(content, ephemeral=True)
-        callback = functools.partial(self.edit_inbox_destination, destination=channel)
-        self.set_inbox_callback(interaction, callback)
+        self.set_inbox_callback(
+            interaction,
+            functools.partial(
+                delete_interaction_and_call(self.edit_inbox_destination, interaction),
+                destination=channel,
+            ),
+        )
 
     async def edit_inbox_destination(
         self,
@@ -344,7 +372,7 @@ class InboxGroup(
                     interaction,
                     data={"inbox": inbox.jump_url, "destination": destination.jump_url},
                 )
-                return await interaction.response.edit_message(content=content)
+                return await interaction.response.send_message(content, ephemeral=True)
 
             await query.set_inbox_destination(
                 inbox.id,
@@ -361,7 +389,7 @@ class InboxGroup(
                 "destination": destination.jump_url,
             },
         )
-        await interaction.response.edit_message(content=content)
+        await interaction.response.send_message(content, ephemeral=True)
 
     @app_commands.command(
         name=_("command-inbox-message"),
@@ -370,7 +398,10 @@ class InboxGroup(
     async def message(self, interaction: discord.Interaction):
         content = await translate(_("select-inbox-to-edit"), interaction)
         await interaction.response.send_message(content, ephemeral=True)
-        self.set_inbox_callback(interaction, self.select_message_to_edit_inbox)
+        self.set_inbox_callback(
+            interaction,
+            delete_interaction_and_call(self.select_message_to_edit_inbox, interaction),
+        )
 
     async def select_message_to_edit_inbox(
         self,
@@ -386,9 +417,15 @@ class InboxGroup(
             interaction,
             data={"inbox": inbox.jump_url},
         )
-        await interaction.response.edit_message(content=content)
-        callback = functools.partial(self.edit_inbox_message, inbox=inbox)
-        self.bot.set_message_callback(guild_id, user_id, callback)
+        await interaction.response.send_message(content, ephemeral=True)
+        self.bot.set_message_callback(
+            guild_id,
+            user_id,
+            functools.partial(
+                delete_interaction_and_call(self.edit_inbox_message, interaction),
+                inbox=inbox,
+            ),
+        )
 
     async def edit_inbox_message(
         self,
@@ -423,7 +460,7 @@ class InboxGroup(
             interaction,
             data={"inbox": inbox.jump_url},
         )
-        await interaction.edit_original_response(content=content)
+        await interaction.followup.send(content, ephemeral=True)
 
     @app_commands.command(
         name=_("command-inbox-staff"),
@@ -432,7 +469,10 @@ class InboxGroup(
     async def staff(self, interaction: discord.Interaction):
         content = await translate(_("select-inbox-to-edit-staff"), interaction)
         await interaction.response.send_message(content, ephemeral=True)
-        self.set_inbox_callback(interaction, self.manage_inbox_staff)
+        self.set_inbox_callback(
+            interaction,
+            delete_interaction_and_call(self.manage_inbox_staff, interaction),
+        )
 
     async def manage_inbox_staff(
         self,
@@ -451,7 +491,7 @@ class InboxGroup(
         )
         view = InboxStaffView(self.bot, inbox.id, set(staff))
 
-        await interaction.response.edit_message(content=content, view=view)
+        await interaction.response.send_message(content, ephemeral=True, view=view)
 
     new_tickets = app_commands.Group(
         name=_("command-inbox-new-tickets"),
@@ -465,7 +505,10 @@ class InboxGroup(
     async def new_tickets_starter(self, interaction: discord.Interaction):
         content = await translate(_("select-inbox-to-edit"), interaction)
         await interaction.response.send_message(content, ephemeral=True)
-        self.set_inbox_callback(interaction, self.edit_new_tickets_starter)
+        self.set_inbox_callback(
+            interaction,
+            delete_interaction_and_call(self.edit_new_tickets_starter, interaction),
+        )
 
     async def edit_new_tickets_starter(
         self,
@@ -485,7 +528,10 @@ class InboxGroup(
     async def new_tickets_name(self, interaction: discord.Interaction):
         content = await translate(_("select-inbox-to-edit"), interaction)
         await interaction.response.send_message(content, ephemeral=True)
-        self.set_inbox_callback(interaction, self.edit_new_tickets_name)
+        self.set_inbox_callback(
+            interaction,
+            delete_interaction_and_call(self.edit_new_tickets_name, interaction),
+        )
 
     async def edit_new_tickets_name(
         self,
