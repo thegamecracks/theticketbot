@@ -243,7 +243,7 @@ class InboxGroup(
             interaction,
             data={"inbox": message.jump_url},
         )
-        await interaction.followup.send(content, ephemeral=True)
+        await interaction.edit_original_response(content=content)
 
     async def create_inbox_message(
         self,
@@ -423,7 +423,7 @@ class InboxGroup(
             interaction,
             data={"inbox": inbox.jump_url},
         )
-        await interaction.followup.send(content, ephemeral=True)
+        await interaction.edit_original_response(content=content)
 
     @app_commands.command(
         name=_("command-inbox-staff"),
