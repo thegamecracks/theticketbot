@@ -386,7 +386,7 @@ class InboxGroup(
             data={
                 "inbox": inbox.jump_url,
                 "old": old.jump_url,
-                "destination": destination.jump_url,
+                "new": destination.jump_url,
             },
         )
         await interaction.response.send_message(content, ephemeral=True)
