@@ -213,7 +213,7 @@ This is theticketbot's first release to go on [PyPI](https://pypi.org/project/th
 
 This is theticketbot's first release! 🎉
 
-[Unreleased]: https://github.com/thegamecracks/theticketbot/compare/v0.5.1...main
+[Unreleased]: https://github.com/thegamecracks/theticketbot/compare/v0.5.2...main
 [0.5.2]: https://github.com/thegamecracks/theticketbot/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/thegamecracks/theticketbot/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/thegamecracks/theticketbot/compare/v0.4.3...v0.5.0
