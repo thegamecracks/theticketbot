@@ -38,4 +38,4 @@ jobs:
           pattern: dist-*
           path: dist/
           merge-multiple: true
-      - uses: pypa/gh-action-pypi-publish@v1.12.3
+      - uses: pypa/gh-action-pypi-publish@v1.12.4
