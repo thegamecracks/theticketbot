@@ -72,7 +72,10 @@ class Bot(commands.Bot):
 
         """
         path = str(self.config.db.path)
-        init = lambda conn: self._run_config_pragmas(conn)
+
+        def init(conn: sqlite3.Connection) -> None:
+            self._run_config_pragmas(conn)
+
         async with database_connect(path, init=init) as conn:
             if not transaction:
                 yield conn

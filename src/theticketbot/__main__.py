@@ -168,10 +168,10 @@ def prompt_and_create_config_file(startup_flags: StartupFlags) -> Path:
     )
     if startup_flags & StartupFlags.SYNC:
         print(
-            f"\n"
-            f"Afterwards, the bot will automatically synchronize its application commands\n"
-            f"and start itself. If an error occurs during this process, the config.toml\n"
-            f"will be deleted so you can redo this."
+            "\n"
+            "Afterwards, the bot will automatically synchronize its application commands\n"
+            "and start itself. If an error occurs during this process, the config.toml\n"
+            "will be deleted so you can redo this."
         )
     print()
 
