@@ -288,7 +288,8 @@ class InboxGroup(
                 interaction,
                 data={"filesize": humanize.naturalsize(max_attachment_size)},
             )
-            return await interaction.response.send_message(content, ephemeral=True)
+            await interaction.response.send_message(content, ephemeral=True)
+            return
 
         embeds_copied = False
         if len(embeds[0]) == 0 and len(message.embeds) > 0:
