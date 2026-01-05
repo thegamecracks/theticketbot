@@ -1,15 +1,15 @@
 [build-system]
-requires = ["setuptools>=64", "setuptools-scm>=8"]
-build-backend = "setuptools.build_meta"
+requires = ["uv-build~=0.9.21"]
+build-backend = "uv_build"
 
 [project]
 name = "theticketbot"
+version = "0.6.0"
 description = "A simple Discord ticket bot built on private channel threads."
 requires-python = ">=3.11"
 authors = [{ name = "thegamecracks" }]
 readme = "README.md"
 license = { text = "MIT License" }
-dynamic = ["version"]
 dependencies = [
     "asqlite==2.0.0",
     "discord.py~=2.4",

@@ -1,3 +1,0 @@
-recursive-include src *.ftl
-include src/theticketbot/migrations/*.sql
-include src/theticketbot/config_default.toml
