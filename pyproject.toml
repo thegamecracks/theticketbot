@@ -9,7 +9,8 @@ description = "A simple Discord ticket bot built on private channel threads."
 requires-python = ">=3.11"
 authors = [{ name = "thegamecracks" }]
 readme = "README.md"
-license = { text = "MIT License" }
+license = "MIT"
+license-files = ["LICENSE"]
 dependencies = [
     "asqlite==2.0.0",
     "discord.py~=2.4",
