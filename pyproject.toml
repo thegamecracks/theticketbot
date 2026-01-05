@@ -46,5 +46,3 @@ theticketbot = "theticketbot.__main__:main"
 
 [project.optional-dependencies]
 jishaku = ["jishaku>=2.6.3"]
-
-[tool.setuptools_scm]
