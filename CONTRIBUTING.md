@@ -43,7 +43,7 @@ new migration script.
 # Python Style Guide
 
 - Code should follow [PEP 8] where possible, unless exempted by this guide
-  - When unsure, run [Black] to format your code
+  - When unsure, run [Ruff] to format your code
   - Use `# fmt: off` and `# fmt: on` comments to override the formatter when necessary
 
 - Unlike PEP 8, the max line length allowed in this codebase is 88 characters
@@ -108,4 +108,4 @@ new migration script.
   ```
 
 [PEP 8]: https://peps.python.org/pep-0008/
-[Black]: https://black.readthedocs.io/en/stable/
+[Ruff]: https://docs.astral.sh/ruff/formatter/
