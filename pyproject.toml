@@ -4,7 +4,7 @@ build-backend = "uv_build"
 
 [project]
 name = "theticketbot"
-version = "0.6.0"
+version = "1.0.0"
 description = "A simple Discord ticket bot built on private channel threads."
 requires-python = ">=3.11"
 authors = [{ name = "thegamecracks" }]
