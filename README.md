@@ -1,8 +1,10 @@
 # theticketbot
 
-[![](https://img.shields.io/pypi/v/theticketbot?style=flat-square)](https://pypi.org/project/theticketbot/)
-[![](https://img.shields.io/github/actions/workflow/status/thegamecracks/theticketbot/black-lint.yml?style=flat-square&label=black)](https://black.readthedocs.io/en/stable/)
+[![](https://img.shields.io/pypi/v/theticketbot?style=flat-square&logo=pypi)](https://pypi.org/project/theticketbot/)
+[![](https://img.shields.io/github/actions/workflow/status/thegamecracks/theticketbot/publish.yml?style=flat-square&logo=uv&label=build)](https://docs.astral.sh/uv/)
 [![](https://img.shields.io/github/actions/workflow/status/thegamecracks/theticketbot/pyright-lint.yml?style=flat-square&label=pyright)](https://microsoft.github.io/pyright/#/)
+[![](https://img.shields.io/github/actions/workflow/status/thegamecracks/theticketbot/ruff-check.yml?style=flat-square&logo=ruff&label=lints)](https://docs.astral.sh/ruff/)
+[![](https://img.shields.io/github/actions/workflow/status/thegamecracks/theticketbot/ruff-format.yml?style=flat-square&logo=ruff&label=style)](https://docs.astral.sh/ruff/)
 
 A simple Discord bot for handling ticket systems using channel threads.
 
