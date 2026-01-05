@@ -21,7 +21,7 @@ dependencies = [
     "pydantic~=2.12",
 ]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: End Users/Desktop",
     "License :: OSI Approved",
     "License :: OSI Approved :: MIT License",
