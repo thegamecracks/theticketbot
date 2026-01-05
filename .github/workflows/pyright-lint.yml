@@ -4,24 +4,24 @@ on:
   push:
     paths:
       - '**.py'
+      - pyproject.toml
+      - uv.lock
   pull_request:
     paths:
       - '**.py'
+      - pyproject.toml
+      - uv.lock
 
 jobs:
   lint:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-        fetch-tags: true
-    - uses: actions/setup-python@v5
-      with:
-        cache: pip
-        cache-dependency-path: pyproject.toml
-        python-version: '3.11'
-    - run: pip install pyright
-    - run: pip install .
-    - run: pyright
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: '3.11'
+          enable-cache: true
+      - run: uv sync --locked --all-extras --dev
+      - run: uv pip install pyright
+      - run: uv run -m pyright
