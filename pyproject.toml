@@ -12,13 +12,13 @@ readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
 dependencies = [
-    "asqlite==2.0.0",
-    "discord.py~=2.4",
+    "asqlite~=2.0",
+    "discord.py~=2.6",
     "fluent-compiler~=1.1",
-    "humanize~=4.9",
-    "packaging~=24.1",
-    "platformdirs~=4.2",
-    "pydantic~=2.7",
+    "humanize~=4.15",
+    "packaging~=25.0",
+    "platformdirs~=4.5",
+    "pydantic~=2.12",
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -42,6 +42,6 @@ Changelog = "https://github.com/thegamecracks/theticketbot/blob/main/CHANGELOG.m
 theticketbot = "theticketbot.__main__:main"
 
 [project.optional-dependencies]
-jishaku = ["jishaku>=2.5.2"]
+jishaku = ["jishaku>=2.6.3"]
 
 [tool.setuptools_scm]
