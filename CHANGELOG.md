@@ -6,6 +6,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-01-05
+
+> [!NOTE]
+>
+> Localizations have not yet been synced in this release.
+> **10** of **124** strings across **2** languages are out of date.
+
+This release updates the project's build system, bumps dependencies, and fixes
+the `label` deprecation warning when using discord.py 2.6+.
+
+### Changes
+
+- Switch from setuptools with setuptools-scm to uv-build backend
+  - This means the project will no longer use Git-based dynamic versioning.
+- Add py.typed marker to package
+- Use SPDX license expression and include LICENSE file
+- Upgrade discord.py and other dependencies
+
+### Fixes
+
+- Use `discord.ui.Label` format for modal text inputs to resolve deprecation warnings
+- Correctly handle `exc_info=False` and `stack_info=False` in JSONL logger
+- Fix `TypeError` when logging number of guilds cleaned up
+
 ## [0.5.2] - 2025-01-21
 
 > [!NOTE]
@@ -213,7 +237,8 @@ This is theticketbot's first release to go on [PyPI](https://pypi.org/project/th
 
 This is theticketbot's first release! 🎉
 
-[Unreleased]: https://github.com/thegamecracks/theticketbot/compare/v0.5.2...main
+[Unreleased]: https://github.com/thegamecracks/theticketbot/compare/v1.0.0...main
+[1.0.0]: https://github.com/thegamecracks/theticketbot/compare/v0.5.2...v1.0.0
 [0.5.2]: https://github.com/thegamecracks/theticketbot/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/thegamecracks/theticketbot/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/thegamecracks/theticketbot/compare/v0.4.3...v0.5.0
