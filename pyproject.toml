@@ -13,11 +13,11 @@ license = "MIT"
 license-files = ["LICENSE"]
 dependencies = [
     "asqlite~=2.0",
-    "discord.py~=2.6",
+    "discord.py~=2.7",
     "fluent-compiler~=1.1",
     "humanize~=4.15",
-    "packaging~=25.0",
-    "platformdirs~=4.5",
+    "packaging~=26.0",
+    "platformdirs~=4.9",
     "pydantic~=2.12",
 ]
 classifiers = [
