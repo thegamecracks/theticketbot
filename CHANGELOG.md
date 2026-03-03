@@ -6,6 +6,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-03-03
+
+> [!NOTE]
+>
+> Localizations have not yet been synced in this release.
+> **10** of **124** strings across **2** languages are out of date.
+
+This release bumps the following dependencies in pyproject.toml:
+
+- uv-build ~= 0.9.21 => 0.10.7
+- discord.py ~= 2.6 => 2.7
+- packaging ~= 25.0 => 26.0
+- platformdirs ~= 4.5 => 4.9
+
+Dependencies were also upgraded in the uv.lock file, which may affect users
+hosting from the source repository with uv.
+
+### Changes
+
+- Upgrade discord.py, packaging, and platformdirs
+
 ## [1.0.0] - 2026-01-05
 
 > [!NOTE]
@@ -237,7 +258,8 @@ This is theticketbot's first release to go on [PyPI](https://pypi.org/project/th
 
 This is theticketbot's first release! 🎉
 
-[Unreleased]: https://github.com/thegamecracks/theticketbot/compare/v1.0.0...main
+[Unreleased]: https://github.com/thegamecracks/theticketbot/compare/v1.0.1...main
+[1.0.1]: https://github.com/thegamecracks/theticketbot/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/thegamecracks/theticketbot/compare/v0.5.2...v1.0.0
 [0.5.2]: https://github.com/thegamecracks/theticketbot/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/thegamecracks/theticketbot/compare/v0.5.0...v0.5.1
