@@ -859,14 +859,14 @@ jishaku = [
 
 [package.metadata]
 requires-dist = [
-    { name = "asqlite", specifier = "~=2.0" },
-    { name = "discord-py", specifier = "~=2.7" },
-    { name = "fluent-compiler", specifier = "~=1.1" },
-    { name = "humanize", specifier = "~=4.15" },
+    { name = "asqlite", specifier = ">=2.0" },
+    { name = "discord-py", specifier = ">=2.7" },
+    { name = "fluent-compiler", specifier = ">=1.1" },
+    { name = "humanize", specifier = ">=4.15" },
     { name = "jishaku", marker = "extra == 'jishaku'", specifier = ">=2.6.3" },
-    { name = "packaging", specifier = "~=26.0" },
-    { name = "platformdirs", specifier = "~=4.9" },
-    { name = "pydantic", specifier = "~=2.12" },
+    { name = "packaging", specifier = ">=26.0" },
+    { name = "platformdirs", specifier = ">=4.9" },
+    { name = "pydantic", specifier = ">=2.12" },
 ]
 provides-extras = ["jishaku"]
 
