@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.0.2] - 2026-07-27
+
+> [!NOTE]
+>
+> Localizations have not yet been synced in this release.
+> **10** of **124** strings across **2** languages are out of date.
+
+## Changed
+
+- Bump dependencies in uv.lock
+- Remove upper bound constraints from project dependencies
+  ([article](https://iscinumpy.dev/post/bound-version-constraints/))
+- Replace deprecated license classifiers with SPDX license expression
+  ([PEP 639](https://peps.python.org/pep-0639/))
+
 ## [1.0.1] - 2026-03-03
 
 > [!NOTE]
@@ -258,7 +273,8 @@ This is theticketbot's first release to go on [PyPI](https://pypi.org/project/th
 
 This is theticketbot's first release! 🎉
 
-[Unreleased]: https://github.com/thegamecracks/theticketbot/compare/v1.0.1...main
+[Unreleased]: https://github.com/thegamecracks/theticketbot/compare/v1.0.2...main
+[1.0.2]: https://github.com/thegamecracks/theticketbot/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/thegamecracks/theticketbot/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/thegamecracks/theticketbot/compare/v0.5.2...v1.0.0
 [0.5.2]: https://github.com/thegamecracks/theticketbot/compare/v0.5.1...v0.5.2
