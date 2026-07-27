@@ -51,7 +51,7 @@ class JSONFormatter(logging.Formatter):
 
         created = datetime.datetime.fromtimestamp(
             record.created,
-            tz=datetime.timezone.utc,
+            tz=datetime.UTC,
         )
 
         data["created"] = created.isoformat()

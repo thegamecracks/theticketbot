@@ -1,4 +1,5 @@
-from typing import Iterable, Iterator, Literal
+from collections.abc import Iterable, Iterator
+from typing import Literal
 
 from packaging.version import Version
 

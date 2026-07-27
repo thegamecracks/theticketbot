@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import importlib.resources
+from collections.abc import Iterator
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Iterator
+from typing import TYPE_CHECKING, Any
 
 import discord
 from discord import app_commands
@@ -27,6 +28,8 @@ def yield_ftl_paths() -> Iterator[tuple[str, list[Path]]]:
 
 
 class FluentBackend:
+    DEFAULT_LOCALE = discord.Locale("en-US")
+
     def __init__(self) -> None:
         ftl_paths = list(yield_ftl_paths())
         ftl_paths = [(locale.replace("_", "-"), paths) for locale, paths in ftl_paths]
@@ -47,7 +50,7 @@ class FluentBackend:
     def translate(
         self,
         string: _locale_str,
-        locale: discord.Locale = discord.Locale("en-US"),
+        locale: discord.Locale = DEFAULT_LOCALE,
         data: Any = None,
         *,
         ignore_missing_data: bool = False,

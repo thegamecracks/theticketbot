@@ -2,9 +2,9 @@ import importlib.resources
 import logging
 import re
 import sqlite3
+from collections.abc import Iterable, Iterator
 from contextlib import contextmanager
-from typing import Iterable, Iterator, NamedTuple, Self
-
+from typing import NamedTuple, Self
 
 log = logging.getLogger(__name__)
 
@@ -65,7 +65,7 @@ class Migrator:
             return
 
         with self.begin() as conn:
-            for version, script in migrations.after_version(version):
+            for version, script in migrations.after_version(version):  # noqa: B020
                 log.info("Migrating database to v%d", version)
                 conn.executescript(script)
 

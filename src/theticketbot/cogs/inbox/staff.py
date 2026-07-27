@@ -1,4 +1,4 @@
-from typing import Sequence
+from collections.abc import Sequence
 
 import discord
 
@@ -20,7 +20,7 @@ async def filter_and_update_inbox_staff(
     inbox_id: int,
     mentions: Sequence[str],
 ) -> list[str]:
-    role_mentions = set(m for m in mentions if m.startswith("<@&"))
+    role_mentions = {m for m in mentions if m.startswith("<@&")}
     current_roles = {role.mention for role in guild.roles}
     removed = role_mentions - current_roles
 

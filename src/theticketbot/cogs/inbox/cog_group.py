@@ -2,14 +2,13 @@ from __future__ import annotations
 
 import functools
 import logging
+from collections.abc import Awaitable, Callable
 from typing import (
     TYPE_CHECKING,
     Any,
-    Awaitable,
-    Callable,
     ParamSpec,
-    TypeVar,
     TypedDict,
+    TypeVar,
     cast,
 )
 

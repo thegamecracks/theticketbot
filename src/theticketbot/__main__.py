@@ -8,7 +8,6 @@ import os
 import re
 import sys
 from pathlib import Path
-from typing import Type
 
 from pydantic import SecretStr
 
@@ -23,7 +22,7 @@ log = logging.getLogger(__package__)
 USER_CONFIG = APP_DIRS.user_config_path / "config.toml"
 
 
-def suppress(*exceptions: Type[BaseException]):
+def suppress(*exceptions: type[BaseException]):
     def decorator(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):

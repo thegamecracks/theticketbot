@@ -1,4 +1,5 @@
 import string
+
 import platformdirs
 
 APP_DIRS = platformdirs.PlatformDirs(

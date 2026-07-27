@@ -103,6 +103,7 @@ new migration script.
   ```py
   # Bad:
   from ..database import DatabaseClient
+
   # Good:
   from theticketbot.database import DatabaseClient
   ```

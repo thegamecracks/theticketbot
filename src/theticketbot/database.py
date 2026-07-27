@@ -1,7 +1,8 @@
 import asyncio
 import re
 import sqlite3
-from typing import Any, Callable, overload
+from collections.abc import Callable
+from typing import Any, overload
 
 import asqlite
 

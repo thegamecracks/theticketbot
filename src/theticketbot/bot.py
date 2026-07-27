@@ -5,8 +5,9 @@ import importlib.metadata
 import logging
 import sqlite3
 import sys
+from collections.abc import AsyncGenerator, Callable
 from enum import Flag, auto
-from typing import TYPE_CHECKING, AsyncGenerator, Callable, cast
+from typing import TYPE_CHECKING, cast
 
 import asqlite
 import discord

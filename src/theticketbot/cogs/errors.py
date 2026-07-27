@@ -1,8 +1,9 @@
 import logging
 import random
 from abc import ABC, abstractmethod
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Any, Callable, ClassVar, Generic, Type, TypeVar, cast
+from typing import Any, ClassVar, Generic, TypeVar, cast
 
 import discord
 from discord import app_commands
@@ -65,7 +66,7 @@ Placeholder = Callable[[Any, Exception], Any]
 
 @dataclass
 class ErrorResponse:
-    exc_types: Type[Exception] | tuple[Type[Exception], ...]
+    exc_types: type[Exception] | tuple[type[Exception], ...]
     content: str | app_commands.locale_str | None
     show_traceback: bool
     placeholders: dict[str, Placeholder] = field(default_factory=dict)
@@ -158,7 +159,7 @@ def get_cooldown_duration(ctx: Any, error: Exception) -> float:
 
 
 class PrefixErrorHandler(ErrorHandler[Context]):
-    responses = [
+    responses: ClassVar[list[ErrorResponse]] = [
         ErrorResponse(
             (commands.CommandNotFound, commands.DisabledCommand),
             content=None,
@@ -215,7 +216,7 @@ class PrefixErrorHandler(ErrorHandler[Context]):
 
 
 class TreeErrorHandler(ErrorHandler[discord.Interaction]):
-    responses = [
+    responses: ClassVar[list[ErrorResponse]] = [
         AppCommandErrorResponse(show_traceback=False),
         ErrorResponse(
             app_commands.CommandOnCooldown,

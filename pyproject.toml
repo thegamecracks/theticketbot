@@ -44,3 +44,9 @@ theticketbot = "theticketbot.__main__:main"
 
 [project.optional-dependencies]
 jishaku = ["jishaku>=2.6.3"]
+
+[tool.ruff.lint]
+ignore = ["SIM"]
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
