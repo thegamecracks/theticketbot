@@ -23,7 +23,7 @@ This release bumps the following dependencies in pyproject.toml:
 Dependencies were also upgraded in the uv.lock file, which may affect users
 hosting from the source repository with uv.
 
-### Changes
+### Changed
 
 - Upgrade discord.py, packaging, and platformdirs
 
@@ -37,7 +37,7 @@ hosting from the source repository with uv.
 This release updates the project's build system, bumps dependencies, and fixes
 the `label` deprecation warning when using discord.py 2.6+.
 
-### Changes
+### Changed
 
 - Switch from setuptools with setuptools-scm to uv-build backend
   - This means the project will no longer use Git-based dynamic versioning.
@@ -45,7 +45,7 @@ the `label` deprecation warning when using discord.py 2.6+.
 - Use SPDX license expression and include LICENSE file
 - Upgrade discord.py and other dependencies
 
-### Fixes
+### Fixed
 
 - Use `discord.ui.Label` format for modal text inputs to resolve deprecation warnings
 - Correctly handle `exc_info=False` and `stack_info=False` in JSONL logger
@@ -72,7 +72,7 @@ to improve UX, and also fixes a long-standing issue that caused the
 This release contains a few tweaks, but nothing that visibly affects
 the bot's functionality.
 
-### Changes
+### Changed
 
 - Document recommended workflow in readme
 - Slightly refactor a few source files
@@ -86,7 +86,7 @@ the bot's functionality.
 > Localizations have not yet been synced in this release.
 > **10** of **124** strings across **2** languages are out of date.
 
-### New Features
+### Added
 
 - Add `/inbox destination` to allow routing tickets to any channel
   - Can also be set during `/inbox create` with a new `destination` parameter
@@ -95,7 +95,7 @@ the bot's functionality.
   - If you are using multiple database files for the same bot, you should pass the
     `--no-sync` argument after switching databases to skip automatic synchronization.
 
-### Changes
+### Changed
 
 - Replace gettext localization system with more flexible [Project Fluent] files
   - Compilation no longer required to use localizations
@@ -104,13 +104,13 @@ the bot's functionality.
 
 ## [0.4.3] - 2024-07-01
 
-### New Features
+### Added
 
 - At bot startup, print an invite link with pre-configured permissions ([#11])
 
 ## [0.4.2] - 2024-06-26
 
-### New Features
+### Added
 
 - Automatically prompt to create a config.toml file in a user config directory
   if no config file is found ([#10])
@@ -120,28 +120,28 @@ the bot's functionality.
   - This behaviour can be bypassed using the `--config-file` argument.
 - Print loaded config file's path when using `--dump-config`
 
-### Changes
+### Changed
 
 - Suppress KeyboardInterrupt tracebacks in the CLI more reliably
 
-### Fixes
+### Fixed
 
 - Fix untranslated message when clicking "Create Ticket" on an unrecognized inbox
 - Raise an exception when `--config-file` is given a non-existent file path
 
 ## [0.4.1] - 2024-06-26
 
-### New Features
+### Added
 
 - Add .jsonl logging to user log directory
 
-### Changes
+### Changed
 
 - Replace hardcoded owner mention shown in error messages
   with the real bot owner given by the Discord API
 - Clarify gettext dependency in readme
 
-### Fixes
+### Fixed
 
 - Don't unnecessarily create application / temporary directories at startup
 
@@ -154,7 +154,7 @@ not showing up on the PyPI page.
 
 This is theticketbot's first release to go on [PyPI](https://pypi.org/project/theticketbot/)! 🎉
 
-### Changes
+### Changed
 
 - BREAKING CHANGE:
   The default database path now defaults to a user-specific directory
@@ -166,28 +166,28 @@ This is theticketbot's first release to go on [PyPI](https://pypi.org/project/th
 - Unpin discord.py to `~=2.4`
 - Use PyPI version of asqlite pinned at `==2.0.0`
 
-### Fixes
+### Fixed
 
 - Disable the polls intent by default, and don't enable any future standard intents
   when upgrading discord.py
 
 ## [0.3.2] - 2024-06-19
 
-### New Features
+### Added
 
 - Add french localization, courtesy of @Bubobubobubobubo
 - Add `--sync` command-line argument to make registering application commands easier
 
 ## [0.3.1] - 2024-06-17
 
-### New Features
+### Added
 
 - Automatically lock tickets when archived by staff / auto-archived,
   and bot is given Manage Threads permission ([#5])
 
 ## [0.3.0] - 2024-06-10
 
-### New Features
+### Added
 
 - Add german localization, courtesy of @GamingGalaxy200
 - Add `/inbox message` for editing inbox messages in-place ([#2])
@@ -203,7 +203,7 @@ This is theticketbot's first release to go on [PyPI](https://pypi.org/project/th
 - Add experimental support for encrypted SQLite databases
   - See the [README](https://github.com/thegamecracks/theticketbot/blob/v0.3.0/README.md#encryption) for usage
 
-### Changes
+### Changed
 
 - Make `/inbox` command guild-only
 - Don't include commas in the `$staff` placeholder for ticket starters
@@ -216,11 +216,11 @@ This is theticketbot's first release to go on [PyPI](https://pypi.org/project/th
 - Remove Manage Server permission check on inbox message selections
   - This is no longer needed since the new message selection system is isolated to each guild, preventing users from attempting to manage inboxes from other guilds. Admins can now grant the `/inbox` command to staff that don't have the Manage Server permission.
 
-### Fixes
+### Fixed
 
 - Fix deleted threads not being removed from database while bot is online
 
-### Removals
+### Removed
 
 - `/inbox staff add`
 - `/inbox staff list`
@@ -228,7 +228,7 @@ This is theticketbot's first release to go on [PyPI](https://pypi.org/project/th
 
 ## [0.2.0] - 2024-06-04
 
-### New Features
+### Added
 
 - Add `/inbox new-tickets name` for customizing names of new tickets
   - See the [README](https://github.com/thegamecracks/theticketbot/blob/v0.2.0/README.md#customization) for available placeholders
@@ -238,7 +238,7 @@ This is theticketbot's first release to go on [PyPI](https://pypi.org/project/th
 - Show a helpful message when creating a ticket on an unrecognized inbox
 - Automated clean up of obsolete guilds in database, running every saturday
 
-### Changes
+### Changed
 
 - Update intents in default configuration:
   - `members = true`
@@ -249,7 +249,7 @@ This is theticketbot's first release to go on [PyPI](https://pypi.org/project/th
   - Version automatically changes according to Git repository tags
   - All tracked files are now included in source distributions
 
-### Removals
+### Removed
 
 - `/inbox starter get`
 - `/inbox starter set` - renamed to `/inbox new-tickets starter`
