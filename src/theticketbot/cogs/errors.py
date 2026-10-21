@@ -264,9 +264,9 @@ class TreeErrorHandler(ErrorHandler[discord.Interaction]):
             "ephemeral": True,
         }
         if interaction.response.is_done():
-            await interaction.followup.send(**kwargs)
+            await interaction.followup.send(**kwargs)  # ty: ignore[no-matching-overload]
         else:
-            await interaction.response.send_message(**kwargs)
+            await interaction.response.send_message(**kwargs)  # ty: ignore[no-matching-overload]
 
     def should_handle(
         self,
@@ -289,14 +289,14 @@ class Errors(commands.Cog):
 
     def setup_events(self) -> None:
         self._old_command_error = self.bot.on_command_error
-        self.bot.on_command_error = self.prefix_handler.handle  # type: ignore
+        self.bot.on_command_error = self.prefix_handler.handle  # ty: ignore[invalid-assignment]
 
         self._old_tree_error = self.bot.tree.on_error
         self.bot.tree.error(self.tree_handler.handle)
 
     def teardown_events(self) -> None:
-        self.bot.on_command_error = self._old_command_error
-        self.bot.tree.error(self._old_tree_error)  # type: ignore
+        self.bot.on_command_error = self._old_command_error  # ty: ignore[invalid-assignment]
+        self.bot.tree.error(self._old_tree_error)  # ty: ignore[invalid-argument-type]
 
 
 async def setup(bot: Bot):

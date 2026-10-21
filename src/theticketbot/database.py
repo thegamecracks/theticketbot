@@ -365,7 +365,7 @@ def connect(
             return conn
 
     else:
-        new_connect = asqlite._connect_pragmas  # type: ignore
+        new_connect = asqlite._connect_pragmas
 
     return asqlite._ContextManagerMixin(
         queue,

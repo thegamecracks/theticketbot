@@ -2,7 +2,7 @@ import importlib.resources
 import logging
 import re
 import sqlite3
-from collections.abc import Iterable, Iterator
+from collections.abc import Generator, Iterable
 from contextlib import contextmanager
 from typing import NamedTuple, Self
 
@@ -77,7 +77,7 @@ class Migrator:
         return version
 
     @contextmanager
-    def begin(self) -> Iterator[sqlite3.Connection]:
+    def begin(self) -> Generator[sqlite3.Connection]:
         self.conn.execute("BEGIN")
         try:
             yield self.conn
