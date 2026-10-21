@@ -1,5 +1,5 @@
 [build-system]
-requires = ["uv-build~=0.13.1"]
+requires = ["uv-build~=0.13.4"]
 build-backend = "uv_build"
 
 [project]
@@ -32,7 +32,13 @@ classifiers = [
     "Topic :: Communications :: Chat",
     "Typing :: Typed",
 ]
-keywords = ["i18n", "discord", "discord.py", "project-fluent", "ticketing-system"]
+keywords = [
+    "i18n",
+    "discord",
+    "discord.py",
+    "project-fluent",
+    "ticketing-system",
+]
 
 [project.urls]
 Homepage = "https://github.com/thegamecracks/theticketbot"
