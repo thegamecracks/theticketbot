@@ -289,7 +289,7 @@ class Errors(commands.Cog):
 
     def setup_events(self) -> None:
         self._old_command_error = self.bot.on_command_error
-        self.bot.on_command_error = self.prefix_handler.handle  # ty: ignore[invalid-assignment]
+        self.bot.on_command_error = self.prefix_handler.handle  # type: ignore
 
         self._old_tree_error = self.bot.tree.on_error
         self.bot.tree.error(self.tree_handler.handle)
